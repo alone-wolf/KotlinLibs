@@ -33,7 +33,7 @@ class FileShardTool(
         return this
     }
 
-    fun printInfo(block: (FileSliceStatus) -> Unit = {}): FileShardTool {
+    suspend fun printInfo(block: suspend (FileSliceStatus) -> Unit = {}): FileShardTool {
         println()
         println("file: ${file.name}")
         println("size: $fileSize")

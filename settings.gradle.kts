@@ -31,3 +31,4 @@ rootProject.name = "KotlinLibs"
 include(":library")
 include(":KotlinLibrary")
 include(":KtorLibrary")
+include(":KMPLibrary")

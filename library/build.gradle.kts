@@ -3,9 +3,9 @@
 //import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
 //    alias(libs.plugins.androidLibrary)
 //    alias(libs.plugins.vanniktech.mavenPublish)
 }
@@ -14,7 +14,11 @@ group = "top.writerpass.libs"
 version = "1.0.0"
 
 kotlin {
-    jvm("desktop")
+    jvm()
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
 //    androidTarget()
 //    androidTarget {
 //        publishLibraryVariants("release")
@@ -29,7 +33,7 @@ kotlin {
 //    linuxX64()
 
     sourceSets {
-        val desktopMain by getting {
+        val jvmMain by getting {
             dependencies {
 
             }
@@ -46,6 +50,7 @@ kotlin {
                 implementation(compose.components.uiToolingPreview)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 //                implementation("co.touchlab:kermit:2.0.4")
+
             }
         }
 //        desktopMain.dependencies {

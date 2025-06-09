@@ -2,7 +2,7 @@ plugins {
     id("java-library")
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
-    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlin.serialization)
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_11
