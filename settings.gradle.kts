@@ -16,7 +16,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        google{
+        google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
                 includeGroupAndSubgroups("com.android")
@@ -24,6 +24,7 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
