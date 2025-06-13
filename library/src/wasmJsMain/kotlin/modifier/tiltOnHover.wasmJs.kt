@@ -12,7 +12,6 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -31,7 +30,7 @@ actual fun Modifier.tiltOnHover(): Modifier = composed {
 
     var updateJob by remember { mutableStateOf<Job?>(null) }
 
-    return@composed this.onSizeChanged { boxSize = it }
+    return@composed onSizeChanged { boxSize = it }
         .pointerInput(inBox) {
             awaitPointerEventScope {
                 while (true) {
