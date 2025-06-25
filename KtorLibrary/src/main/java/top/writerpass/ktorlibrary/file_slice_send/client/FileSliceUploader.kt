@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import top.writerpass.kotlinlibrary.ObservableConcurrentMap
+import top.writerpass.kotlinlibrary.map.ObservableConcurrentMap
 import top.writerpass.kotlinlibrary.coroutine.withContextDefault
 import top.writerpass.kotlinlibrary.digest.calcSHA256String
 import top.writerpass.kotlinlibrary.file.operator.FileShardTool

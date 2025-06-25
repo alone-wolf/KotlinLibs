@@ -5,13 +5,13 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-//fun CoroutineScope.launchIO(
-//    block: suspend CoroutineScope.() -> Unit
-//) = launch(
-//    context = Dispatchers.IO,
-//    start = CoroutineStart.DEFAULT,
-//    block = block
-//)
+fun CoroutineScope.launchIO(
+    block: suspend CoroutineScope.() -> Unit
+) = launch(
+    context = PlatformDispatchers.IO,
+    start = CoroutineStart.DEFAULT,
+    block = block
+)
 
 fun CoroutineScope.launchDefault(
     block: suspend CoroutineScope.() -> Unit

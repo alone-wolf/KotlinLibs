@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 //import com.vanniktech.maven.publish.SonatypeHost
 //import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 //import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -31,6 +35,17 @@ kotlin {
 //    iosArm64()
 //    iosSimulatorArm64()
 //    linuxX64()
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
 
     sourceSets {
         val jvmMain by getting {

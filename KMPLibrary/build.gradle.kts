@@ -1,12 +1,14 @@
-//import com.vanniktech.maven.publish.SonatypeHost
-//import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-//import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.gradle.kotlin.dsl.kotlin
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.multiplatform)
 //    alias(libs.plugins.compose)
 //    alias(libs.plugins.compose.compiler)
-//    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.android.library)
 //    alias(libs.plugins.vanniktech.mavenPublish)
 }
 
@@ -14,12 +16,18 @@ group = "top.writerpass.kmplibrary"
 version = "1.0.0"
 
 kotlin {
-    jvm("desktop")
+    jvm()
     wasmJs {
         browser()
         binaries.executable()
     }
-//    androidTarget()
+    androidTarget {
+        publishLibraryVariants("release")
+        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+//        compilerOptions {
+//            jvmTarget.set(JvmTarget.JVM_11)
+//        }
+    }
 //    androidTarget {
 //        publishLibraryVariants("release")
 //        @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -32,14 +40,32 @@ kotlin {
 //    iosSimulatorArm64()
 //    linuxX64()
 
-    sourceSets {
-        val desktopMain by getting {
-            dependencies {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
 
-            }
+
+    sourceSets {
+//        val jvmMain by getting {
+//            dependencies {
+//
+//            }
+//        }
+
+        jvmMain.dependencies {
+
         }
         val commonMain by getting {
             dependencies {
+//                implementation(kotlin("stdlib-jdk8"))
+
                 //put your multiplatform dependencies here
 //                implementation(compose.runtime)
 //                implementation(compose.foundation)
@@ -51,6 +77,25 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
 //                implementation("co.touchlab:kermit:2.0.4")
+
+
+                implementation(kotlincrypto.bitops.bits)
+                implementation(kotlincrypto.bitops.endian)
+
+                implementation(kotlincrypto.hash.blake2)
+                implementation(kotlincrypto.hash.md)
+                implementation(kotlincrypto.hash.sha1)
+                implementation(kotlincrypto.hash.sha2)
+                implementation(kotlincrypto.hash.sha3)
+
+                implementation(kotlincrypto.macs.blake2)
+                implementation(kotlincrypto.macs.hmac.md)
+                implementation(kotlincrypto.macs.hmac.sha1)
+                implementation(kotlincrypto.macs.hmac.sha2)
+                implementation(kotlincrypto.macs.hmac.sha3)
+                implementation(kotlincrypto.macs.kmac)
+
+                implementation(kotlincrypto.random.crypto.rand)
             }
         }
 
@@ -68,17 +113,20 @@ kotlin {
     }
 }
 
-//android {
-//    namespace = "org.jetbrains.kotlinx.multiplatform.library.template"
-//    compileSdk = libs.versions.android.compileSdk.get().toInt()
-//    defaultConfig {
-//        minSdk = libs.versions.android.minSdk.get().toInt()
-//    }
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_11
-//        targetCompatibility = JavaVersion.VERSION_11
-//    }
-//}
+android {
+    namespace = "top.writerpass.kotlinlibs.kmplibrary"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        //noinspection OldTargetApi
+//        targetSdk = libs.versions.android.targetSdk.get().toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
 
 //mavenPublishing {
 //    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)

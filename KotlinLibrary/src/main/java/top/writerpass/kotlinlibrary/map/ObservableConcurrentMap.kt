@@ -1,4 +1,4 @@
-﻿package top.writerpass.kotlinlibrary
+package top.writerpass.kotlinlibrary.map
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

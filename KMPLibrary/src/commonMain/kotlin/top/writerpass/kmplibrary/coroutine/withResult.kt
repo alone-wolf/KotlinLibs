@@ -16,15 +16,15 @@ suspend fun <T> withContextResult(
     }
 }
 
-//suspend fun <T> withContextIOResult(
-//    block: suspend CoroutineScope.() -> T
-//): Result<T> {
-//    return try {
-//        Result.success(withContext(Dispatchers.IO, block))
-//    } catch (e: Exception) {
-//        Result.failure(e)
-//    }
-//}
+suspend fun <T> withContextIOResult(
+    block: suspend CoroutineScope.() -> T
+): Result<T> {
+    return try {
+        Result.success(withContext(PlatformDispatchers.IO, block))
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+}
 
 suspend fun <T> withContextMainResult(
     block: suspend CoroutineScope.() -> T

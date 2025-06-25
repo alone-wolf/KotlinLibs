@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
     alias(libs.plugins.kotlinJvm)
-    alias(libs.plugins.ktor)
+    alias(ktorLibs.plugins.ktor)
     alias(libs.plugins.kotlin.serialization)
 }
 java {
@@ -15,21 +15,21 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(ktorLibs.serialization.kotlinx.json)
 
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.content.negotiation)
+    implementation(ktorLibs.client.core)
+    implementation(ktorLibs.client.cio)
+    implementation(ktorLibs.client.contentNegotiation)
 
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.netty)
-    implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.ktor.server.call.logging)
-    implementation(libs.ktor.server.sse)
-    implementation(libs.ktor.server.cors)
-    implementation(libs.ktor.server.compression)
+    implementation(ktorLibs.server.core)
+    implementation(ktorLibs.server.netty)
+    implementation(ktorLibs.server.contentNegotiation)
+    implementation(ktorLibs.server.callLogging)
+    implementation(ktorLibs.server.sse)
+    implementation(ktorLibs.server.cors)
+    implementation(ktorLibs.server.compression)
 
-    implementation(libs.logback)
+//    implementation(libs.logback)
 
     implementation(project(":KotlinLibrary"))
 }

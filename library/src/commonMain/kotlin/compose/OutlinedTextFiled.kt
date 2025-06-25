@@ -4,12 +4,14 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import compose.Text
 
 @Composable
-fun MutableState<String>.OutlinedTextFiled(modifier: Modifier = Modifier) {
+fun MutableState<String>.OutlinedTextFiled(modifier: Modifier = Modifier, label: String? = null) {
     OutlinedTextField(
         value = value,
         onValueChange = { value = it },
+        label = label?.let { { it.Text() } },
         modifier = modifier
     )
 }
