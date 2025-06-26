@@ -2,6 +2,7 @@
 
 import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
@@ -24,9 +25,9 @@ kotlin {
     androidTarget {
         publishLibraryVariants("release")
         instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
-//        compilerOptions {
-//            jvmTarget.set(JvmTarget.JVM_11)
-//        }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
 //    androidTarget {
 //        publishLibraryVariants("release")
@@ -35,15 +36,13 @@ kotlin {
 //            jvmTarget.set(JvmTarget.JVM_11)
 //        }
 //    }
-//    iosX64()
-//    iosArm64()
-//    iosSimulatorArm64()
-//    linuxX64()
 
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
+        macosX64(),
+        macosArm64()
     ).forEach {
         it.binaries.framework {
             baseName = "ComposeApp"
@@ -53,15 +52,7 @@ kotlin {
 
 
     sourceSets {
-//        val jvmMain by getting {
-//            dependencies {
-//
-//            }
-//        }
-
-        jvmMain.dependencies {
-
-        }
+        jvmMain.dependencies {}
         val commonMain by getting {
             dependencies {
 //                implementation(kotlin("stdlib-jdk8"))
@@ -82,29 +73,27 @@ kotlin {
                 implementation(kotlincrypto.bitops.bits)
                 implementation(kotlincrypto.bitops.endian)
 
-                implementation(kotlincrypto.hash.blake2)
-                implementation(kotlincrypto.hash.md)
-                implementation(kotlincrypto.hash.sha1)
+//                implementation(kotlincrypto.hash.blake2)
+//                implementation(kotlincrypto.hash.md)
+//                implementation(kotlincrypto.hash.sha1)
                 implementation(kotlincrypto.hash.sha2)
-                implementation(kotlincrypto.hash.sha3)
+//                implementation(kotlincrypto.hash.sha3)
 
-                implementation(kotlincrypto.macs.blake2)
-                implementation(kotlincrypto.macs.hmac.md)
-                implementation(kotlincrypto.macs.hmac.sha1)
-                implementation(kotlincrypto.macs.hmac.sha2)
-                implementation(kotlincrypto.macs.hmac.sha3)
-                implementation(kotlincrypto.macs.kmac)
-
-                implementation(kotlincrypto.random.crypto.rand)
+//                implementation(kotlincrypto.macs.blake2)
+//                implementation(kotlincrypto.macs.hmac.md)
+//                implementation(kotlincrypto.macs.hmac.sha1)
+//                implementation(kotlincrypto.macs.hmac.sha2)
+//                implementation(kotlincrypto.macs.hmac.sha3)
+//                implementation(kotlincrypto.macs.kmac)
+//
+//                implementation(kotlincrypto.random.crypto.rand)
             }
         }
 
         wasmJsMain.dependencies {
 //            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.9.0")
         }
-//        desktopMain.dependencies {
-//
-//        }
+
 //        val commonTest by getting {
 //            dependencies {
 //                implementation(libs.kotlin.test)
@@ -120,7 +109,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         //noinspection OldTargetApi
-//        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        // targetSdk = libs.versions.android.targetSdk.get().toInt()
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
