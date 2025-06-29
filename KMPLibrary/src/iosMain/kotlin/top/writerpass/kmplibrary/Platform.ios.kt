@@ -1,3 +1,3 @@
 package top.writerpass.kmplibrary
 
-actual fun platform() = "iOS"
+//actual fun platform() = "iOS"
