@@ -35,7 +35,7 @@ class OutputInterceptor(
     fun start() {
         if (job != null) return // already running
 
-        job = scope.launch {
+        job = scope.launch(Dispatchers.Default) {
             val jobs = mutableListOf<Job>()
             if (interceptStdOut) {
                 System.setOut(
@@ -77,7 +77,7 @@ class OutputInterceptor(
         target: MutableList<String>,
         mutex: Mutex,
         onLine: ((String) -> Unit)?
-    ) = scope.launch {
+    ) = scope.launch(Dispatchers.Default) {
         input.bufferedReader().useLines { lines ->
             lines.forEach { line ->
                 mutex.withLock { target.add(line) }
