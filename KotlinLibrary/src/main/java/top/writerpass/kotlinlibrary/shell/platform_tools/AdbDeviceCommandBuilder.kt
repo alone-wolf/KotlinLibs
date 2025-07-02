@@ -1,38 +1,6 @@
-package top.writerpass.kotlinlibrary.shell
+package top.writerpass.kotlinlibrary.shell.platform_tools
 
-class DeviceEntity(val deviceSerial: String) {
-    val adb: DeviceCommandBuilderFactory
-        get() = DeviceCommandBuilderFactory("adb", deviceSerial)
-    val fastboot: DeviceCommandBuilderFactory
-        get() = DeviceCommandBuilderFactory("fastboot", deviceSerial)
-}
-
-class DeviceCommandBuilderFactory(
-    private val baseCommand: String,
-    private val deviceSerial: String?
-) {
-    private fun getArgs(): MutableList<String> {
-        val s = mutableListOf(baseCommand)
-        if (deviceSerial != null) {
-            s.add("-s")
-            s.add(deviceSerial)
-        }
-        return s
-    }
-
-    fun newCommandBuilder(): AdbCommandBuilder {
-        return AdbCommandBuilder(getArgs())
-    }
-}
-
-object GlobalCommandBuilderFactory {
-    val adb: CommandBuilder
-        get() = CommandBuilder(mutableListOf("adb"))
-    val fastboot: CommandBuilder
-        get() = CommandBuilder(mutableListOf("fastboot"))
-}
-
-class AdbCommandBuilder(
+class AdbDeviceCommandBuilder(
     private val args: MutableList<String> = mutableListOf()
 ) : CommandBuilder(args = args) {
     // get-state
@@ -94,29 +62,4 @@ class AdbCommandBuilder(
         args.add("install")
         args.addAll(installArgs)
     }
-}
-
-class FastbootCommandBuilder(
-    private val args: MutableList<String> = mutableListOf()
-) : CommandBuilder(args = args) {
-
-}
-
-open class CommandBuilder(
-    private val args: MutableList<String> = mutableListOf()
-) {
-
-    fun build(): List<String> {
-        return args
-    }
-
-    override fun toString(): String = build().joinToString(" ")
-}
-
-fun main() {
-    DeviceEntity("AAA")
-        .adb
-        .newCommandBuilder().let { builder ->
-            builder.getState()
-        }
 }
