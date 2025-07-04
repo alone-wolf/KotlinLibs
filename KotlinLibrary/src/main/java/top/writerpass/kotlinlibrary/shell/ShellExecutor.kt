@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 
 object ShellExecutor {
 
-    fun execute(
+    fun executeAsync(
         command: List<String>,
         coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default),
         onStdout: (String) -> Unit = {},
@@ -57,12 +57,14 @@ object ShellExecutor {
 
     fun execute(
         command: String,
+        coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default),
         onStdout: (String) -> Unit = {},
         onStderr: (String) -> Unit = {}
     ): Job {
         val parts = command.split("\\s+".toRegex())
-        return execute(
+        return executeAsync(
             command = parts,
+            coroutineScope = coroutineScope,
             onStdout = onStdout,
             onStderr = onStderr,
         )

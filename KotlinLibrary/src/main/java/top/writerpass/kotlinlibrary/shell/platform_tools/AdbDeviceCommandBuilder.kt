@@ -1,7 +1,7 @@
 package top.writerpass.kotlinlibrary.shell.platform_tools
 
 class AdbDeviceCommandBuilder(
-    private val args: MutableList<String> = mutableListOf()
+    override val args: MutableList<String> = mutableListOf()
 ) : CommandBuilder(args = args) {
     // get-state
     fun getState(): CommandBuilder = apply {

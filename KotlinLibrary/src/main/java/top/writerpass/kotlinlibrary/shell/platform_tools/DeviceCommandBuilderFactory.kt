@@ -5,7 +5,8 @@ class DeviceCommandBuilderFactory(
     private val deviceSerial: String?
 ) {
     private fun getArgs(): MutableList<String> {
-        val s = mutableListOf(baseCommand)
+        val s = mutableListOf<String>()
+        s.add(baseCommand)
         if (deviceSerial != null) {
             s.add("-s")
             s.add(deviceSerial)
