@@ -44,8 +44,27 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "KotlinLibs"
-include(":library")
+include(":CMPLibrary")
 include(":KotlinLibrary")
 include(":KtorLibrary")
 include(":KMPLibrary")
 include(":KtorMLibrary")
+include(":AndLib")
+
+////include(":KotlinLibrary")
+////project(":KotlinLibrary").projectDir = File("../KotlinLibs/KotlinLibrary")
+//
+//include(":CMPLibrary")
+//project(":CMPLibrary").projectDir = File("../KotlinLibs/CMPLibrary")
+//
+//include(":KMPLibrary")
+//project(":KMPLibrary").projectDir = File("../KotlinLibs/KMPLibrary")
+//
+////include(":KtorLibrary")
+////project(":KtorLibrary").projectDir = File("../KotlinLibs/KtorLibrary")
+//
+////include(":KtorMLibrary")
+////project(":KtorMLibrary").projectDir = File("../KotlinLibs/KtorMLibrary")
+//
+////include(":AndroidLibrary")
+////project(":AndroidLibrary").projectDir = File("../KotlinLibs/AndLib")
