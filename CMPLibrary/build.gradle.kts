@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
 //    alias(libs.plugins.androidLibrary)
 //    alias(libs.plugins.vanniktech.mavenPublish)
+//    `maven-publish`
 }
 
 group = "top.writerpass.cmplibrary"
@@ -77,6 +78,14 @@ kotlin {
 //        }
     }
 }
+
+//publishing {
+//    publications {
+//        create<MavenPublication>("default") {
+//            from(components["kotlin"])
+//        }
+//    }
+//}
 
 //android {
 //    namespace = "org.jetbrains.kotlinx.multiplatform.library.template"

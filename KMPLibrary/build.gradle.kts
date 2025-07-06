@@ -11,6 +11,7 @@ plugins {
 //    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.library)
 //    alias(libs.plugins.vanniktech.mavenPublish)
+//    `maven-publish`
 }
 
 group = "top.writerpass.kmplibrary"
@@ -116,6 +117,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
+//publishing {
+//    publications {
+//        create<MavenPublication>("default") {
+//            from(components["kotlin"])
+//        }
+//    }
+//}
 
 //mavenPublishing {
 //    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
