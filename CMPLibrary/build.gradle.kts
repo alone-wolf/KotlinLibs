@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalWasmDsl::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -14,7 +13,7 @@ plugins {
 //    alias(libs.plugins.vanniktech.mavenPublish)
 }
 
-group = "top.writerpass.libs"
+group = "top.writerpass.cmplibrary"
 version = "1.0.0"
 
 kotlin {

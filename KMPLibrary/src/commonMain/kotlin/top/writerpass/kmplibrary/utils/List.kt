@@ -15,3 +15,9 @@ fun <T : Any> List<T>.getPrevious(item: T): T? {
         }
     }
 }
+
+fun <T> MutableList<T>.slidingWindowInsert(item: T): MutableList<T> {
+    removeFirst()
+    add(item)
+    return this
+}

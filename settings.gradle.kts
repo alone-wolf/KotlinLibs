@@ -51,6 +51,9 @@ include(":KMPLibrary")
 include(":KtorMLibrary")
 include(":AndLib")
 
+//includeBuild("../KotlinLibs")
+//implementation(":KotlinLibs:KotlinLibrary")
+
 ////include(":KotlinLibrary")
 ////project(":KotlinLibrary").projectDir = File("../KotlinLibs/KotlinLibrary")
 //
