@@ -14,6 +14,9 @@ kotlin {
     }
 }
 
+group = "top.writerpass.libs"
+version = "1.0.0"
+
 dependencies {
     implementation(ktorLibs.serialization.kotlinx.json)
 

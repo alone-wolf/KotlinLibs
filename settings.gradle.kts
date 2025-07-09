@@ -52,22 +52,6 @@ include(":KtorMLibrary")
 include(":AndLib")
 
 //includeBuild("../KotlinLibs")
-//implementation(":KotlinLibs:KotlinLibrary")
-
-////include(":KotlinLibrary")
-////project(":KotlinLibrary").projectDir = File("../KotlinLibs/KotlinLibrary")
-//
-//include(":CMPLibrary")
-//project(":CMPLibrary").projectDir = File("../KotlinLibs/CMPLibrary")
-//
-//include(":KMPLibrary")
-//project(":KMPLibrary").projectDir = File("../KotlinLibs/KMPLibrary")
-//
-////include(":KtorLibrary")
-////project(":KtorLibrary").projectDir = File("../KotlinLibs/KtorLibrary")
-//
-////include(":KtorMLibrary")
-////project(":KtorMLibrary").projectDir = File("../KotlinLibs/KtorMLibrary")
-//
-////include(":AndroidLibrary")
-////project(":AndroidLibrary").projectDir = File("../KotlinLibs/AndLib")
+//implementation("top.writerpass.libs:KMPLibrary:1.0.0")
+//implementation("top.writerpass.libs:CMPLibrary:1.0.0")
+//implementation("top.writerpass.libs:AndLib:1.0.0")

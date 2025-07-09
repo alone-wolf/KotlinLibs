@@ -14,7 +14,7 @@ plugins {
 //    `maven-publish`
 }
 
-group = "top.writerpass.cmplibrary"
+group = "top.writerpass.libs"
 version = "1.0.0"
 
 kotlin {

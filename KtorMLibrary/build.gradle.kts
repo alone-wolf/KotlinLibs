@@ -8,6 +8,10 @@ plugins {
     alias(ktorLibs.plugins.ktor)
 }
 
+
+group = "top.writerpass.libs"
+version = "1.0.0"
+
 kotlin {
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.

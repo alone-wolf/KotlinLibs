@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+group = "top.writerpass.libs"
+version = "1.0.0"
+
 android {
     namespace = "top.writerpass.andlib"
     compileSdk = 35
