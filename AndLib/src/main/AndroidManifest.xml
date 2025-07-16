@@ -7,6 +7,9 @@
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.KotlinLibs" />
+        <activity
+            android:name="top.writerpass.inputeventdispatcher.MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

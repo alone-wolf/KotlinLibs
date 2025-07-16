@@ -1,4 +1,5 @@
 plugins {
+//    alias(libs.plugins.android.application)
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
@@ -12,7 +13,11 @@ android {
     compileSdk = 35
 
     defaultConfig {
+//        applicationId = "top.writerpass.inputeventdispatcher"
         minSdk = 24
+//        targetSdk = 36
+//        versionCode = 1
+//        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -57,4 +62,7 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
+    implementation(project(":KMPLibrary"))
+    implementation(project(":CMPLibrary"))
 }

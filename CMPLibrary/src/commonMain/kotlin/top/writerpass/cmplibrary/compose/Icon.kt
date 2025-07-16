@@ -5,6 +5,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
@@ -26,6 +27,20 @@ fun ImageVector.Icon(
 ) {
     Icon(
         imageVector = this,
+        contentDescription = description,
+        modifier = modifier,
+        tint = tint
+    )
+}
+
+@Composable
+fun Painter.Icon(
+    description: String? = null,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    Icon(
+        painter = this,
         contentDescription = description,
         modifier = modifier,
         tint = tint

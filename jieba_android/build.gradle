@@ -1,0 +1,53 @@
+plugins {
+    alias(libs.plugins.jetbrains.kotlin.android)
+}
+apply plugin: 'com.android.library'
+//apply plugin: 'com.novoda.bintray-release'
+
+//publish {
+//    def groupProjectID = 'jackmego.com.jieba_android'
+//    def artifactProjectID = 'jieba_android-release'
+//    def publishVersionID = '0.1.0'
+
+//    userOrg = 'jackmego'
+//    repoName = 'JiebaAndroid'
+//    groupId = groupProjectID
+//    artifactId = artifactProjectID
+//    publishVersion = publishVersionID
+//    desc = 'Android library for Chinese word segmenter Jieba.'
+//    website = 'https://github.com/452896915/jieba-android'
+//}
+
+android {
+    compileSdkVersion 34
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 33
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    namespace 'jackmego.com.jieba_android'
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation libs.androidx.core.ktx
+
+//    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}

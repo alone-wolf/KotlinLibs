@@ -55,3 +55,6 @@ include(":AndLib")
 //implementation("top.writerpass.libs:KMPLibrary:1.0.0")
 //implementation("top.writerpass.libs:CMPLibrary:1.0.0")
 //implementation("top.writerpass.libs:AndLib:1.0.0")
+include(":JiebaJvm")
+include(":AndLibSample")
+ 

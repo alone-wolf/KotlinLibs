@@ -6,6 +6,7 @@ android-compileSdk = "35"
 android-targetSdk = "34"
 compose-multiplatform = "1.8.1"
 #ktor = "3.1.1"
+kotlinxCoroutinesCore = "1.10.2"
 logback = "1.5.18"
 serialization = "1.8.1"
 kotlinStdlib = "2.1.21"
@@ -24,6 +25,7 @@ composeBom = "2025.06.01"
 [libraries]
 #kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 # server
 #ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -69,6 +71,7 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 #vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }

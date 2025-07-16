@@ -66,7 +66,7 @@ kotlin {
 //                implementation(compose.ui)
 //                implementation(compose.components.resources)
 //                implementation(compose.components.uiToolingPreview)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                implementation(libs.kotlinx.coroutines.core)
 
 //                implementation("co.touchlab:kermit:2.0.4")
 
@@ -108,7 +108,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
+//        compileSdk = libs.versions.android.compileSdk.get().toInt()
         //noinspection OldTargetApi
         // targetSdk = libs.versions.android.targetSdk.get().toInt()
     }
