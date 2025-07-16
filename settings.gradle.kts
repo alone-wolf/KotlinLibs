@@ -34,7 +34,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("ktorLibs"){
-            from("io.ktor:ktor-version-catalog:3.2.0")
+            from("io.ktor:ktor-version-catalog:3.2.1")
         }
         create("kotlincrypto") {
             // https://github.com/KotlinCrypto/version-catalog/blob/master/gradle/kotlincrypto.versions.toml
@@ -50,11 +50,11 @@ include(":KtorLibrary")
 include(":KMPLibrary")
 include(":KtorMLibrary")
 include(":AndLib")
+include(":JiebaJvm")
+include(":AndLibSample")
 
 //includeBuild("../KotlinLibs")
 //implementation("top.writerpass.libs:KMPLibrary:1.0.0")
 //implementation("top.writerpass.libs:CMPLibrary:1.0.0")
 //implementation("top.writerpass.libs:AndLib:1.0.0")
-include(":JiebaJvm")
-include(":AndLibSample")
- 
+//implementation("top.writerpass.libs:JiebaJvm:1.0.0")
