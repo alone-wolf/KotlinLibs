@@ -9,7 +9,8 @@ plugins {
     alias(libs.plugins.multiplatform)
 //    alias(libs.plugins.compose)
 //    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+//    alias(libs.plugins.android.library)
 //    alias(libs.plugins.vanniktech.mavenPublish)
 //    `maven-publish`
 }
@@ -23,13 +24,33 @@ kotlin {
         browser()
         binaries.executable()
     }
-    androidTarget {
-        publishLibraryVariants("release")
-        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
+
+    androidLibrary {
+        namespace = "top.writerpass.kotlinlibs.kmplibrary"
+        compileSdk = 33
+        minSdk = 24
+
+        withJava() // enable java compilation support
+        //withHostTestBuilder {}.configure {}
+        //withDeviceTestBuilder {
+        //    sourceSetTreeName = "test"
+        //}
+
+//        compilations.configureEach {
+//            compilerOptions.configure {
+//                jvmTarget.set(
+//                    org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
+//                )
+//            }
+//        }
     }
+//    androidTarget {
+//        publishLibraryVariants("release")
+//        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+//        compilerOptions {
+//            jvmTarget.set(JvmTarget.JVM_11)
+//        }
+//    }
 //    androidTarget {
 //        publishLibraryVariants("release")
 //        @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -103,20 +124,20 @@ kotlin {
     }
 }
 
-android {
-    namespace = "top.writerpass.kotlinlibs.kmplibrary"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-//        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        //noinspection OldTargetApi
-        // targetSdk = libs.versions.android.targetSdk.get().toInt()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
+//android {
+//    namespace = "top.writerpass.kotlinlibs.kmplibrary"
+//    compileSdk = libs.versions.android.compileSdk.get().toInt()
+//    defaultConfig {
+//        minSdk = libs.versions.android.minSdk.get().toInt()
+////        compileSdk = libs.versions.android.compileSdk.get().toInt()
+//        //noinspection OldTargetApi
+//        // targetSdk = libs.versions.android.targetSdk.get().toInt()
+//    }
+//    compileOptions {
+//        sourceCompatibility = JavaVersion.VERSION_11
+//        targetCompatibility = JavaVersion.VERSION_11
+//    }
+//}
 
 //publishing {
 //    publications {
