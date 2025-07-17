@@ -1,10 +1,8 @@
 plugins {
-//    alias(libs.plugins.android.application)
-//    alias(libs.plugins.android.library)
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
-    //alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+//    alias(libs.plugins.compose)
 }
 
 group = "top.writerpass.libs"

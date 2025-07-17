@@ -48,11 +48,6 @@ kotlin {
     }
 
     sourceSets {
-        val jvmMain by getting {
-            dependencies {
-
-            }
-        }
         val commonMain by getting {
             dependencies {
                 //put your multiplatform dependencies here
@@ -66,6 +61,14 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 //                implementation("co.touchlab:kermit:2.0.4")
 
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+//            implementation(libs.ktor.client.okhttp)
+                implementation(libs.kstore.file)
             }
         }
 //        desktopMain.dependencies {
