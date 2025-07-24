@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.multiplatform)
     alias(ktorLibs.plugins.ktor)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "top.writerpass.libs"
@@ -25,6 +26,7 @@ kotlin {
             api(ktorLibs.server.statusPages)
             api(ktorLibs.server.compression)
 
+            implementation(libs.kotlinx.datetime)
 
             implementation(ktorLibs.serialization.kotlinx.json)
         }

@@ -15,9 +15,6 @@ import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
 import kotlinx.serialization.json.Json
-import top.writerpass.ktorserverjvm.installCallLogging
-import top.writerpass.ktorserverjvm.installCompression
-import top.writerpass.ktorserverjvm.installShutdownEndpoint
 import kotlin.time.Duration.Companion.seconds
 
 private val commonDefaultJson = Json {
@@ -51,7 +48,7 @@ fun Application.installWebsocket() {
         pingPeriod = 15.seconds
         timeout = 15.seconds
         maxFrameSize = Long.MAX_VALUE
-        masking = false
+//        masking = false
         contentConverter = KotlinxWebsocketSerializationConverter(commonDefaultJson)
     }
 }
