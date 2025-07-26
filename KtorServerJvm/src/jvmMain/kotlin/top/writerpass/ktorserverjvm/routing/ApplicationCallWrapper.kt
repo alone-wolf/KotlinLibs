@@ -12,9 +12,11 @@ import io.ktor.server.response.respondFile
 import io.ktor.server.routing.Routing
 import java.io.File
 
-@JvmInline
-value class ApplicationCallWrapper(val call: ApplicationCall) {
+class ApplicationCallWrapper(val call: ApplicationCall) {
     suspend inline fun <reified T : Any> receive() = call.receive<T>()
+    fun longPathValue(key: String) = call.parameters[key]?.toLongOrNull()
+    fun pathValue(key: String) = call.parameters[key]
+    fun pathValue(key: String, default: String) = call.parameters[key] ?: default
 }
 
 

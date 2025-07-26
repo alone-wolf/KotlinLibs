@@ -31,7 +31,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("ktorLibs"){
-            from("io.ktor:ktor-version-catalog:3.2.1")
+            from("io.ktor:ktor-version-catalog:3.2.2")
         }
         create("kotlincrypto") {
             // https://github.com/KotlinCrypto/version-catalog/blob/master/gradle/kotlincrypto.versions.toml

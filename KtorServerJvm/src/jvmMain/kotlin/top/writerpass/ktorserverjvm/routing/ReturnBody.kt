@@ -86,11 +86,11 @@ class ReturnBody<T> @OptIn(ExperimentalTime::class) constructor(
             message: String,
             statusCode: HttpStatusCode,
             endpoint: String? = null
-        ): ReturnBody<String> = ReturnBody(
+        ): ReturnBody<Unit> = ReturnBody(
             code = statusCode.value,
             status = statusCode.description,
             message = message,
-            data = "null",
+            data = Unit,
             success = false,
             error = error,
             endpoint = endpoint

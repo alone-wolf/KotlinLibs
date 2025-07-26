@@ -15,9 +15,9 @@ sealed interface ResultNullable {
     }
 }
 
-suspend inline fun <reified T> ResultNullable.onSuccess(block: suspend (T?) -> Unit): ResultNullable {
+suspend inline fun <reified T> ResultNullable.onSuccess(block: suspend (T) -> Unit): ResultNullable {
     if (this is ResultNullable.Success<*>) {
-        block(data as? T)
+        block(data as T)
     }
     return this
 }
@@ -29,7 +29,7 @@ suspend fun ResultNullable.onFailed(block: suspend (Throwable) -> Unit): ResultN
     return this
 }
 
-suspend fun <T : Any?> forResultNullable(block: suspend () -> T): ResultNullable {
+suspend fun <T> forResultNullable(block: suspend () -> T): ResultNullable {
     return try {
         ResultNullable.successfully(block())
     } catch (e: Exception) {

@@ -32,7 +32,7 @@ suspend fun Result.onFailed(block: suspend (Throwable) -> Unit): Result {
     return this
 }
 
-suspend fun <T : Any> forResult(block: suspend () -> T): Result {
+suspend inline fun <reified T : Any> forResult(block: suspend () -> T): Result {
     return try {
         Result.successfully(block())
     } catch (e: Exception) {
