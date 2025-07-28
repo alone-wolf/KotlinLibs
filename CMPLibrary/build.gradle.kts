@@ -46,7 +46,7 @@ kotlin {
                 api(libs.kotlinx.coroutines.core)
 
                 api(libs.androidx.navigation.compose)
-                api("io.github.dautovicharis:charts:2.0.0")
+//                api("io.github.dautovicharis:charts:2.0.0")
             }
         }
         val jvmMain by getting {
