@@ -1,7 +1,3 @@
-@file:OptIn(ExperimentalWasmDsl::class)
-
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose)
@@ -40,23 +36,24 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.material3)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
-                implementation(libs.kotlinx.coroutines.core)
+                api(compose.runtime)
+                api(compose.foundation)
+//                implementation(compose.material)
+                api(compose.material3)
+                api(compose.ui)
+                api(compose.components.resources)
+                api(compose.components.uiToolingPreview)
+                api(libs.kotlinx.coroutines.core)
 
                 api(libs.androidx.navigation.compose)
+                api("io.github.dautovicharis:charts:2.0.0")
             }
         }
         val jvmMain by getting {
             dependencies {
-                implementation(compose.desktop.currentOs)
-                implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.kstore.file)
+                api(compose.desktop.currentOs)
+                api(libs.kotlinx.coroutines.swing)
+                api(libs.kstore.file)
             }
         }
     }

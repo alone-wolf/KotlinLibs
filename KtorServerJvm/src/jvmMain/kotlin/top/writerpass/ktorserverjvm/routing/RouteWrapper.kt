@@ -14,8 +14,6 @@ typealias RouteWrapperHandler = suspend RoutingContextWrapper.() -> Unit
 typealias WsHandler = suspend DefaultWebSocketServerSession.() -> Unit
 
 open class RouteWrapper(val route: Route) {
-//    fun List<String>.get(body: RouteWrapperHandler) = forEach { get(it, body) }
-
     fun String.restful(
         getAll: RouteWrapperHandler? = null,
         getById: RouteWrapperHandler? = null,

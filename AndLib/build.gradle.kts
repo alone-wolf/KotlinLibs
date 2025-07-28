@@ -8,43 +8,25 @@ plugins {
 group = "top.writerpass.libs"
 version = "1.0.0"
 
-//android {
-//    namespace = "top.writerpass.andlib"
-//    compileSdk = libs.versions.android.compileSdk.get().toInt()
-//    defaultConfig {
-//        minSdk = libs.versions.android.minSdk.get().toInt()
-//    }
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_1_8
-//        targetCompatibility = JavaVersion.VERSION_1_8
-//    }
-//    testOptions {
-//        unitTests.isIncludeAndroidResources = true
-//    }
-//}
+android {
+    namespace = "top.writerpass.libs.andlib"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
 
 kotlin {
-
-    androidTarget{
-//        namespace = "top.writerpass.andlib"
-//        compileSdk = libs.versions.android.compileSdk.get().toInt()
-//        defaultConfig {
-//            minSdk = libs.versions.android.minSdk.get().toInt()
-//        }
-//        compileOptions {
-//            sourceCompatibility = JavaVersion.VERSION_1_8
-//            targetCompatibility = JavaVersion.VERSION_1_8
-//        }
-//        testOptions {
-//            unitTests.isIncludeAndroidResources = true
-//        }
-    }
-
+    androidTarget()
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":KMPLibrary"))
-                implementation(project(":CMPLibrary"))
+                api(project(":KMPLibrary"))
+                api(project(":CMPLibrary"))
             }
         }
         androidMain {
@@ -54,8 +36,6 @@ kotlin {
                 implementation(libs.material)
                 implementation(libs.lifecycle.runtime.ktx)
                 implementation(libs.activity.compose)
-                implementation(libs.ui)
-                implementation(libs.ui.graphics)
             }
         }
     }
