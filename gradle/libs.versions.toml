@@ -30,6 +30,7 @@ kotlinx-datetime = "0.7.1"
 kstore = "1.0.0"
 materialKolor = "3.0.1"
 jetbrainsKotlinJvm = "2.2.0"
+kotlinTest = "2.2.0"
 
 [libraries]
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -69,6 +70,7 @@ kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
 kstore-file = { module = "io.github.xxfast:kstore-file", version.ref = "kstore" }
 kstore-storage = { module = "io.github.xxfast:kstore-storage", version.ref = "kstore" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
 
 
 [plugins]
