@@ -32,14 +32,15 @@ open class RouteWrapper(val route: Route) {
         }
     }
 
-    fun String.get(body: RouteWrapperHandler) = get(this, body)
-    fun String.post(body: RouteWrapperHandler) = post(this, body)
-    fun String.delete(body: RouteWrapperHandler) = delete(this, body)
-    fun String.put(body: RouteWrapperHandler) = put(this, body)
-    fun String.patch(body: RouteWrapperHandler) = patch(this, body)
-    fun String.route(build: RouteWrapper.() -> Unit) = route(this, build)
-    fun String.websocket(handler: WsHandler) = websocket(this, handler)
-    fun String.ws(handler: WsHandler) = websocket(this, handler)
+
+    infix fun String.get(body: RouteWrapperHandler) = get(this, body)
+    infix fun String.post(body: RouteWrapperHandler) = post(this, body)
+    infix fun String.delete(body: RouteWrapperHandler) = delete(this, body)
+    infix fun String.put(body: RouteWrapperHandler) = put(this, body)
+    infix fun String.patch(body: RouteWrapperHandler) = patch(this, body)
+    infix fun String.route(build: RouteWrapper.() -> Unit) = route(this, build)
+    infix fun String.websocket(handler: WsHandler) = websocket(this, handler)
+    infix fun String.ws(handler: WsHandler) = websocket(this, handler)
 }
 
 fun RouteWrapper.get(path: String, body: RouteWrapperHandler) =
