@@ -1,15 +1,22 @@
 ﻿package top.writerpass.cmplibrary.compose
 
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 
 @Composable
-fun MutableState<String>.OutlinedTextFiled(modifier: Modifier = Modifier, label: String? = null) {
+fun MutableState<String>.OutlinedTextFiled(
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    enabled: Boolean = true,
+    label: String? = null
+) {
     OutlinedTextField(
         value = value,
         onValueChange = { value = it },
+        enabled = enabled,
+        maxLines = maxLines,
         label = label?.let { { it.Text() } },
         modifier = modifier
     )
