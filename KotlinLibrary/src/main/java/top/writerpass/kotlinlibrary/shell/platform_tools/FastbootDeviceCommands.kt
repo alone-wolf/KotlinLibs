@@ -1,7 +1,7 @@
 package top.writerpass.kotlinlibrary.shell.platform_tools
 
-class FastbootDeviceCommandBuilder(
+class FastbootDeviceCommands(
     override val args: MutableList<String> = mutableListOf()
-) : CommandBuilder(args = args) {
+) : Commands(args = args) {
 
 }

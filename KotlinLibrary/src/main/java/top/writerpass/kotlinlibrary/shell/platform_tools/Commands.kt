@@ -1,8 +1,14 @@
 package top.writerpass.kotlinlibrary.shell.platform_tools
 
-abstract class CommandBuilder(
+open class Commands private constructor(
     open val args: MutableList<String> = mutableListOf()
 ) {
+
+    companion object{
+        fun builder(){
+            
+        }
+    }
 
     fun build(): List<String> {
         return args
@@ -10,11 +16,3 @@ abstract class CommandBuilder(
 
     override fun toString(): String = build().joinToString(" ")
 }
-
-//fun main() {
-//    DeviceEntity("AAA")
-//        .adb
-//        .newCommandBuilder().let { builder ->
-//            builder.getState()
-//        }
-//}

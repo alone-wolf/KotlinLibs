@@ -1,64 +1,64 @@
 package top.writerpass.kotlinlibrary.shell.platform_tools
 
-class AdbDeviceCommandBuilder(
+class AdbDeviceCommands(
     override val args: MutableList<String> = mutableListOf()
-) : CommandBuilder(args = args) {
+) : Commands(args = args) {
     // get-state
-    fun getState(): CommandBuilder = apply {
+    fun getState(): Commands = apply {
         args.add("get-state")
     }
 
     // reboot
-    fun reboot(): CommandBuilder = apply {
+    fun reboot(): Commands = apply {
         args.add("reboot")
     }
 
     // reboot-bootloader
-    fun rebootBootloader(): CommandBuilder = apply {
+    fun rebootBootloader(): Commands = apply {
         args.add("reboot")
         args.add("bootloader")
     }
 
     // reboot-recovery
-    fun rebootRecovery(): CommandBuilder = apply {
+    fun rebootRecovery(): Commands = apply {
         args.add("reboot")
         args.add("recovery")
     }
 
     // reboot-sideload
-    fun rebootSideload(): CommandBuilder = apply {
+    fun rebootSideload(): Commands = apply {
         args.add("reboot")
         args.add("sideload")
     }
 
     // reboot-sideload-auto-reboot
-    fun rebootSideloadAutoReboot(): CommandBuilder = apply {
+    fun rebootSideloadAutoReboot(): Commands = apply {
         args.add("reboot")
         args.add("sideload-auto-reboot")
     }
 
     // push
-    fun push(source: String,destination: String): CommandBuilder = apply {
+    fun push(source: String,destination: String): Commands = apply {
         args.add("push")
         args.add(source)
         args.add(destination)
     }
 
     // pull
-    fun pull(source: String,destination: String): CommandBuilder = apply {
+    fun pull(source: String,destination: String): Commands = apply {
         args.add("pull")
         args.add(source)
         args.add(destination)
     }
 
     // shell
-    fun shell(vararg shellArgs: String): CommandBuilder = apply {
+    fun shell(vararg shellArgs: String): Commands = apply {
         args.add("shell")
         args.addAll(shellArgs)
     }
 
     // install
-    fun install(vararg installArgs: String): CommandBuilder = apply {
+    fun install(vararg installArgs: String): Commands = apply {
         args.add("install")
         args.addAll(installArgs)
     }

@@ -14,7 +14,8 @@ class DeviceCommandBuilderFactory(
         return s
     }
 
-    fun newCommandBuilder(): AdbDeviceCommandBuilder {
-        return AdbDeviceCommandBuilder(getArgs())
+    fun newCommandBuilder(): AdbDeviceCommands {
+        return AdbDeviceCommands(getArgs())
     }
 }
+
