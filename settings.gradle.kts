@@ -56,3 +56,6 @@ include(":KtorServerJvm")
 //implementation("top.writerpass.libs:CMPLibrary:1.0.0")
 //implementation("top.writerpass.libs:AndLib:1.0.0")
 //implementation("top.writerpass.libs:JiebaJvm:1.0.0")
+include(":OSPaths")
+include(":FullKMP")
+ 
