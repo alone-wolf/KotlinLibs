@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class, ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
@@ -48,6 +52,11 @@ kotlin {
     wasmJs()                  // WebAssembly（实验性）
 
     // ----------- ✅ Native Targets -----------
+
+    androidNativeX64()
+    androidNativeArm32()
+    androidNativeArm64()
+    androidNativeX86()
 
     // --- Windows
     mingwX64("windowsX64")
@@ -139,7 +148,7 @@ kotlin {
 // ----------- ✅ Android 配置（如启用 androidTarget）-----------
 android {
     compileSdk = 34
-    namespace = "your.package.name"
+    namespace = "your.name"
 
     defaultConfig {
         minSdk = 21
