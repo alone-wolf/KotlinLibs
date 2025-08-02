@@ -58,4 +58,4 @@ include(":KtorServerJvm")
 //implementation("top.writerpass.libs:JiebaJvm:1.0.0")
 include(":OSPaths")
 include(":FullKMP")
- 
+include(":OSDetect")

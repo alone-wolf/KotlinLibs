@@ -4,13 +4,14 @@ plugins {
 
 kotlin {
     jvm()
-
     sourceSets {
-        val commonMain by getting {
-            dependencies {}
-        }
         val jvmMain by getting {
-            dependencies {}
+            dependencies {
+                api(project(":OSDetect"))
+                implementation("net.java.dev.jna:jna:5.17.0") // 最新版本可查 Maven Central
+                implementation("net.java.dev.jna:jna-platform:5.17.0") // 包含 Guid、ShlObj、Ole32 等
+
+            }
         }
     }
 }
