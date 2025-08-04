@@ -9,7 +9,7 @@ group = "top.writerpass.libs"
 version = "1.0.0"
 
 android {
-    namespace = "top.writerpass.libs.andlib"
+    namespace = "top.writerpass.andlib"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()

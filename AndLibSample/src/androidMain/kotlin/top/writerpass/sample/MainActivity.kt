@@ -1,4 +1,4 @@
-package top.writerpass.andlib.sample
+package top.writerpass.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,11 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import top.writerpass.andlib.sample.ui.theme.KotlinLibsTheme
+import top.writerpass.cmplibrary.compose.FullSizeBox
+import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.sample.ui.theme.KotlinLibsTheme
 
 
 object Pages {
@@ -26,7 +25,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             KotlinLibsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
+                    FullSizeBox(modifier = Modifier.padding(innerPadding)) {
+                        "AAA".Text()
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-package top.writerpass.andlib.sample.ui.theme
+package top.writerpass.inputeventdispatcher.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
