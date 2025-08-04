@@ -17,7 +17,7 @@ kotlin {
                 implementation(libs.core.ktx)
                 implementation(libs.lifecycle.runtime.ktx)
                 implementation(libs.activity.compose)
-//                implementation(project(":AndLib"))
+                implementation(project(":AndLib"))
                 implementation(project(":CMPLibrary"))
                 implementation(project(":KMPLibrary"))
             }
