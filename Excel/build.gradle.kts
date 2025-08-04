@@ -14,7 +14,7 @@ kotlin {
 
 dependencies {
     api("org.apache.poi:poi-ooxml:5.4.1")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.21")
 }
 
 group = "top.writerpass.libs"
