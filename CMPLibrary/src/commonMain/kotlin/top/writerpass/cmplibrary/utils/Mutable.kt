@@ -29,7 +29,7 @@ object Mutable {
     }
 
     @Composable
-    fun SomeBoolean(default: Boolean): MutableState<Boolean> {
+    fun SomeBoolean(default: Boolean = false): MutableState<Boolean> {
         return remember { mutableStateOf(default) }
     }
 
