@@ -24,11 +24,17 @@ fun MutableState<String>.OutlinedTextFiled(
 
 @Composable
 fun <T : Any> MutableState<T>.OutlinedTextFiled(
+    label: String? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     string2Any: String.() -> T,
     any2String: T.() -> String
 ) {
     OutlinedTextField(
+        label = label?.let { { it.Text() } },
+        maxLines = maxLines,
+        enabled = enabled,
         value = value.any2String(),
         onValueChange = { value = it.string2Any() },
         modifier = modifier
