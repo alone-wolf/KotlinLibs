@@ -11,8 +11,11 @@
 
         <activity
             android:name="top.writerpass.inputeventdispatcher.MainActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
+
+        <activity
+            android:name="top.writerpass.animates.Activity1"
+            android:exported="true" />
 
         <activity
             android:name="top.writerpass.sample.MainActivity"

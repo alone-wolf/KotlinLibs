@@ -25,6 +25,12 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.animation)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(project(":KMPLibrary"))
                 implementation(project(":CMPLibrary"))
             }
@@ -33,7 +39,7 @@ kotlin {
             dependencies {
                 implementation(libs.core.ktx)
                 implementation(libs.appcompat)
-                implementation(libs.material)
+//                implementation(libs.material)
                 implementation(libs.lifecycle.runtime.ktx)
                 implementation(libs.activity.compose)
             }
