@@ -25,8 +25,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":KMPLibrary"))
-                api(project(":CMPLibrary"))
+                implementation(project(":KMPLibrary"))
+                implementation(project(":CMPLibrary"))
             }
         }
         androidMain {
