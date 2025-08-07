@@ -112,11 +112,3 @@ class KLogger private constructor() {
     }
 }
 
-//suspend operator fun KLogger.Companion.invoke(
-//    tag: String,
-//    instance: KLogger = KLogger.default,
-//    block: suspend KLogger.(String) -> Unit
-//) {
-//    instance.block(tag)
-//}
-

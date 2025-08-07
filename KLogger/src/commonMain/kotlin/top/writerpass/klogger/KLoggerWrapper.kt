@@ -5,10 +5,66 @@ class KLoggerWrapper(
     val tag: String,
     val source: LogSources = LogSources.NORMAL
 ) {
-    // error/debug/info/warn/verbose
-    fun error(message: String, error: Throwable? = null) = instance.error(tag, message, error, source)
-    fun debug(message: String) = instance.debug(tag, message, source)
-    fun info(message: String) = instance.info(tag, message, source)
-    fun warn(message: String) = instance.warn(tag, message, source)
-    fun verbose(message: String) = instance.verbose(tag, message, source)
+    fun error(message: String, error: Throwable? = null) = instance.error(
+        tag = tag,
+        message = message,
+        error = error,
+        source = source
+    )
+
+    fun debug(message: String) = instance.debug(
+        tag = tag,
+        message = message,
+        source = source
+    )
+
+    fun info(message: String) = instance.info(
+        tag = tag,
+        message = message,
+        source = source
+    )
+
+    fun warn(message: String) = instance.warn(
+        tag = tag,
+        message = message,
+        source = source
+    )
+
+    fun verbose(message: String) = instance.verbose(
+        tag = tag,
+        message = message,
+        source = source
+    )
 }
+
+fun KLoggerWrapper.e(message: String, error: Throwable? = null) =
+    instance.error(
+        tag = tag,
+        message = message,
+        error = error,
+        source = source
+    )
+
+fun KLoggerWrapper.d(message: String) = instance.debug(
+    tag = tag,
+    message = message,
+    source = source
+)
+
+fun KLoggerWrapper.i(message: String) = instance.info(
+    tag = tag,
+    message = message,
+    source = source
+)
+
+fun KLoggerWrapper.w(message: String) = instance.warn(
+    tag = tag,
+    message = message,
+    source = source
+)
+
+fun KLoggerWrapper.v(message: String) = instance.verbose(
+    tag = tag,
+    message = message,
+    source = source
+)
