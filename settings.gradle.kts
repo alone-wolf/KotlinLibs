@@ -61,3 +61,5 @@ include(":FullKMP")
 include(":OSDetect")
 include(":Excel")
 include(":KLogger")
+include(":CMPFramework")
+ 
