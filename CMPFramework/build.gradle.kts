@@ -3,10 +3,8 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
 }
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
+group = "top.writerpass.libs"
+version = "1.0.0"
 kotlin {
 
     jvm()

@@ -2,7 +2,6 @@ package top.writerpass.cmpframework.page
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
@@ -56,7 +55,7 @@ interface IMainPages {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Framework(
-    startDestination: String,
+    startPage: Page,
     pages: IPages,
     mainPages: IMainPages
 ) {
@@ -117,7 +116,7 @@ fun Framework(
         NavHost(
             navController = navController,
             modifier = Modifier.fillMaxSize(),
-            startDestination = startDestination,
+            startDestination = startPage,
         ) {
 
             pages.pages.forEach { p ->
