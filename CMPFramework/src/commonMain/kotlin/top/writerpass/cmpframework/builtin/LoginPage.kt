@@ -24,8 +24,9 @@ internal val loginPage = Page(
             val username = Mutable.SomeString("")
             val password = Mutable.SomeString("")
 
-            username.OutlinedTextFiled()
+            username.OutlinedTextFiled(label = "Username")
             password.OutlinedTextFiled(
+                label = "Password",
                 visualTransformation = PasswordVisualTransformation()
             )
 
