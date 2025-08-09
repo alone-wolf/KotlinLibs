@@ -9,7 +9,6 @@ import top.writerpass.cmpframework.builtin.LocalLoginManager
 import top.writerpass.cmpframework.builtin.LoginManager
 import top.writerpass.cmpframework.navigation.gotoPage
 import top.writerpass.cmpframework.navigation.wrapper
-import top.writerpass.cmpframework.page.LocalNavControllerWrapper
 
 fun main() = application {
     Window(

@@ -1,7 +1,6 @@
-package top.writerpass.cmpframework.page
+package top.writerpass.cmpframework
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation.NavHostController
 import top.writerpass.cmpframework.navigation.NavControllerWrapper
 
 val LocalNavControllerWrapper = staticCompositionLocalOf<NavControllerWrapper> {
