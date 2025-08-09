@@ -9,10 +9,16 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.outlined.MoreHoriz
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -27,6 +33,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import top.writerpass.cmpframework.navigation.gotoMainPage
 import top.writerpass.cmpframework.page.IMainPages
 import top.writerpass.cmpframework.page.IPages
 import top.writerpass.cmpframework.page.LocalNavController
@@ -34,6 +41,7 @@ import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.IconButton
 import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.utils.Mutable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +70,7 @@ fun Framework(
                     exit = fadeOut() + slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }),
                 ) {
                     NavigationBar {
-                        mainPages.showInBottomBarPages.forEach { p ->
+                        mainPages.pagesShow.forEach { p ->
                             val selected = p.route == currentRoute
                             NavigationBarItem(
                                 icon = {
@@ -75,17 +83,44 @@ fun Framework(
                                 label = { p.label.Text() },
                                 selected = selected,
                                 onClick = {
-                                    navController.navigate(p.route) {
-                                        navController.graph.startDestinationRoute?.let { route ->
-                                            popUpTo(route) {
-                                                saveState = true
-                                            }
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    navController.gotoMainPage(p)
                                 }
                             )
+                        }
+                        if (mainPages.hasMore) {
+                            val selected = Mutable.SomeBoolean(false)
+                            this@NavigationBar.NavigationBarItem(
+                                icon = {
+                                    if (selected.value) {
+                                        Icons.Filled.Close.Icon()
+                                    } else {
+                                        Icons.Outlined.MoreHoriz.Icon()
+                                    }
+                                },
+                                label = { "More".Text() },
+                                selected = selected.value,
+                                onClick = {
+                                    selected.value = !selected.value
+                                }
+                            )
+                            Box {
+                                DropdownMenu(
+                                    expanded = selected.value,
+                                    onDismissRequest = { selected.value = false }
+                                ) {
+                                    mainPages.pagesInMore.forEach { p ->
+                                        DropdownMenuItem(
+                                            text = { p.label.Text() },
+                                            leadingIcon = { p.icon.Icon() },
+                                            onClick = {
+                                                selected.value = false
+                                                navController.gotoMainPage(p)
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
                         }
                     }
                 }

@@ -15,6 +15,7 @@ import top.writerpass.cmplibrary.compose.OutlinedButton
 import top.writerpass.cmplibrary.compose.Text
 
 object MainPages : IMainPages {
+
     val homePage = MainPage(
         route = "home",
         label = "Home",
@@ -52,7 +53,7 @@ object MainPages : IMainPages {
         label = "Settings",
         icon = Icons.AutoMirrored.Outlined.Article,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
-        showInBottomBar = false,
+        hideInMore = true,
         content = { FullSizeRow { "Settings".Text() } }
     )
 
@@ -61,7 +62,7 @@ object MainPages : IMainPages {
         label = "Settings1",
         icon = Icons.AutoMirrored.Outlined.Article,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
-        showInBottomBar = false,
+        hideInMore = true,
         content = { FullSizeRow { "Settings1".Text() } }
     )
 
@@ -70,7 +71,7 @@ object MainPages : IMainPages {
         label = "Settings2",
         icon = Icons.AutoMirrored.Outlined.Article,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
-        showInBottomBar = false,
+        hideInMore = true,
         content = { FullSizeRow { "Settings2".Text() } }
     )
 

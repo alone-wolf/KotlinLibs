@@ -1,20 +1,15 @@
 package top.writerpass.cmpframework.page
 
-import androidx.compose.runtime.Stable
-
 interface IMainPages {
     val pages: List<MainPage>
     val routes: List<String>
         get() = pages.map { it.route }
 
-    @Stable
-    val showInBottomBarPages: List<MainPage>
-        get() = pages.filter { it.showInBottomBar }
+    val pagesShow: List<MainPage>
+        get() = pages.filter { it.hideInMore.not() }
 
-//    val showBackButtonRoutes: List<String>
-//        get() = pages.filter { it.showBackButton }.map { it.route }
+    val hasMore: Boolean
+        get() = pages.any { it.hideInMore }
+    val pagesInMore: List<MainPage>
+        get() = pages.filter { it.hideInMore }
 }
-
-// BasePage
-// OtherPage:BaePage
-// MainPage:BasePage
