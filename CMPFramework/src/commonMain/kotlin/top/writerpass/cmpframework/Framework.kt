@@ -32,11 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import top.writerpass.cmpframework.navigation.back
 import top.writerpass.cmpframework.navigation.gotoMainPage
 import top.writerpass.cmpframework.page.IMainPages
 import top.writerpass.cmpframework.page.IPages
-import top.writerpass.cmpframework.page.LocalNavController
+import top.writerpass.cmpframework.page.LocalNavControllerWrapper
 import top.writerpass.cmpframework.page.MainPage
 import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.Icon
@@ -52,10 +52,10 @@ fun Framework(
     pages: IPages,
     mainPages: IMainPages
 ) {
-    val navController = LocalNavController.current
+    val navController = LocalNavControllerWrapper.current
     val mainRoutes = remember { mainPages.routes }
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val navBackStackEntry by navController.controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     val currentPage by remember(currentRoute) {
@@ -152,7 +152,7 @@ fun Framework(
                                 exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
                             ) {
                                 Icons.AutoMirrored.Filled.ArrowBack.IconButton {
-                                    navController.popBackStack()
+                                    navController.back()
                                 }
                             }
                         },
@@ -163,7 +163,7 @@ fun Framework(
             }
         ) { innerPadding ->
             NavHost(
-                navController = navController,
+                navController = navController.controller,
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 startDestination = startPage.route,
             ) {

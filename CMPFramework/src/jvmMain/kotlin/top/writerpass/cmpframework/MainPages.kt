@@ -7,14 +7,15 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Home
+import top.writerpass.cmpframework.navigation.gotoPage
 import top.writerpass.cmpframework.page.IMainPages
-import top.writerpass.cmpframework.page.LocalNavController
+import top.writerpass.cmpframework.page.LocalNavControllerWrapper
 import top.writerpass.cmpframework.page.MainPage
 import top.writerpass.cmplibrary.compose.FullSizeRow
 import top.writerpass.cmplibrary.compose.OutlinedButton
 import top.writerpass.cmplibrary.compose.Text
 
-object MainPages : IMainPages {
+internal object MainPages : IMainPages {
 
     val homePage = MainPage(
         route = "home",
@@ -24,9 +25,9 @@ object MainPages : IMainPages {
         content = { it ->
             FullSizeRow {
                 "Home".Text()
-                val navController = LocalNavController.current
+                val navController = LocalNavControllerWrapper.current
                 "LoginPage".OutlinedButton {
-                    navController.navigate("login")
+                    navController.gotoPage(Pages.loginPage)
                 }
             }
         }

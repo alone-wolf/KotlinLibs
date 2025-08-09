@@ -5,9 +5,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-import top.writerpass.cmpframework.page.LocalNavController
 import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.OutlinedButton

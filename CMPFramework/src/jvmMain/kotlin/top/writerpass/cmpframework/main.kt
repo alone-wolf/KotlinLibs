@@ -1,14 +1,15 @@
 package top.writerpass.cmpframework
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import top.writerpass.cmpframework.builtin.LocalLoginManager
 import top.writerpass.cmpframework.builtin.LoginManager
 import top.writerpass.cmpframework.navigation.gotoPage
-import top.writerpass.cmpframework.page.LocalNavController
+import top.writerpass.cmpframework.navigation.wrapper
+import top.writerpass.cmpframework.page.LocalNavControllerWrapper
 
 fun main() = application {
     Window(
@@ -16,6 +17,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         content = {
             val navController = rememberNavController()
+            val navControllerWrapper = remember { navController.wrapper }
             val loginManager = object : LoginManager {
                 override suspend fun check(
                     username: String,
@@ -32,17 +34,17 @@ fun main() = application {
                 }
 
                 override fun leaveLoginPage() {
-                    navController.gotoPage(MainPages.homePage)
+                    navControllerWrapper.gotoPage(MainPages.homePage)
                 }
 
                 override fun gotoRegister() {
-                    navController.gotoPage(Pages.registerPage)
+                    navControllerWrapper.gotoPage(Pages.registerPage)
                 }
 
             }
             CompositionLocalProvider(
                 LocalLoginManager provides loginManager,
-                LocalNavController provides navController
+                LocalNavControllerWrapper provides navControllerWrapper
             ) {
                 Framework(
                     startPage = Pages.loginPage,

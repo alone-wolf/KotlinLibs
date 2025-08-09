@@ -4,9 +4,13 @@ import androidx.navigation.NavHostController
 import top.writerpass.cmpframework.page.MainPage
 import top.writerpass.cmpframework.page.Page
 
-fun NavHostController.gotoMainPage(page: MainPage) {
-    navigate(page.route) {
-        graph.startDestinationRoute?.let { route ->
+val NavHostController.wrapper get() = NavControllerWrapper(this)
+
+class NavControllerWrapper(val controller: NavHostController)
+
+fun NavControllerWrapper.gotoMainPage(page: MainPage) {
+    controller.navigate(page.route) {
+        controller.graph.startDestinationRoute?.let { route ->
             popUpTo(route) {
                 saveState = true
             }
@@ -17,6 +21,10 @@ fun NavHostController.gotoMainPage(page: MainPage) {
 }
 
 
-fun NavHostController.gotoPage(page: Page) {
-    navigate(page.route)
+fun NavControllerWrapper.gotoPage(page: Page) {
+    controller.navigate(page.route)
+}
+
+fun NavControllerWrapper.back() {
+    controller.popBackStack()
 }
