@@ -47,18 +47,13 @@ import top.writerpass.cmplibrary.utils.Mutable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Framework(
+    appName:String = "CMPFramework",
     startPage: Page,
     pages: IPages,
     mainPages: IMainPages
 ) {
     val navController = rememberNavController()
-//    val showBackButtonRoutes = remember {
-//        pages.showBackButtonRoutes
-//    }
     val mainRoutes = remember { mainPages.routes }
-//    val hideTopAppBarRoutes = remember {
-//        pages.hideTopAppBarRoutes
-//    }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -73,17 +68,9 @@ fun Framework(
     val currentPageLabel by remember(currentPage) {
         derivedStateOf {
             when (currentPage) {
-                null -> {
-                    "Untitled"
-                }
-
-                is MainPage -> {
-                    (currentPage as MainPage).label
-                }
-
-                else -> {
-                    (currentPage as Page).label ?: "Untitled"
-                }
+                null -> appName
+                is MainPage -> (currentPage as MainPage).label
+                else -> (currentPage as Page).label ?: appName
             }
         }
     }
@@ -155,7 +142,6 @@ fun Framework(
                 }
             },
             topBar = {
-//                if (!hideTopAppBarRoutes.contains(currentRoute)) {
                 if (currentPage?.showTopAppBar ?: true) {
                     TopAppBar(
                         title = {
@@ -163,7 +149,6 @@ fun Framework(
                         },
                         navigationIcon = {
                             AnimatedVisibility(
-//                                visible = showBackButtonRoutes.contains(currentRoute),
                                 visible = currentPage?.showBackButton ?: true,
                                 enter = fadeIn() + slideInHorizontally() + expandHorizontally(),
                                 exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
