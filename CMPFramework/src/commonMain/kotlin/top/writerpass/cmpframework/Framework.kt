@@ -2,9 +2,11 @@ package top.writerpass.cmpframework
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -26,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,6 +40,7 @@ import top.writerpass.cmpframework.navigation.gotoMainPage
 import top.writerpass.cmpframework.page.IMainPages
 import top.writerpass.cmpframework.page.IPages
 import top.writerpass.cmpframework.page.LocalNavController
+import top.writerpass.cmpframework.page.MainPage
 import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.IconButton
@@ -55,9 +59,36 @@ fun Framework(
         pages.showBackButtonRoutes
     }
     val mainRoutes = remember { mainPages.routes }
+    val hideTopAppBarRoutes = remember {
+        pages.hideTopAppBarRoutes
+    }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    val currentPage by remember(currentRoute) {
+        derivedStateOf {
+            pages.pages.find { it.route == currentRoute }
+                ?: mainPages.pages.find { it.route == currentRoute }
+        }
+    }
+    val currentPageLabel by remember(currentPage) {
+        derivedStateOf {
+            when (currentPage) {
+                null -> {
+                    "Untitled"
+                }
+
+                is MainPage -> {
+                    (currentPage as MainPage).label
+                }
+
+                else -> {
+                    (currentPage as Page).label ?: "Untitled"
+                }
+            }
+        }
+    }
     CompositionLocalProvider(
         LocalNavController provides navController
     ) {
@@ -126,24 +157,26 @@ fun Framework(
                 }
             },
             topBar = {
-                TopAppBar(
-                    title = {
-                        "CMPFramework".Text()
-                    },
-                    navigationIcon = {
-                        val showBackButton = showBackButtonRoutes.contains(currentRoute)
-                        AnimatedVisibility(
-                            visible = showBackButton,
-                            enter = fadeIn() + slideInHorizontally() + expandHorizontally(),
-                            exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
-                        ) {
-                            Icons.Default.ArrowBack.IconButton {
-                                navController.popBackStack()
+                if (!hideTopAppBarRoutes.contains(currentRoute)) {
+                    TopAppBar(
+                        title = {
+                            currentPageLabel.Text()
+                        },
+                        navigationIcon = {
+                            AnimatedVisibility(
+                                visible = showBackButtonRoutes.contains(currentRoute),
+                                enter = fadeIn() + slideInHorizontally() + expandHorizontally(),
+                                exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
+                            ) {
+                                Icons.Default.ArrowBack.IconButton {
+                                    navController.popBackStack()
+                                }
                             }
-                        }
-                    },
-                    actions = {},
-                )
+                        },
+                        actions = {},
+                    )
+                }
+
             }
         ) { innerPadding ->
             NavHost(

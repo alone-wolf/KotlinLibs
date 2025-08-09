@@ -4,13 +4,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun MutableState<String>.OutlinedTextFiled(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
-    label: String? = null
+    label: String? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     OutlinedTextField(
         value = value,
@@ -18,7 +20,8 @@ fun MutableState<String>.OutlinedTextFiled(
         enabled = enabled,
         maxLines = maxLines,
         label = label?.let { { it.Text() } },
-        modifier = modifier
+        modifier = modifier,
+        visualTransformation = visualTransformation
     )
 }
 
