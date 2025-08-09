@@ -1,0 +1,134 @@
+package top.writerpass.cmpframework
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import top.writerpass.cmpframework.page.IMainPages
+import top.writerpass.cmpframework.page.IPages
+import top.writerpass.cmpframework.page.LocalNavController
+import top.writerpass.cmpframework.page.Page
+import top.writerpass.cmplibrary.compose.Icon
+import top.writerpass.cmplibrary.compose.IconButton
+import top.writerpass.cmplibrary.compose.Text
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Framework(
+    startPage: Page,
+    pages: IPages,
+    mainPages: IMainPages
+) {
+    val navController = rememberNavController()
+    val showBackButtonRoutes = remember {
+        pages.showBackButtonRoutes
+    }
+    val mainRoutes = remember { mainPages.routes }
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    CompositionLocalProvider(
+        LocalNavController provides navController
+    ) {
+        Scaffold(
+            bottomBar = {
+                // 只在 Main 区域显示 BottomBar
+                AnimatedVisibility(
+                    currentRoute in mainRoutes,
+                    enter = fadeIn() + slideInVertically(initialOffsetY = { fullHeight -> fullHeight }),
+                    exit = fadeOut() + slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }),
+                ) {
+                    NavigationBar {
+                        mainPages.showInBottomBarPages.forEach { p ->
+                            val selected = p.route == currentRoute
+                            NavigationBarItem(
+                                icon = {
+                                    if (selected) {
+                                        p.selectedIcon.Icon()
+                                    } else {
+                                        p.icon.Icon()
+                                    }
+                                },
+                                label = { p.label.Text() },
+                                selected = selected,
+                                onClick = {
+                                    navController.navigate(p.route) {
+                                        navController.graph.startDestinationRoute?.let { route ->
+                                            popUpTo(route) {
+                                                saveState = true
+                                            }
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            },
+            topBar = {
+                TopAppBar(
+                    title = {
+                        "CMPFramework".Text()
+                    },
+                    navigationIcon = {
+                        val showBackButton = showBackButtonRoutes.contains(currentRoute)
+                        AnimatedVisibility(
+                            visible = showBackButton,
+                            enter = fadeIn() + slideInHorizontally() + expandHorizontally(),
+                            exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
+                        ) {
+                            Icons.Default.ArrowBack.IconButton {
+                                navController.popBackStack()
+                            }
+                        }
+                    },
+                    actions = {},
+                )
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                startDestination = startPage.route,
+            ) {
+
+                pages.pages.forEach { p ->
+                    composable(route = p.route) { it ->
+                        p.content(it)
+                    }
+                }
+
+                mainPages.pages.forEach { p ->
+                    composable(route = p.route) { it ->
+                        p.content(it)
+                    }
+                }
+            }
+        }
+    }
+}

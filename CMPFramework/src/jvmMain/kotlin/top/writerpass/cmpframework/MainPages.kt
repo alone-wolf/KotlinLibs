@@ -47,8 +47,35 @@ object MainPages : IMainPages {
         content = { FullSizeRow { "Profile".Text() } }
     )
 
+    val settingsPage = MainPage(
+        route = "settings",
+        label = "Settings",
+        icon = Icons.AutoMirrored.Outlined.Article,
+        selectedIcon = Icons.AutoMirrored.Filled.Article,
+        showInBottomBar = false,
+        content = { FullSizeRow { "Settings".Text() } }
+    )
+
+    val settingsPage1 = MainPage(
+        route = "settings1",
+        label = "Settings1",
+        icon = Icons.AutoMirrored.Outlined.Article,
+        selectedIcon = Icons.AutoMirrored.Filled.Article,
+        showInBottomBar = false,
+        content = { FullSizeRow { "Settings1".Text() } }
+    )
+
+    val settingsPage2 = MainPage(
+        route = "settings2",
+        label = "Settings2",
+        icon = Icons.AutoMirrored.Outlined.Article,
+        selectedIcon = Icons.AutoMirrored.Filled.Article,
+        showInBottomBar = false,
+        content = { FullSizeRow { "Settings2".Text() } }
+    )
+
     override val pages: List<MainPage> = listOf(
-        homePage, listPage, profilePage
+        homePage, listPage, profilePage, settingsPage, settingsPage1, settingsPage2
     )
 
 }
