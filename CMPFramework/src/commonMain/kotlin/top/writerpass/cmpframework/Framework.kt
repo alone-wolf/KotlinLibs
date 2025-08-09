@@ -48,8 +48,8 @@ import top.writerpass.cmplibrary.utils.Mutable
 fun Framework(
     appName: String = "CMPFramework",
     startPage: Page,
-    pages: IPages,
-    mainPages: IMainPages
+    pages: IPages?,
+    mainPages: IMainPages?
 ) {
     val navController = LocalNavControllerWrapper.current
 
@@ -58,8 +58,8 @@ fun Framework(
 
     val currentPage by remember(currentRoute) {
         derivedStateOf {
-            pages.pages.find { it.route == currentRoute }
-                ?: mainPages.pages.find { it.route == currentRoute }
+            pages?.pages?.find { it.route == currentRoute }
+                ?: mainPages?.pages?.find { it.route == currentRoute }
         }
     }
 
@@ -75,7 +75,7 @@ fun Framework(
 
     val showBottomBar by remember(currentPage) {
         derivedStateOf {
-            currentPage?.let { it is MainPage } ?: false && mainPages.pages.size > 1
+            currentPage?.let { it is MainPage } ?: false && (mainPages?.pages?.size ?: 0) > 1
         }
     }
 
@@ -89,7 +89,7 @@ fun Framework(
                     exit = fadeOut() + slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }),
                 ) {
                     NavigationBar {
-                        mainPages.pagesShow.forEach { p ->
+                        mainPages?.pagesShow?.forEach { p ->
                             val selected = p.route == currentRoute
                             NavigationBarItem(
                                 icon = {
@@ -106,7 +106,7 @@ fun Framework(
                                 }
                             )
                         }
-                        if (mainPages.hasMore) {
+                        if (mainPages?.hasMore ?: false) {
                             val selected = Mutable.SomeBoolean(false)
                             this@NavigationBar.NavigationBarItem(
                                 icon = {
@@ -173,13 +173,13 @@ fun Framework(
                 startDestination = startPage.route,
             ) {
 
-                pages.pages.forEach { p ->
+                pages?.pages?.forEach { p ->
                     composable(route = p.route) { it ->
                         p.content(it)
                     }
                 }
 
-                mainPages.pages.forEach { p ->
+                mainPages?.pages?.forEach { p ->
                     composable(route = p.route) { it ->
                         p.content(it)
                     }
