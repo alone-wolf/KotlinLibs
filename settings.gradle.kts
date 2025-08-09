@@ -59,7 +59,7 @@ include(":KtorServerJvm")
 include(":OSPaths")
 include(":FullKMP")
 include(":OSDetect")
-include(":Excel")
+include(":ExcelJvm")
 include(":KLogger")
 include(":CMPFramework")
  
