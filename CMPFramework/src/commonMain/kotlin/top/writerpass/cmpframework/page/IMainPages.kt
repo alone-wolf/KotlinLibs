@@ -1,10 +1,13 @@
 package top.writerpass.cmpframework.page
 
+import androidx.compose.runtime.Stable
+
 interface IMainPages {
     val pages: List<MainPage>
     val routes: List<String>
         get() = pages.map { it.route }
 
+    @Stable
     val showInBottomBarPages: List<MainPage>
         get() = pages.filter { it.showInBottomBar }
 
