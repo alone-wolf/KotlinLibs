@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.DropdownMenu
@@ -153,7 +153,7 @@ fun Framework(
                                 enter = fadeIn() + slideInHorizontally() + expandHorizontally(),
                                 exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
                             ) {
-                                Icons.Default.ArrowBack.IconButton {
+                                Icons.AutoMirrored.Filled.ArrowBack.IconButton {
                                     navController.popBackStack()
                                 }
                             }
