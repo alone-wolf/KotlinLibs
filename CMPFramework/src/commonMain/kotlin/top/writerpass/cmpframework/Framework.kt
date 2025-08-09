@@ -2,11 +2,9 @@ package top.writerpass.cmpframework
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -55,13 +52,13 @@ fun Framework(
     mainPages: IMainPages
 ) {
     val navController = rememberNavController()
-    val showBackButtonRoutes = remember {
-        pages.showBackButtonRoutes
-    }
+//    val showBackButtonRoutes = remember {
+//        pages.showBackButtonRoutes
+//    }
     val mainRoutes = remember { mainPages.routes }
-    val hideTopAppBarRoutes = remember {
-        pages.hideTopAppBarRoutes
-    }
+//    val hideTopAppBarRoutes = remember {
+//        pages.hideTopAppBarRoutes
+//    }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -72,6 +69,7 @@ fun Framework(
                 ?: mainPages.pages.find { it.route == currentRoute }
         }
     }
+
     val currentPageLabel by remember(currentPage) {
         derivedStateOf {
             when (currentPage) {
@@ -157,14 +155,16 @@ fun Framework(
                 }
             },
             topBar = {
-                if (!hideTopAppBarRoutes.contains(currentRoute)) {
+//                if (!hideTopAppBarRoutes.contains(currentRoute)) {
+                if (currentPage?.showTopAppBar ?: true) {
                     TopAppBar(
                         title = {
                             currentPageLabel.Text()
                         },
                         navigationIcon = {
                             AnimatedVisibility(
-                                visible = showBackButtonRoutes.contains(currentRoute),
+//                                visible = showBackButtonRoutes.contains(currentRoute),
+                                visible = currentPage?.showBackButton ?: true,
                                 enter = fadeIn() + slideInHorizontally() + expandHorizontally(),
                                 exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
                             ) {

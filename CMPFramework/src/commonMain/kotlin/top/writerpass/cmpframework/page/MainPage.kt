@@ -9,6 +9,14 @@ class MainPage(
     override val label: String,
     val icon: ImageVector,
     val selectedIcon: ImageVector = icon,
+    override val showBackButton: Boolean = false,
+    override val showTopAppBar: Boolean = true,
     val hideInMore: Boolean = false,
     override val content: @Composable (NavBackStackEntry) -> Unit
-) : Page(route = route, label = label, content = content)
+) : Page(
+    route = route,
+    showBackButton = showBackButton,
+    showTopAppBar = showTopAppBar,
+    label = label,
+    content = content
+)

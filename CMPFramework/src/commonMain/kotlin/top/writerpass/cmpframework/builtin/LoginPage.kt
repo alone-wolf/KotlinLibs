@@ -14,8 +14,7 @@ import top.writerpass.cmplibrary.utils.Mutable
 internal val loginPage = Page(
     route = "login",
     label = "Login",
-    showBackButton = false,
-    hideTopAppBar = true,
+    showTopAppBar = false,
     content = {
         FullSizeColumn(
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -8,8 +8,9 @@ import top.writerpass.cmplibrary.compose.Text
 
 internal val registerPage = Page(
     route = "register",
+    label = "Register",
     showBackButton = true,
-    hideTopAppBar = true,
+    showTopAppBar = true,
     content = {
         FullSizeColumn {
             "Register".Text()

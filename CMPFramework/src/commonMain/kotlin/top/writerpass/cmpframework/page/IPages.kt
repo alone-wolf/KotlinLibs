@@ -5,5 +5,5 @@ interface IPages {
     val showBackButtonRoutes: List<String>
         get() = pages.filter { it.showBackButton }.map { it.route }
     val hideTopAppBarRoutes: List<String>
-        get() = pages.filter { it.hideTopAppBar }.map { it.route }
+        get() = pages.filter { it.showTopAppBar }.map { it.route }
 }

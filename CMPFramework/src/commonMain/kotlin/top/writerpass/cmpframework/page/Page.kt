@@ -8,6 +8,6 @@ open class Page(
     open val route: String,
     open val label: String? = null,
     open val showBackButton: Boolean = true,
-    open val hideTopAppBar: Boolean = true,
+    open val showTopAppBar: Boolean = true,
     open val content: @Composable (NavBackStackEntry) -> Unit
 )
