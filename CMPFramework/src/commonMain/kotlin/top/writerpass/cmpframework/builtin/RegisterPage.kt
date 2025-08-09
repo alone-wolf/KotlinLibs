@@ -1,5 +1,6 @@
 package top.writerpass.cmpframework.builtin
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import top.writerpass.cmpframework.page.LocalNavController
 import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.FullSizeColumn
@@ -21,3 +22,11 @@ internal val registerPage = Page(
         }
     },
 )
+
+interface RegisterManager {
+    suspend fun register(username: String, password: String): Boolean
+}
+
+val LocalRegisterManager = staticCompositionLocalOf<RegisterManager> {
+    error("No RegisterManager provided")
+}

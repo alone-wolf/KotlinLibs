@@ -47,12 +47,12 @@ import top.writerpass.cmplibrary.utils.Mutable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Framework(
-    appName:String = "CMPFramework",
+    appName: String = "CMPFramework",
     startPage: Page,
     pages: IPages,
     mainPages: IMainPages
 ) {
-    val navController = rememberNavController()
+    val navController = LocalNavController.current
     val mainRoutes = remember { mainPages.routes }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -74,9 +74,7 @@ fun Framework(
             }
         }
     }
-    CompositionLocalProvider(
-        LocalNavController provides navController
-    ) {
+    CompositionLocalProvider {
         Scaffold(
             bottomBar = {
                 // 只在 Main 区域显示 BottomBar

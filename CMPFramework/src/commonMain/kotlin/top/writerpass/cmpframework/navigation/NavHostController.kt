@@ -2,6 +2,7 @@ package top.writerpass.cmpframework.navigation
 
 import androidx.navigation.NavHostController
 import top.writerpass.cmpframework.page.MainPage
+import top.writerpass.cmpframework.page.Page
 
 fun NavHostController.gotoMainPage(page: MainPage) {
     navigate(page.route) {
@@ -13,4 +14,9 @@ fun NavHostController.gotoMainPage(page: MainPage) {
         launchSingleTop = true
         restoreState = true
     }
+}
+
+
+fun NavHostController.gotoPage(page: Page) {
+    navigate(page.route)
 }

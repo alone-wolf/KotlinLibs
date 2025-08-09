@@ -1,8 +1,12 @@
 package top.writerpass.cmpframework.builtin
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import top.writerpass.cmpframework.page.LocalNavController
 import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.FullSizeColumn
@@ -20,9 +24,9 @@ internal val loginPage = Page(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            "Demo App Login".Text()
-            val username = Mutable.SomeString("")
-            val password = Mutable.SomeString("")
+            "Login".Text()
+            val username = Mutable.SomeString()
+            val password = Mutable.SomeString()
 
             username.OutlinedTextFiled(label = "Username")
             password.OutlinedTextFiled(
@@ -30,14 +34,35 @@ internal val loginPage = Page(
                 visualTransformation = PasswordVisualTransformation()
             )
 
-            val navController = LocalNavController.current
+            val loginManager = LocalLoginManager.current
+            val scope = rememberCoroutineScope()
             "Login".OutlinedButton {
-                navController.navigate("home")
+                scope.launch {
+                    if (loginManager.check(username.value, password.value)) {
+                        if (loginManager.login(username.value, password.value)) {
+                            loginManager.leaveLoginPage()
+                        }
+                    }
+                }
             }
             "Register".OutlinedButton {
-                navController.navigate("register")
+                loginManager.gotoRegister()
             }
         }
     }
 )
+
+interface LoginManager {
+
+    suspend fun check(username: String, password: String): Boolean
+    suspend fun login(username: String, password: String): Boolean
+
+    fun leaveLoginPage()
+
+    fun gotoRegister()
+}
+
+val LocalLoginManager = staticCompositionLocalOf<LoginManager> {
+    error("No LoginManager provided")
+}
 

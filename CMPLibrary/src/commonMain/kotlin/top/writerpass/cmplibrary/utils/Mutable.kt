@@ -14,17 +14,12 @@ import top.writerpass.cmplibrary.LaunchedEffectOdd
 object Mutable {
 
     @Composable
-    fun aaaa() {
-        var a = SomeString("")
-    }
-
-    @Composable
     fun <T> Something(default: T): MutableState<T> {
         return remember { mutableStateOf(default) }
     }
 
     @Composable
-    fun SomeString(default: String): MutableState<String> {
+    fun SomeString(default: String = ""): MutableState<String> {
         return remember { mutableStateOf(default) }
     }
 
@@ -34,17 +29,17 @@ object Mutable {
     }
 
     @Composable
-    fun SomeInt(default: Int): MutableState<Int> {
+    fun SomeInt(default: Int = 0): MutableState<Int> {
         return remember { mutableIntStateOf(default) }
     }
 
     @Composable
-    fun SomeLong(default: Long): MutableState<Long> {
+    fun SomeLong(default: Long = 0): MutableState<Long> {
         return remember { mutableLongStateOf(default) }
     }
 
     @Composable
-    fun SomeDouble(default: Double): MutableState<Double> {
+    fun SomeDouble(default: Double = 0.0): MutableState<Double> {
         return remember { mutableDoubleStateOf(default) }
     }
 
