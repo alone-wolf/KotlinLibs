@@ -1,4 +1,4 @@
-package top.writerpass.cmpframework
+package top.writerpass.cmpframework.sample
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Home
+import top.writerpass.cmpframework.LocalNavControllerWrapper
 import top.writerpass.cmpframework.navigation.gotoPage
 import top.writerpass.cmpframework.page.IMainPages
 import top.writerpass.cmpframework.page.MainPage

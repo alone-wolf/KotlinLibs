@@ -1,4 +1,4 @@
-package top.writerpass.cmpframework
+package top.writerpass.cmpframework.sample
 
 import top.writerpass.cmpframework.builtin.BuiltinPages
 import top.writerpass.cmpframework.page.IPages

@@ -1,10 +1,12 @@
-package top.writerpass.cmpframework
+package top.writerpass.cmpframework.sample
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.navigation.compose.rememberNavController
+import top.writerpass.cmpframework.Framework
+import top.writerpass.cmpframework.LocalNavControllerWrapper
 import top.writerpass.cmpframework.builtin.LocalLoginManager
 import top.writerpass.cmpframework.builtin.LoginManager
 import top.writerpass.cmpframework.navigation.NavControllerWrapper
