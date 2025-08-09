@@ -52,7 +52,6 @@ fun Framework(
     mainPages: IMainPages
 ) {
     val navController = LocalNavControllerWrapper.current
-    val mainRoutes = remember { mainPages.routes }
 
     val navBackStackEntry by navController.controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -73,12 +72,19 @@ fun Framework(
             }
         }
     }
+
+    val showBottomBar by remember(currentPage) {
+        derivedStateOf {
+            currentPage?.let { it is MainPage } ?: false && mainPages.pages.size > 1
+        }
+    }
+
     CompositionLocalProvider {
         Scaffold(
             bottomBar = {
                 // 只在 Main 区域显示 BottomBar
                 AnimatedVisibility(
-                    currentRoute in mainRoutes,
+                    visible = showBottomBar,
                     enter = fadeIn() + slideInVertically(initialOffsetY = { fullHeight -> fullHeight }),
                     exit = fadeOut() + slideOutVertically(targetOffsetY = { fullHeight -> fullHeight }),
                 ) {

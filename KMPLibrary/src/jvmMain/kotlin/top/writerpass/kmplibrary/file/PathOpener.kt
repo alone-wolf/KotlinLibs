@@ -4,7 +4,7 @@ import java.awt.Desktop
 import java.io.File
 import java.io.IOException
 
-object FileOpener {
+object PathOpener {
     fun open(filePath: String): Boolean {
         val file = File(filePath)
         return try {
