@@ -62,4 +62,5 @@ include(":OSDetect")
 include(":ExcelJvm")
 include(":KLogger")
 include(":CMPFramework")
+include(":KLoggerCMP")
  

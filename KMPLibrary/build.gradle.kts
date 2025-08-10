@@ -101,6 +101,8 @@ kotlin {
                 implementation(kotlincrypto.hash.sha2)
 //                implementation(kotlincrypto.hash.sha3)
 
+                implementation(libs.kotlinx.datetime)
+
 //                implementation(kotlincrypto.macs.blake2)
 //                implementation(kotlincrypto.macs.hmac.md)
 //                implementation(kotlincrypto.macs.hmac.sha1)

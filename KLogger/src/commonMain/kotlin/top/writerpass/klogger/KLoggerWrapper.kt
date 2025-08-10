@@ -5,39 +5,39 @@ class KLoggerWrapper(
     val tag: String,
     val source: LogSources = LogSources.NORMAL
 ) {
-    fun error(message: String, error: Throwable? = null) = instance.error(
+    suspend fun error(message: String, error: Throwable? = null) = instance.error(
         tag = tag,
         message = message,
         error = error,
         source = source
     )
 
-    fun debug(message: String) = instance.debug(
+    suspend fun debug(message: String) = instance.debug(
         tag = tag,
         message = message,
         source = source
     )
 
-    fun info(message: String) = instance.info(
+    suspend fun info(message: String) = instance.info(
         tag = tag,
         message = message,
         source = source
     )
 
-    fun warn(message: String) = instance.warn(
+    suspend fun warn(message: String) = instance.warn(
         tag = tag,
         message = message,
         source = source
     )
 
-    fun verbose(message: String) = instance.verbose(
+    suspend fun verbose(message: String) = instance.verbose(
         tag = tag,
         message = message,
         source = source
     )
 }
 
-fun KLoggerWrapper.e(message: String, error: Throwable? = null) =
+suspend fun KLoggerWrapper.e(message: String, error: Throwable? = null) =
     instance.error(
         tag = tag,
         message = message,
@@ -45,25 +45,25 @@ fun KLoggerWrapper.e(message: String, error: Throwable? = null) =
         source = source
     )
 
-fun KLoggerWrapper.d(message: String) = instance.debug(
+suspend fun KLoggerWrapper.d(message: String) = instance.debug(
     tag = tag,
     message = message,
     source = source
 )
 
-fun KLoggerWrapper.i(message: String) = instance.info(
+suspend fun KLoggerWrapper.i(message: String) = instance.info(
     tag = tag,
     message = message,
     source = source
 )
 
-fun KLoggerWrapper.w(message: String) = instance.warn(
+suspend fun KLoggerWrapper.w(message: String) = instance.warn(
     tag = tag,
     message = message,
     source = source
 )
 
-fun KLoggerWrapper.v(message: String) = instance.verbose(
+suspend fun KLoggerWrapper.v(message: String) = instance.verbose(
     tag = tag,
     message = message,
     source = source

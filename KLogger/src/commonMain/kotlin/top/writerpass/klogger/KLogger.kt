@@ -2,8 +2,15 @@
 
 package top.writerpass.klogger
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.util.Map.copyOf
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.time.ExperimentalTime
@@ -14,12 +21,12 @@ class KLogger private constructor() {
     private val _logFlow = MutableSharedFlow<Log>()
     val logFlow = _logFlow.asSharedFlow()
 
-    private fun logSaver(log: Log) {
+    private suspend fun logSaver(log: Log) {
         logList.add(log)
-        _logFlow.tryEmit(log)
+        _logFlow.emit(log)
     }
 
-    fun baseLog(
+    suspend fun baseLog(
         level: LogLevel,
         tag: String,
         message: String,
@@ -36,7 +43,7 @@ class KLogger private constructor() {
         logSaver(log)
     }
 
-    fun error(
+    suspend fun error(
         tag: String,
         message: String,
         error: Throwable? = null,
@@ -49,7 +56,7 @@ class KLogger private constructor() {
         source = source
     )
 
-    fun debug(
+    suspend fun debug(
         tag: String,
         message: String,
         source: LogSources = LogSources.NORMAL
@@ -60,7 +67,7 @@ class KLogger private constructor() {
         source = source
     )
 
-    fun info(
+    suspend fun info(
         tag: String,
         message: String,
         source: LogSources = LogSources.NORMAL
@@ -71,7 +78,7 @@ class KLogger private constructor() {
         source = source
     )
 
-    fun warn(
+    suspend fun warn(
         tag: String,
         message: String,
         source: LogSources = LogSources.NORMAL
@@ -82,7 +89,7 @@ class KLogger private constructor() {
         source = source
     )
 
-    fun verbose(
+    suspend fun verbose(
         tag: String,
         message: String,
         source: LogSources = LogSources.NORMAL
@@ -94,21 +101,11 @@ class KLogger private constructor() {
     )
 
     companion object {
-        private val loggers = ConcurrentHashMap<String, KLogger>()
-        val default: KLogger by lazy { loggers.getOrPut("default") { KLogger() } }
+        private val _loggers = ConcurrentHashMap<String, KLogger>()
 
-        fun instance(name: String): KLogger = loggers.getOrPut(name) { KLogger() }
+        val default: KLogger = _loggers.getOrPut("default") { KLogger() }
 
-        fun wrap(
-            tag: String,
-            source: LogSources = LogSources.NORMAL,
-            name: String = "default",
-            block: KLoggerWrapper.() -> Unit
-        ) {
-            val instance = instance(name)
-            val w = KLoggerWrapper(instance, tag, source)
-            w.block()
-        }
+        fun instance(name: String): KLogger = _loggers.getOrPut(name) { KLogger() }
     }
 }
 

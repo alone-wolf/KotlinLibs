@@ -10,11 +10,11 @@ fun main(): Unit = runBlocking {
     }
     while (true) {
         delay(700)
-        KLogger.wrap("WH_") {
-            debug("debug")
-            info("info")
-            warn("warn")
-            error("error")
-        }
+//        KLogger.wrap("WH_") {
+//            debug("debug")
+//            info("info")
+//            warn("warn")
+//            error("error")
+//        }
     }
 }

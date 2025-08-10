@@ -36,23 +36,29 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(compose.runtime)
-                api(compose.foundation)
-                api(compose.material3)
-                api(compose.ui)
-                api(compose.components.resources)
-                api(compose.components.uiToolingPreview)
-                api(libs.kotlinx.coroutines.core)
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+//                implementation(compose.material)
+                implementation(compose.material3)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+                implementation(libs.kotlinx.coroutines.core)
 
-                api(libs.androidx.navigation.compose)
+                implementation(libs.androidx.navigation.compose)
 //                api("io.github.dautovicharis:charts:2.0.0")
+
+                implementation(project(":CMPLibrary"))
+                implementation(project(":KMPLibrary"))
+                implementation(project(":OSPaths"))
+                implementation(project(":KLogger"))
             }
         }
         val jvmMain by getting {
             dependencies {
-                api(compose.desktop.currentOs)
-                api(libs.kotlinx.coroutines.swing)
-                api(libs.kstore.file)
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.kstore.file)
             }
         }
     }

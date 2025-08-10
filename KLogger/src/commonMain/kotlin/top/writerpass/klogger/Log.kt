@@ -5,7 +5,7 @@ package top.writerpass.klogger
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-class Log(
+data class Log(
     val tag: String,
     val message: String,
     val error: Throwable? = null,
