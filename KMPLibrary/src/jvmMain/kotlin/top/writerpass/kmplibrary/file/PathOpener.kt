@@ -1,14 +1,19 @@
 package top.writerpass.kmplibrary.file
 
+import top.writerpass.kmplibrary.utils.println
 import java.awt.Desktop
 import java.io.File
 import java.io.IOException
 
 object PathOpener {
     fun open(filePath: String): Boolean {
-        val file = File(filePath)
+        val file = File(filePath).normalize()
+        "Opening file: ${file.absolutePath}".println()
         return try {
-            if (!file.exists()) return false
+            if (!file.exists()) {
+                "File $filePath does not exist".println()
+                return false
+            }
 
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().open(file)

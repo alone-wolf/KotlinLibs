@@ -18,11 +18,10 @@ fun MutableState<String>.DropDownMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        value.TextButton { expanded = !expanded }
+        value.TextButton(modifier = modifier) { expanded = !expanded }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = modifier
         ) {
             values.forEach {
                 DropdownMenuItem(

@@ -161,7 +161,9 @@ fun Framework(
                                 }
                             }
                         },
-                        actions = {},
+                        actions = {
+                            currentPage?.actions(this)
+                        },
                     )
                 }
 
