@@ -1,5 +1,7 @@
 package top.writerpass.kmplibrary.utils
 
+inline fun <reified T> T.singleItemList(): List<T> = listOf(this)
+
 fun <T : Any> List<T>.getPrevious(item: T): T? {
     return when (val index = indexOf(item)) {
         -1 -> {

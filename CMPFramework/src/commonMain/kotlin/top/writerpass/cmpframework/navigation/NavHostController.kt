@@ -25,6 +25,10 @@ fun NavControllerWrapper.gotoPage(page: Page) {
     controller.navigate(page.route)
 }
 
+fun NavControllerWrapper.gotoPageRoute(pageRoute: String) {
+    controller.navigate(pageRoute)
+}
+
 fun NavControllerWrapper.back() {
     controller.popBackStack()
 }

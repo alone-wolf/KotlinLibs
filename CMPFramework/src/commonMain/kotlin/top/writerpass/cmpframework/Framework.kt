@@ -29,9 +29,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import top.writerpass.cmpframework.navigation.back
 import top.writerpass.cmpframework.navigation.gotoMainPage
 import top.writerpass.cmpframework.page.IMainPages
@@ -176,7 +178,7 @@ fun Framework(
             ) {
 
                 pages?.pages?.forEach { p ->
-                    composable(route = p.route) { it ->
+                    composable(route = p.route, arguments = p.arguments) { it ->
                         p.content(it)
                     }
                 }

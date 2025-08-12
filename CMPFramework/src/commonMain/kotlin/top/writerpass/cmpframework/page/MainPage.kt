@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
 
-class MainPage(
+open class MainPage(
     override val route: String,
     override val label: String,
     val icon: ImageVector,

@@ -63,4 +63,5 @@ include(":ExcelJvm")
 include(":KLogger")
 include(":CMPFramework")
 include(":KLoggerCMP")
+include(":CMPDatePicker")
  
