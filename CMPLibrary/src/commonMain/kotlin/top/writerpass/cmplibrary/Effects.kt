@@ -8,3 +8,10 @@ import kotlinx.coroutines.CoroutineScope
 fun LaunchedEffectOdd(block: suspend CoroutineScope.() -> Unit) {
     LaunchedEffect(Unit, block)
 }
+
+@Composable
+fun Any?.WatchCompose(block: suspend CoroutineScope.()-> Unit){
+    LaunchedEffect(this){
+        block()
+    }
+}
