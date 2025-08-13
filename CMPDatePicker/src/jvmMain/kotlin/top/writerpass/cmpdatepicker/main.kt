@@ -23,13 +23,6 @@ fun main() = application {
                 color = MaterialTheme.colorScheme.background,
                 contentColor = MaterialTheme.colorScheme.onBackground
             ){
-                DatePicker1(
-                    range = false,
-                    onSelectDate = {},
-                    onRangeSelected = { _, _ -> },
-                    clickable = true,
-                    dateTimePickerDefaults = DateTimePickerDefaults(),
-                )
             }
         }
     }
