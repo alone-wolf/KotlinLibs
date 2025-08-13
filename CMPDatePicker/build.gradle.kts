@@ -39,6 +39,8 @@ kotlin {
 
                 implementation(libs.androidx.navigation.compose)
 //                api("io.github.dautovicharis:charts:2.0.0")
+                implementation("com.composables:composetheme:1.1.0-alpha")
+
 
                 implementation(project(":CMPLibrary"))
             }
