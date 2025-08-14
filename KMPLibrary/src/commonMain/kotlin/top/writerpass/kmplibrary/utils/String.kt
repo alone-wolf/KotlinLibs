@@ -12,3 +12,7 @@ fun ByteArray.toHexString(): String {
 
     return result.toString()
 }
+
+fun String.startsWithAny(prefixList: List<String>): Boolean {
+    return prefixList.any { this.startsWith(it) }
+}

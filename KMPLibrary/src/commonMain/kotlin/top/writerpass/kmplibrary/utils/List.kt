@@ -23,3 +23,9 @@ fun <T> MutableList<T>.slidingWindowInsert(item: T): MutableList<T> {
     add(item)
     return this
 }
+
+fun <T : Any> List<T>.clearItemsBeforeActions(): List<T> {
+    return toMutableList()
+        .apply { clear() }
+        .toList()
+}
