@@ -69,34 +69,28 @@ class UnixPathStrategy : PathStrategy {
 enum class PathStyle {
     WINDOWS,
     UNIX,
-    AUTO // 自动检测（优先手动设定）
 }
 
 
 class KPath private constructor(
     private val rawPath: String,
-    private val style: PathStyle = PathStyle.AUTO
-) {
-    // 根据风格选择相应的 PathStrategy
+    private val style: PathStyle,
     private val strategy: PathStrategy = when (style) {
         PathStyle.WINDOWS -> WindowsPathStrategy()
         PathStyle.UNIX -> UnixPathStrategy()
-        PathStyle.AUTO -> if (System.getProperty("os.name").contains("Windows", true)) {
-            WindowsPathStrategy()
-        } else {
-            UnixPathStrategy()
-        }
     }
+) {
+
 
     val separator: Char = strategy.separator
 
     // 静态方法创建 KPath 实例
     companion object {
-        fun of(path: String, style: PathStyle = PathStyle.AUTO): KPath {
+        fun of(path: String, style: PathStyle): KPath {
             return KPath(path, style)
         }
 
-        fun of(parts: List<String>, style: PathStyle = PathStyle.AUTO): KPath {
+        fun of(parts: List<String>, style: PathStyle): KPath {
             return KPath(strategyJoin(parts, style), style)
         }
 

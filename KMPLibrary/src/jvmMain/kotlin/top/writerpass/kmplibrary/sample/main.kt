@@ -13,7 +13,7 @@ fun main() {
     println("Unix Path: $unixPath")
 
     // 自动识别操作系统类型
-    val autoPath = KPath.of("/usr/local/bin", PathStyle.AUTO)
+    val autoPath = KPath.of("/usr/local/bin", PathStyle.UNIX)
     println("Auto Path (Unix): $autoPath")
 
     // 规范化路径
