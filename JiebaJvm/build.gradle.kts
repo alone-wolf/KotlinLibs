@@ -4,14 +4,14 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     alias(libs.plugins.multiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.multiplatform.android.library)
 }
 
 group = "top.writerpass.libs"
 version = "1.0.0"
 
 kotlin {
-    jvm{
+    jvm {
         compilations["main"].defaultSourceSet {
             resources.srcDir("src/jvmMain/resources")
         }

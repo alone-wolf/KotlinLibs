@@ -9,7 +9,7 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 
-fun Activity.enterFullscreen() {
+fun Activity.enterFullscreenOnce() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         // Android 11+
         window.setDecorFitsSystemWindows(false)

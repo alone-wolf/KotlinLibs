@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.multiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.multiplatform.android.library)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -36,13 +36,13 @@ kotlin {
                 implementation(ktorLibs.client.java)
             }
         }
-        val androidMain by getting{
-            dependencies{
+        val androidMain by getting {
+            dependencies {
                 implementation(ktorLibs.client.android)
             }
         }
-        val wasmJsMain by getting{
-            dependencies{
+        val wasmJsMain by getting {
+            dependencies {
                 implementation(ktorLibs.client.js)
             }
         }

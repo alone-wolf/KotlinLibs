@@ -7,7 +7,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 plugins {
     alias(libs.plugins.kotlin.cocoapods)
     alias(libs.plugins.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.multiplatform.android.library)
+//    alias(libs.plugins.android.application)
 
 }
 
@@ -44,7 +45,11 @@ kotlin {
     }
     // ----------- ✅ Common Targets -----------
     jvm()                // Java Virtual Machine
-    androidTarget()           // Android
+//    androidTarget()           // Android
+    androidLibrary {
+        compileSdk = 34
+        namespace = "your.name"
+    }
     js(IR) {
         browser()
         nodejs()
@@ -146,17 +151,17 @@ kotlin {
 }
 
 // ----------- ✅ Android 配置（如启用 androidTarget）-----------
-android {
-    compileSdk = 34
-    namespace = "your.name"
-
-    defaultConfig {
-        minSdk = 21
-        targetSdk = 34
-    }
-
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-}
+//android {
+//    compileSdk = 34
+//    namespace = "your.name"
+//
+//    defaultConfig {
+//        minSdk = 21
+//        targetSdk = 34
+//    }
+//
+//    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+//}
 
 // ----------- ✅ CocoaPods（如你要支持 iOS Framework）-----------
 // apply(plugin = "org.jetbrains.kotlin.native.cocoapods")

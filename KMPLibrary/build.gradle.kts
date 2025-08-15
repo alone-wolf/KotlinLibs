@@ -1,15 +1,12 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
-import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.multiplatform)
+    alias(libs.plugins.multiplatform.android.library)
 //    alias(libs.plugins.compose)
 //    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
 //    alias(libs.plugins.android.library)
 //    alias(libs.plugins.vanniktech.mavenPublish)
 //    `maven-publish`
