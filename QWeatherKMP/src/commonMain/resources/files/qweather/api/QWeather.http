@@ -1,0 +1,12 @@
+### GET request to example server
+# curl -X GET --compressed
+#-H 'Authorization: Bearer your_token'
+#'https://your_api_host/v7/weather/now?location=101010100'
+GET https://k63dn236jg.re.qweatherapi.com/v7/weather/now?location=101010100
+X-QW-Api-Key: ffb900024f4048369483d25a15b9a807
+
+###
+
+
+
+###

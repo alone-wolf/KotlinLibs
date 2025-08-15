@@ -31,7 +31,10 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("ktorLibs"){
-            from("io.ktor:ktor-version-catalog:3.2.2")
+            from("io.ktor:ktor-version-catalog:3.2.3")
+        }
+        create("kotlinLibs"){
+            from(files("./gradle/KotlinLibs.versions.toml"))
         }
         create("kotlincrypto") {
             // https://github.com/KotlinCrypto/version-catalog/blob/master/gradle/kotlincrypto.versions.toml
@@ -50,12 +53,6 @@ include(":AndLib")
 include(":JiebaJvm")
 include(":AndLibSample")
 include(":KtorServerJvm")
-
-//includeBuild("../KotlinLibs")
-//implementation("top.writerpass.libs:KMPLibrary:1.0.0")
-//implementation("top.writerpass.libs:CMPLibrary:1.0.0")
-//implementation("top.writerpass.libs:AndLib:1.0.0")
-//implementation("top.writerpass.libs:JiebaJvm:1.0.0")
 include(":OSPaths")
 include(":FullKMP")
 include(":OSDetect")
@@ -64,4 +61,13 @@ include(":KLogger")
 include(":CMPFramework")
 include(":CMPKLogger")
 include(":CMPDatePicker")
+include(":QWeatherKMP")
+include(":KtorClientKMP")
+
+//includeBuild("../KotlinLibs")
+//implementation("top.writerpass.libs:KMPLibrary:1.0.0")
+//implementation("top.writerpass.libs:CMPLibrary:1.0.0")
+//implementation("top.writerpass.libs:AndLib:1.0.0")
+//implementation("top.writerpass.libs:JiebaJvm:1.0.0")
+
  
