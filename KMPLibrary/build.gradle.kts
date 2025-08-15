@@ -5,11 +5,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.multiplatform.android.library)
-//    alias(libs.plugins.compose)
-//    alias(libs.plugins.compose.compiler)
-//    alias(libs.plugins.android.library)
-//    alias(libs.plugins.vanniktech.mavenPublish)
-//    `maven-publish`
 }
 
 group = "top.writerpass.libs"
@@ -28,33 +23,7 @@ kotlin {
         minSdk = 24
 
         withJava() // enable java compilation support
-        //withHostTestBuilder {}.configure {}
-        //withDeviceTestBuilder {
-        //    sourceSetTreeName = "test"
-        //}
-
-//        compilations.configureEach {
-//            compilerOptions.configure {
-//                jvmTarget.set(
-//                    org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
-//                )
-//            }
-//        }
     }
-//    androidTarget {
-//        publishLibraryVariants("release")
-//        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
-//        compilerOptions {
-//            jvmTarget.set(JvmTarget.JVM_11)
-//        }
-//    }
-//    androidTarget {
-//        publishLibraryVariants("release")
-//        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-//        compilerOptions {
-//            jvmTarget.set(JvmTarget.JVM_11)
-//        }
-//    }
 
     listOf(
         iosX64(),
@@ -99,15 +68,6 @@ kotlin {
 //                implementation(kotlincrypto.hash.sha3)
 
                 implementation(libs.kotlinx.datetime)
-
-//                implementation(kotlincrypto.macs.blake2)
-//                implementation(kotlincrypto.macs.hmac.md)
-//                implementation(kotlincrypto.macs.hmac.sha1)
-//                implementation(kotlincrypto.macs.hmac.sha2)
-//                implementation(kotlincrypto.macs.hmac.sha3)
-//                implementation(kotlincrypto.macs.kmac)
-//
-//                implementation(kotlincrypto.random.crypto.rand)
             }
         }
 
@@ -122,64 +82,3 @@ kotlin {
 //        }
     }
 }
-
-//android {
-//    namespace = "top.writerpass.kotlinlibs.kmplibrary"
-//    compileSdk = libs.versions.android.compileSdk.get().toInt()
-//    defaultConfig {
-//        minSdk = libs.versions.android.minSdk.get().toInt()
-////        compileSdk = libs.versions.android.compileSdk.get().toInt()
-//        //noinspection OldTargetApi
-//        // targetSdk = libs.versions.android.targetSdk.get().toInt()
-//    }
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_11
-//        targetCompatibility = JavaVersion.VERSION_11
-//    }
-//}
-
-//publishing {
-//    publications {
-//        create<MavenPublication>("default") {
-//            from(components["kotlin"])
-//        }
-//    }
-//}
-
-//mavenPublishing {
-//    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-//
-//    signAllPublications()
-//
-//    coordinates(group.toString(), "library", version.toString())
-//
-//    pom {
-//        name = "My library"
-//        description = "A library."
-//        inceptionYear = "2024"
-//        url = "https://github.com/kotlin/multiplatform-library-template/"
-//        licenses {
-//            license {
-//                name = "XXX"
-//                url = "YYY"
-//                distribution = "ZZZ"
-//            }
-//        }
-//        developers {
-//            developer {
-//                id = "XXX"
-//                name = "YYY"
-//                url = "ZZZ"
-//            }
-//        }
-//        scm {
-//            url = "XXX"
-//            connection = "YYY"
-//            developerConnection = "ZZZ"
-//        }
-//    }
-//}
-
-//dependencyResolutionManagement {
-//
-//}
