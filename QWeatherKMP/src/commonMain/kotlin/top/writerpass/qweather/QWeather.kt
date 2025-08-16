@@ -7,7 +7,6 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -20,10 +19,20 @@ import top.writerpass.qweather.ktor.createHttpClient
 suspend fun HttpClient.request(
     apiHost: String,
     endpoint: QWeatherEndpoints,
-    block: HttpRequestBuilder.(String) -> Unit
+    urlRoutePath: (String) -> String,
+    block: HttpRequestBuilder.() -> Unit
 ): QWeatherRequestResult {
-    val url = endpoint.getUrl(apiHost)
-    val resp = get { block(url) }
+    val resp = get {
+        url {
+            set(
+                scheme = "https",
+                host = apiHost,
+                port = 443,
+                path = urlRoutePath(endpoint.route)
+            )
+        }
+        block()
+    }
     val body = resp.resolve(endpoint.returnBodyTypeInfo)
     return QWeatherRequestResult(
         statusCode = resp.status,
@@ -58,19 +67,30 @@ class QWeatherClient(
 
     private suspend fun HttpClient.request(
         endpoint: QWeatherEndpoints,
-        block: HttpRequestBuilder.(String) -> Unit
-    ) = request(apiHost = apiHost, endpoint = endpoint, block = block)
+        urlRoutePath: (String) -> String,
+        block: HttpRequestBuilder.() -> Unit
+    ) = request(apiHost = apiHost, endpoint = endpoint, urlRoutePath = urlRoutePath, block = block)
 
     suspend fun getNowWeather(
         location: String,
         lang: String? = "zh-hans",
         unit: String? = "m"
-    ): QWeatherRequestResult = client.request(QWeatherEndpoints.Now) { urlString ->
-        url { set("https", apiHost, 443) }
-        url(urlString)
+    ) = client.request(
+        endpoint = QWeatherEndpoints.Now,
+        urlRoutePath = { it }
+    ) {
         parameter("location", location)
         lang?.let { parameter("lang", it) }
         unit?.let { parameter("unit", it) }
+    }
+
+    suspend fun getDailyWeather(
+
+    ) = client.request(
+        endpoint = QWeatherEndpoints.Daily,
+        urlRoutePath = { it.replace("{days}", "") }
+    ) {
+
     }
 
     override fun close() {
@@ -78,4 +98,16 @@ class QWeatherClient(
     }
 }
 
+fun String.replaceWith(map: Map<String, String>): String {
+    var a = this
+    map.forEach { (key, value) ->
+        a = a.replace(key, value)
+    }
+    return a
+
+}
+
+fun String.replaceWith(pair: Pair<String, String>): String {
+    return replace(pair.first, pair.second)
+}
 

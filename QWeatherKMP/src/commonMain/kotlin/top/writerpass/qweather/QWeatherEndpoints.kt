@@ -4,12 +4,12 @@ import io.ktor.util.reflect.TypeInfo
 import io.ktor.util.reflect.typeInfo
 
 sealed class QWeatherEndpoints(
-    private val route: String,
+    val route: String,
     val returnBodyTypeInfo: TypeInfo
 ) {
-    fun getUrl(apiHost: String): String {
-        return "https://${apiHost}${route}"
-    }
+//    fun getUrl(apiHost: String): String {
+//        return "https://${apiHost}${route}"
+//    }
 
     object Now : QWeatherEndpoints(
         route = "/v7/weather/now",
