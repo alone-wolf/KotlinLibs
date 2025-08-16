@@ -2,7 +2,6 @@ package top.writerpass.qweather
 
 import kotlinx.serialization.Serializable
 
-
 object QWeatherData {
     @Serializable
     data class Refer(
