@@ -13,8 +13,50 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.set
 import io.ktor.util.reflect.TypeInfo
 import io.ktor.utils.io.core.Closeable
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.floatOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 import top.writerpass.qweather.ktor.clientEngine
 import top.writerpass.qweather.ktor.createHttpClient
+
+val json = Json.parseToJsonElement(
+    """{
+        "name": "ChatGPT",
+        "age": 3,
+        "pi": 3.14159,
+        "active": true
+    }"""
+)
+
+//@Serializable
+//class A(
+//    val a: String,
+//    val b: Int,
+//    val c: Long,
+//    val d: Double,
+//    val x: D
+//)
+//
+//@Serializable
+//class D(
+//    val x: Float
+//)
+//
+//fun JsonElement.decodeAsType(type: TypeInfo) {
+//    return Json.decodeFromJsonElement(type, this)
+//}
 
 suspend fun HttpClient.request(
     apiHost: String,

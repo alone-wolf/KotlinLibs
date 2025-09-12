@@ -70,4 +70,5 @@ include(":KtorClientKMP")
 //implementation("top.writerpass.libs:AndLib:1.0.0")
 //implementation("top.writerpass.libs:JiebaJvm:1.0.0")
 
- 
+include(":OSAccessKMP")
+include(":KtorUserCentre")
