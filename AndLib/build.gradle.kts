@@ -55,6 +55,13 @@ kotlin {
 //                implementation(libs.material)
                 implementation(libs.lifecycle.runtime.ktx)
                 implementation(libs.activity.compose)
+
+                api(project.dependencies.platform("androidx.compose:compose-bom:2025.09.00"))
+                api("androidx.compose.ui:ui")
+                api("androidx.compose.ui:ui-graphics")
+                api("androidx.compose.animation:animation")
+                api("androidx.compose.ui:ui-tooling-preview")
+                api("androidx.compose.material3:material3")
             }
         }
     }
