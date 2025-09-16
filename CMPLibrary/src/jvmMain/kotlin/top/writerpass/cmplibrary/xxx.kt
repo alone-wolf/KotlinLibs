@@ -1,9 +1,5 @@
-package top.writerpass.sample
+package top.writerpass.cmplibrary
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.DeferredTargetAnimation
 import androidx.compose.animation.core.ExperimentalAnimatableApi
@@ -17,7 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
@@ -29,6 +25,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ApproachLayoutModifierNode
 import androidx.compose.ui.layout.ApproachMeasureScope
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -42,28 +39,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import top.writerpass.cmplibrary.compose.FullSizeBox
-import top.writerpass.sample.ui.theme.KotlinLibsTheme
+import androidx.compose.ui.window.singleWindowApplication
 
-object Pages {
-    const val Home = "Home"
-    const val Mine = "Mine"
-}
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            KotlinLibsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    FullSizeBox(modifier = Modifier.padding(innerPadding)) {
-                        LookAheadWithCustomApproachLayoutModifierNode()
-                    }
-                }
-            }
-        }
-    }
+fun main() = singleWindowApplication {
+    LookAheadWithCustomApproachLayoutModifierNode()
 }
 
 @Composable
@@ -76,6 +56,7 @@ fun LookAheadWithCustomApproachLayoutModifierNode() {
         Color(0xFF679138),
     )
     var isInColumn by remember { mutableStateOf(true) }
+    var pressure by remember { mutableStateOf("Press for value") }
     LookaheadScope {
         // Creates movable content containing 4 boxes.
         // They will be put either in a [Row] or in a [Column] depending on the state.
@@ -86,17 +67,30 @@ fun LookAheadWithCustomApproachLayoutModifierNode() {
                         Modifier
                             .padding(8.dp)
                             .size(80.dp)
-                            .then(AnimatePlacementNodeElement(this))
-//                            .animatePlacementInScope(this)
+                            .animatePlacementInScope(this)
                             .background(color, RoundedCornerShape(10))
-                    )
+                    ){
+                        Text(pressure)
+                    }
                 }
             }
         }
 
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            event.changes.forEach { it ->
+                                pressure = "${it.pressure}"
+                                it.consume()
+                            }
+                        }
+                    }
+                }
                 .clickable { isInColumn = !isInColumn },
             contentAlignment = Alignment.Center
         ) {
