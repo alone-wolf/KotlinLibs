@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalAnimatableApi::class)
+
 package top.writerpass.cmplibrary.lookaheadscope
 
 import androidx.compose.animation.core.AnimationVector2D
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -53,7 +56,6 @@ private object XXXXX {
     class AnimatedPlacementModifierNode(var lookaheadScope: LookaheadScope) :
         ApproachLayoutModifierNode, Modifier.Node() {
         // Creates an offset animation, the target of which will be known during placement.
-        @OptIn(ExperimentalAnimatableApi::class)
         val offsetAnimation: DeferredTargetAnimation<IntOffset, AnimationVector2D> =
             DeferredTargetAnimation(IntOffset.VectorConverter)
 
@@ -64,19 +66,14 @@ private object XXXXX {
         }
 
         // Returns true when the offset animation is in progress, false otherwise.
-        @OptIn(ExperimentalAnimatableApi::class)
-        override fun Placeable.PlacementScope.isPlacementApproachInProgress(
-            lookaheadCoordinates: LayoutCoordinates
-        ): Boolean {
-            val target =
-                with(lookaheadScope) {
-                    lookaheadScopeCoordinates.localLookaheadPositionOf(lookaheadCoordinates).round()
-                }
+        override fun Placeable.PlacementScope.isPlacementApproachInProgress(lookaheadCoordinates: LayoutCoordinates): Boolean {
+            val target = with(lookaheadScope) {
+                lookaheadScopeCoordinates.localLookaheadPositionOf(lookaheadCoordinates).round()
+            }
             offsetAnimation.updateTarget(target, coroutineScope)
             return !offsetAnimation.isIdle
         }
 
-        @OptIn(ExperimentalAnimatableApi::class)
         override fun ApproachMeasureScope.approachMeasure(
             measurable: Measurable,
             constraints: Constraints,
@@ -86,10 +83,9 @@ private object XXXXX {
                 val coordinates = coordinates
                 if (coordinates != null) {
                     // Calculates the target offset within the lookaheadScope
-                    val target =
-                        with(lookaheadScope) {
-                            lookaheadScopeCoordinates.localLookaheadPositionOf(coordinates).round()
-                        }
+                    val target = with(lookaheadScope) {
+                        lookaheadScopeCoordinates.localLookaheadPositionOf(coordinates).round()
+                    }
 
                     // Uses the target offset to start an offset animation
                     val animatedOffset = offsetAnimation.updateTarget(target, coroutineScope)
@@ -136,9 +132,7 @@ private object XXXXX {
                         it.Text(
                             modifier = Modifier.padding(8.dp)
                                 .wrapContentSize()
-                                .then(AnimatePlacementNodeElement(this@LookaheadScope))
-//                                .background(Color.Blue)
-                            ,
+                                .then(AnimatePlacementNodeElement(this@LookaheadScope)),
                             textAlign = TextAlign.Center,
                             fontSize = 150.sp
                         )
@@ -152,9 +146,7 @@ private object XXXXX {
                         it.Text(
                             modifier = Modifier.padding(8.dp)
                                 .wrapContentSize()
-                                .then(AnimatePlacementNodeElement(this@LookaheadScope))
-//                                .background(Color.Blue)
-                            ,
+                                .then(AnimatePlacementNodeElement(this@LookaheadScope)),
                             textAlign = TextAlign.Center,
                             fontSize = 150.sp
                         )
@@ -175,6 +167,7 @@ private object XXXXX {
                 } else {
                     Row(modifier = Modifier.align(Alignment.TopStart).wrapContentSize()) {
                         hours()
+                        Spacer(modifier = Modifier.width(20.dp))
                         minutes()
                     }
                 }
@@ -185,13 +178,11 @@ private object XXXXX {
 
 fun main() = singleWindowApplication {
     Column {
-        Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .weight(1f)
+        ) {
             XXXXX.aaa()
-        }
-        Row {
-            "2025/9/16".Text()
-            Spacer(modifier = Modifier.weight(1f))
-            "50% Battery".Text()
         }
     }
 }

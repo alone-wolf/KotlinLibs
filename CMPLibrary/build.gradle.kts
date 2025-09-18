@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
+//    alias(libs.plugins.kotlinJvm)
+//    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "top.writerpass.libs"
