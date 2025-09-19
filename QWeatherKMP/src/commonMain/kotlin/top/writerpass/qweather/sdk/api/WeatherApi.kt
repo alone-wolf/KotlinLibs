@@ -19,7 +19,7 @@ class WeatherApi(
 ) {
     // https://dev.qweather.com/docs/api/weather/weather-now/
     suspend fun weatherNow(location: String): WeatherNowResponse {
-        return client.get("${config.baseUrl}/weather/now") {
+        return client.get("${config.baseUrl}/v7/weather/now") {
             url {
                 parameters.append("location", location)
             }
@@ -33,7 +33,7 @@ class WeatherApi(
         lang: String? = null,
         unit: String? = "m",
     ): WeatherDaysResponse {
-        return client.get("${config.baseUrl}/weather") {
+        return client.get("${config.baseUrl}/v7/weather") {
             url {
                 appendPathSegments(days)
                 parameters.append("location", location)
@@ -50,7 +50,7 @@ class WeatherApi(
         lang: String? = null,
         unit: String? = "m",
     ): WeatherHoursResponse {
-        return client.get("${config.baseUrl}/weather") {
+        return client.get("${config.baseUrl}/v7/weather") {
             url {
                 appendPathSegments(hours)
                 parameters.append("location", location)

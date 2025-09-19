@@ -72,3 +72,5 @@ include(":KtorClientKMP")
 
 include(":OSAccessKMP")
 include(":KtorUserCentre")
+include(":WebDavServer")
+include(":WebDavClient")

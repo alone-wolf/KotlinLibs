@@ -9,11 +9,12 @@ import top.writerpass.qweather.sdk.model.GeoCityTopResponse
 import top.writerpass.qweather.sdk.model.GeoPOILookupResponse
 import top.writerpass.qweather.sdk.model.GeoPOIRangeResponse
 
-// https://dev.qweather.com/docs/api/geoapi/city-lookup/
 class GeoApi(
     private val client: HttpClient,
     private val config: QWeatherConfig
 ) {
+
+    // https://dev.qweather.com/docs/api/geoapi/city-lookup/
     suspend fun cityLookup(
         location: String,
         adm: String? = null,
