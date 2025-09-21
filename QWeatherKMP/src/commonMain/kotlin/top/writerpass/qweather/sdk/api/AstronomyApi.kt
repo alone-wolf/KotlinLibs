@@ -7,6 +7,7 @@ import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.AstronomyMoonResponse
 import top.writerpass.qweather.sdk.model.AstronomySunElevationAngleResponse
 import top.writerpass.qweather.sdk.model.AstronomySunResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class AstronomyApi(
     private val client: HttpClient,
@@ -23,7 +24,7 @@ class AstronomyApi(
                 parameters.append("location", location)
                 parameters.append("date", date)
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/astronomy/moon-and-moon-phase/
@@ -36,7 +37,7 @@ class AstronomyApi(
                 parameters.append("location", location)
                 parameters.append("date", date)
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/astronomy/solar-elevation-angle/
@@ -55,6 +56,6 @@ class AstronomyApi(
                 parameters.append("tz", tz)
                 parameters.append("alt", alt.toString())
             }
-        }.body()
+        }.check().body()
     }
 }

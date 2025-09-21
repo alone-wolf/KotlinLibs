@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.PrecipitationMinutesResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class PrecipitationApi(
     private val client: HttpClient,
@@ -20,6 +21,6 @@ class PrecipitationApi(
                 parameters.append("location", location)
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 }

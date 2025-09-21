@@ -7,6 +7,7 @@ import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.StormForecastResponse
 import top.writerpass.qweather.sdk.model.StormListResponse
 import top.writerpass.qweather.sdk.model.StormTrackResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class StormApi(
     private val client: HttpClient,
@@ -21,7 +22,7 @@ class StormApi(
             url {
                 parameters.append("stormid", stormid)
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/tropical-cyclone/storm-track/
@@ -32,7 +33,7 @@ class StormApi(
             url {
                 parameters.append("stormid", stormid)
             }
-        }.body()
+        }.check().body()
     }
 
 
@@ -46,6 +47,6 @@ class StormApi(
                 parameters.append("basin", basin)
                 parameters.append("year", year)
             }
-        }.body()
+        }.check().body()
     }
 }

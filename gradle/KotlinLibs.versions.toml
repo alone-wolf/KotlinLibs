@@ -6,6 +6,7 @@ andlib = { module = "top.writerpass.libs:AndLib", version.ref = "kotlin-libs" }
 cmp-library = { module = "top.writerpass.libs:CMPLibrary", version.ref = "kotlin-libs" }
 cmp-framework = { module = "top.writerpass.libs:CMPFramework", version.ref = "kotlin-libs" }
 kmp-library = { module = "top.writerpass.libs:KMPLibrary", version.ref = "kotlin-libs" }
+kmp-qweather = { module = "top.writerpass.libs:QWeatherKMP", version.ref = "kotlin-libs" }
 ktorlibrary = { module = "top.writerpass.libs:KtorLibrary", version.ref = "kotlin-libs" }
 ktor-server-jvm = { module = "top.writerpass.libs:KtorServerJvm", version.ref = "kotlin-libs" }
 excel-jvm = { module = "top.writerpass.libs:ExcelJvm", version.ref = "kotlin-libs" }

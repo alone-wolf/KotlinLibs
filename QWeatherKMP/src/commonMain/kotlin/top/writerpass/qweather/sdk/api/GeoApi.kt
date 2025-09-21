@@ -8,6 +8,7 @@ import top.writerpass.qweather.sdk.model.GeoCityLookupResponse
 import top.writerpass.qweather.sdk.model.GeoCityTopResponse
 import top.writerpass.qweather.sdk.model.GeoPOILookupResponse
 import top.writerpass.qweather.sdk.model.GeoPOIRangeResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class GeoApi(
     private val client: HttpClient,
@@ -30,7 +31,7 @@ class GeoApi(
                 number?.let { parameters.append("number", it.toString()) }
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/geoapi/top-city/
@@ -45,7 +46,7 @@ class GeoApi(
                 number?.let { parameters.append("number", it.toString()) }
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
 
@@ -65,7 +66,7 @@ class GeoApi(
                 number?.let { parameters.append("number", it.toString()) }
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/geoapi/poi-range/
@@ -84,7 +85,7 @@ class GeoApi(
                 number?.let { parameters.append("number", it.toString()) }
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 }
 

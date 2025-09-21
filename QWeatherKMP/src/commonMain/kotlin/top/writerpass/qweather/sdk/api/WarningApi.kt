@@ -6,6 +6,7 @@ import io.ktor.client.request.get
 import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.WarningListResponse
 import top.writerpass.qweather.sdk.model.WarningNowResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class WarningApi(
     private val client: HttpClient,
@@ -21,7 +22,7 @@ class WarningApi(
                 parameters.append("location", location)
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/warning/weather-warning-city-list/
@@ -32,6 +33,6 @@ class WarningApi(
             url {
                 parameters.append("range", range)
             }
-        }.body()
+        }.check().body()
     }
 }

@@ -6,6 +6,7 @@ import io.ktor.client.request.get
 import io.ktor.http.appendPathSegments
 import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.SolarRadiationResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class SolarApi(
     private val client: HttpClient,
@@ -27,7 +28,7 @@ class SolarApi(
                 parameters.append("interval", interval.toString())
                 parameters.append("extra", extra.toString())
             }
-        }.body()
+        }.check().body()
     }
 
 }

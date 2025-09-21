@@ -12,6 +12,7 @@ import top.writerpass.qweather.sdk.model.WeatherHoursGridResponse
 import top.writerpass.qweather.sdk.model.WeatherHoursResponse
 import top.writerpass.qweather.sdk.model.WeatherNowGridResponse
 import top.writerpass.qweather.sdk.model.WeatherNowResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class WeatherApi(
     private val client: HttpClient,
@@ -23,7 +24,7 @@ class WeatherApi(
             url {
                 parameters.append("location", location)
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/weather/weather-daily-forecast/
@@ -40,7 +41,7 @@ class WeatherApi(
                 lang?.let { parameters.append("lang", it) }
                 unit?.let { parameters.append("unit", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/weather/weather-hourly-forecast/
@@ -57,7 +58,7 @@ class WeatherApi(
                 lang?.let { parameters.append("lang", it) }
                 unit?.let { parameters.append("unit", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/weather/grid-weather-now/
@@ -72,7 +73,7 @@ class WeatherApi(
                 lang?.let { parameters.append("lang", it) }
                 unit?.let { parameters.append("unit", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/weather/grid-weather-daily-forecast/
@@ -89,7 +90,7 @@ class WeatherApi(
                 lang?.let { parameters.append("lang", it) }
                 unit?.let { parameters.append("unit", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/weather/grid-weather-hourly-forecast/
@@ -106,8 +107,6 @@ class WeatherApi(
                 lang?.let { parameters.append("lang", it) }
                 unit?.let { parameters.append("unit", it) }
             }
-        }.body()
+        }.check().body()
     }
-
-
 }

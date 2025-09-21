@@ -6,6 +6,7 @@ import io.ktor.client.request.get
 import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.HistoricalAirResponse
 import top.writerpass.qweather.sdk.model.HistoricalWeatherResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class HistoricalApi(
     private val client: HttpClient,
@@ -26,7 +27,7 @@ class HistoricalApi(
                 lang?.let { parameters.append("lang", it) }
                 parameters.append("unit", unit)
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/time-machine/time-machine-air/
@@ -41,6 +42,6 @@ class HistoricalApi(
                 parameters.append("date", date)
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 }

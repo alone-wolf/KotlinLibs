@@ -7,6 +7,7 @@ import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.AirQualityCurrentResponse
 import top.writerpass.qweather.sdk.model.AirQualityDailyResponse
 import top.writerpass.qweather.sdk.model.AirQualityHourlyResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class AirQualityApi(
     private val client: HttpClient,
@@ -25,7 +26,7 @@ class AirQualityApi(
                 parameters.append("longitude", longitude)
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/air-quality/air-hourly-forecast/
@@ -40,7 +41,7 @@ class AirQualityApi(
                 parameters.append("longitude", longitude)
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
 
@@ -56,7 +57,7 @@ class AirQualityApi(
                 parameters.append("longitude", longitude)
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
     // https://dev.qweather.com/docs/api/air-quality/air-station/

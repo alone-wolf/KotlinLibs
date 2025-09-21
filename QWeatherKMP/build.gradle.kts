@@ -4,15 +4,31 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+group = "top.writerpass.libs"
+version = "1.0.0"
+
 kotlin {
     jvm()
-    wasmJs()
+//    wasmJs()
     androidLibrary {
         namespace = "top.writerpass.kotlinlibs.kmplibrary"
         compileSdk = 33
         minSdk = 24
 
         withJava()
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+        macosX64(),
+        macosArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
     }
 
     sourceSets {
@@ -26,9 +42,11 @@ kotlin {
                 implementation(ktorLibs.client.contentNegotiation)
                 implementation(ktorLibs.client.logging)
                 implementation(ktorLibs.client.encoding)
-//                implementation("io.ktor:ktor-client-encoding:3.2.3")
+                implementation("co.touchlab:kermit:2.0.8")
+
 
                 implementation(project(":KMPLibrary"))
+                implementation(project(":KMPResLoader"))
             }
         }
         val jvmMain by getting {
@@ -39,11 +57,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(ktorLibs.client.android)
-            }
-        }
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(ktorLibs.client.js)
             }
         }
     }

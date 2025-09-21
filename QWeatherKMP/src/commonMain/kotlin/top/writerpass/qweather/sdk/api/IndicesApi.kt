@@ -6,6 +6,7 @@ import io.ktor.client.request.get
 import io.ktor.http.appendPathSegments
 import top.writerpass.qweather.sdk.QWeatherConfig
 import top.writerpass.qweather.sdk.model.IndicesResponse
+import top.writerpass.qweather.sdk.utils.check
 
 class IndicesApi(
     private val client: HttpClient,
@@ -26,7 +27,7 @@ class IndicesApi(
                 parameters.append("type", type)
                 lang?.let { parameters.append("lang", it) }
             }
-        }.body()
+        }.check().body()
     }
 
 }

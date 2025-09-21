@@ -1,18 +1,18 @@
-[versions]
-kotlin-libs = "1.0.0"
-
-[libraries]
-andlib = { module = "top.writerpass.libs:AndLib", version.ref = "kotlin-libs" }
-cmp-library = { module = "top.writerpass.libs:CMPLibrary", version.ref = "kotlin-libs" }
-cmp-framework = { module = "top.writerpass.libs:CMPFramework", version.ref = "kotlin-libs" }
-kmp-library = { module = "top.writerpass.libs:KMPLibrary", version.ref = "kotlin-libs" }
-ktorlibrary = { module = "top.writerpass.libs:KtorLibrary", version.ref = "kotlin-libs" }
-ktor-server-jvm = { module = "top.writerpass.libs:KtorServerJvm", version.ref = "kotlin-libs" }
-excel-jvm = { module = "top.writerpass.libs:ExcelJvm", version.ref = "kotlin-libs" }
-os-detect = { module = "top.writerpass.libs:OSDetect", version.ref = "kotlin-libs" }
-os-paths = { module = "top.writerpass.libs:OSPaths", version.ref = "kotlin-libs" }
-klogger = { module = "top.writerpass.libs:KLogger", version.ref = "kotlin-libs" }
-klogger-cmp = { module = "top.writerpass.libs:KLoggerCMP", version.ref = "kotlin-libs" }
-
-[plugins]
-
+#[versions]
+#kotlin-libs = "1.0.0"
+#
+#[libraries]
+#andlib = { module = "top.writerpass.libs:AndLib", version.ref = "kotlin-libs" }
+#cmp-library = { module = "top.writerpass.libs:CMPLibrary", version.ref = "kotlin-libs" }
+#cmp-framework = { module = "top.writerpass.libs:CMPFramework", version.ref = "kotlin-libs" }
+#kmp-library = { module = "top.writerpass.libs:KMPLibrary", version.ref = "kotlin-libs" }
+#ktorlibrary = { module = "top.writerpass.libs:KtorLibrary", version.ref = "kotlin-libs" }
+#ktor-server-jvm = { module = "top.writerpass.libs:KtorServerJvm", version.ref = "kotlin-libs" }
+#excel-jvm = { module = "top.writerpass.libs:ExcelJvm", version.ref = "kotlin-libs" }
+#os-detect = { module = "top.writerpass.libs:OSDetect", version.ref = "kotlin-libs" }
+#os-paths = { module = "top.writerpass.libs:OSPaths", version.ref = "kotlin-libs" }
+#klogger = { module = "top.writerpass.libs:KLogger", version.ref = "kotlin-libs" }
+#klogger-cmp = { module = "top.writerpass.libs:KLoggerCMP", version.ref = "kotlin-libs" }
+#
+#[plugins]
+#
