@@ -75,4 +75,4 @@ include(":KtorUserCentre")
 include(":WebDavServer")
 include(":WebDavClient")
 include(":KMPResLoader")
- 
+include(":CMPSample")

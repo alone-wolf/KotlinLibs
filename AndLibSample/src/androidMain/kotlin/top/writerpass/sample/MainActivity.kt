@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import top.writerpass.cmplibrary.compose.FullSizeBox
+//import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.sample.ui.theme.KotlinLibsTheme
 
 object Pages {
@@ -57,9 +57,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             KotlinLibsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    FullSizeBox(modifier = Modifier.padding(innerPadding)) {
-                        LookAheadWithCustomApproachLayoutModifierNode()
-                    }
+//                    FullSizeBox(modifier = Modifier.padding(innerPadding)) {
+//                        LookAheadWithCustomApproachLayoutModifierNode()
+//                    }
                 }
             }
         }

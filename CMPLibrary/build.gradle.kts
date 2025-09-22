@@ -1,7 +1,11 @@
+import com.android.build.api.dsl.androidLibrary
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.multiplatform.android.library)
 //    alias(libs.plugins.kotlinJvm)
 //    alias(libs.plugins.kotlin.serialization)
 }
@@ -15,14 +19,13 @@ kotlin {
         browser()
         binaries.executable()
     }
-//    androidTarget()
-//    androidTarget {
-//        publishLibraryVariants("release")
-//        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-//        compilerOptions {
-//            jvmTarget.set(JvmTarget.JVM_11)
-//        }
-//    }
+    androidLibrary {
+        namespace = "top.writerpass.cmplibrary"
+        compileSdk = 36
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
 
     listOf(
         iosX64(),

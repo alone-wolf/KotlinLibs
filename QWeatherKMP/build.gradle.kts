@@ -12,10 +12,10 @@ kotlin {
 //    wasmJs()
     androidLibrary {
         namespace = "top.writerpass.kotlinlibs.kmplibrary"
-        compileSdk = 33
         minSdk = 24
 
         withJava()
+        compileSdk = 36
     }
 
     listOf(
