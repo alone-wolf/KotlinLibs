@@ -1,8 +1,6 @@
 plugins {
     id("java-library")
-    //alias(libs.plugins.kotlinJvm)
-//    kotlin("jvm") version "2.0.21"
-    kotlin("jvm")
+    alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.kotlin.serialization)
     alias(ktorLibs.plugins.ktor)
 }

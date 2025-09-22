@@ -20,7 +20,7 @@ kotlin {
         binaries.executable()
     }
     androidLibrary {
-        namespace = "top.writerpass.cmplibrary"
+        namespace = "top.writerpass.cmpsample"
         compileSdk = 36
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -59,10 +59,15 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.ui)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.animation)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.androidx.navigation.compose)
+
+                implementation(project(":CMPLibrary"))
+                implementation(project(":KMPLibrary"))
             }
         }
         val jvmMain by getting {
