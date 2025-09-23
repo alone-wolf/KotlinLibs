@@ -14,6 +14,12 @@ kotlin {
     }
 }
 
-dependencies{
-
+dependencies {
+    implementation(ktorLibs.server.core)
+    implementation(ktorLibs.server.cio)
+    implementation(ktorLibs.server.contentNegotiation)
+    implementation(ktorLibs.server.compression)
+    implementation(ktorLibs.server.cors)
+    implementation(ktorLibs.server.resources)
+    implementation(ktorLibs.server.openapi)
 }
