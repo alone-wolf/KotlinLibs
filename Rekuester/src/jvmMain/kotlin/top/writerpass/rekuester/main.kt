@@ -110,8 +110,8 @@ private fun ApiRequestPage(api: Api, client: RekuesterClient) {
             apiRequestViewModel.label.value,
             apiRequestViewModel.method.value,
             apiRequestViewModel.address.value,
-//            apiRequestViewModel.params,
-//            apiRequestViewModel.headers,
+            apiRequestViewModel.params,
+            apiRequestViewModel.headers,
         ) {
             if (isFirst) {
                 isFirst = false
