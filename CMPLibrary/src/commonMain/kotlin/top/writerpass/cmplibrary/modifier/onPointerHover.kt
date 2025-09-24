@@ -10,7 +10,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import top.writerpass.cmplibrary.utils.Mutable
 
 fun Modifier.onPointerHover(onHover: () -> Unit): Modifier = composed {
-    var entered by Mutable.SomeBoolean(false)
+    var entered by Mutable.someBoolean()
 
     LaunchedEffect(entered) {
         if (entered) {
@@ -35,7 +35,7 @@ fun Modifier.onPointerHover(onHover: () -> Unit): Modifier = composed {
     }
 }
 
-fun Modifier.onPointerHover(onHover: () -> Unit,onNotHover:()->Unit): Modifier = composed {
+fun Modifier.onPointerHover(onHover: () -> Unit, onNotHover: () -> Unit): Modifier = composed {
 //    var entered by Mutable.SomeBoolean(false)
 //
 //    LaunchedEffect(entered) {

@@ -13,44 +13,52 @@ import top.writerpass.cmplibrary.LaunchedEffectOdd
 
 object Mutable {
 
+    fun MutableState<Boolean>.setTrue() {
+        value = true
+    }
+
+    fun MutableState<Boolean>.setFalse() {
+        value = false
+    }
+
     @Composable
-    fun <T> Something(default: T): MutableState<T> {
+    fun <T> something(default: T): MutableState<T> {
         return remember { mutableStateOf(default) }
     }
 
     @Composable
-    fun SomeString(default: String = ""): MutableState<String> {
+    fun someString(default: String = ""): MutableState<String> {
         return remember { mutableStateOf(default) }
     }
 
     @Composable
-    fun SomeBoolean(default: Boolean = false): MutableState<Boolean> {
+    fun someBoolean(default: Boolean = false): MutableState<Boolean> {
         return remember { mutableStateOf(default) }
     }
 
     @Composable
-    fun SomeInt(default: Int = 0): MutableState<Int> {
+    fun someInt(default: Int = 0): MutableState<Int> {
         return remember { mutableIntStateOf(default) }
     }
 
     @Composable
-    fun SomeLong(default: Long = 0): MutableState<Long> {
+    fun someLong(default: Long = 0): MutableState<Long> {
         return remember { mutableLongStateOf(default) }
     }
 
     @Composable
-    fun SomeDouble(default: Double = 0.0): MutableState<Double> {
+    fun someDouble(default: Double = 0.0): MutableState<Double> {
         return remember { mutableDoubleStateOf(default) }
     }
 
     @Composable
-    fun <T> SomeList(): SnapshotStateList<T> {
+    fun <T> someList(): SnapshotStateList<T> {
         return remember { mutableStateListOf() }
     }
 }
 
 @Composable
-fun <T> MutableState<T>.laterDefaultValue(v: T) {
+fun <T> MutableState<T>.LaterDefaultValue(v: T) {
     LaunchedEffectOdd {
         value = v
     }

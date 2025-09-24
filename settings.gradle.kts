@@ -30,11 +30,14 @@ dependencyResolutionManagement {
         maven { url = uri("https://jitpack.io") }
     }
     versionCatalogs {
-        create("ktorLibs"){
+        create("ktorLibs") {
             from("io.ktor:ktor-version-catalog:3.2.3")
         }
-        create("kotlinLibs"){
+        create("kotlinLibs") {
             from(files("./gradle/KotlinLibs.versions.toml"))
+        }
+        create("databaseORM") {
+            from(files("./gradle/DBORM.versions.toml"))
         }
         create("kotlincrypto") {
             // https://github.com/KotlinCrypto/version-catalog/blob/master/gradle/kotlincrypto.versions.toml
@@ -76,3 +79,4 @@ include(":WebDavServer")
 include(":WebDavClient")
 include(":KMPResLoader")
 include(":CMPSample")
+include(":Rekuester")
