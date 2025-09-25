@@ -57,7 +57,10 @@ kotlin {
 //        }
 //    }
 
-    wasmJs()
+    wasmJs {
+        browser()
+        nodejs()
+    }
     jvm()
 
 //    js(IR) {

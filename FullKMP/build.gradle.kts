@@ -54,7 +54,10 @@ kotlin {
         browser()
         nodejs()
     }
-    wasmJs()                  // WebAssembly（实验性）
+    wasmJs {
+        browser()
+        nodejs()
+    }             // WebAssembly（实验性）
 
     // ----------- ✅ Native Targets -----------
 
@@ -131,22 +134,22 @@ kotlin {
         val watchosArm64Main by getting
 
         // 可按需求组织共享 sourceSets，如下所示：
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
+//        val nativeMain by creating {
+//            dependsOn(commonMain)
+//        }
 
-        listOf(
-            linuxX64Main,
-            linuxArm64Main,
-            macosX64Main,
-            macosArm64Main,
-            iosX64Main,
-            iosArm64Main,
-            iosSimArm64Main,
-            windowsX64Main
-        ).forEach {
-            it.dependsOn(nativeMain)
-        }
+//        listOf(
+//            linuxX64Main,
+//            linuxArm64Main,
+//            macosX64Main,
+//            macosArm64Main,
+//            iosX64Main,
+//            iosArm64Main,
+//            iosSimArm64Main,
+//            windowsX64Main
+//        ).forEach {
+//            it.dependsOn(nativeMain)
+//        }
     }
 }
 

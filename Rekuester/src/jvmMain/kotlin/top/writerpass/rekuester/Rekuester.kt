@@ -6,12 +6,14 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,6 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -33,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +59,7 @@ import top.writerpass.cmplibrary.compose.FullHeightColumn
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullSizeRow
 import top.writerpass.cmplibrary.compose.FullWidthBox
+import top.writerpass.cmplibrary.compose.FullWidthColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.IconButton
 import top.writerpass.cmplibrary.compose.OutlinedButton
@@ -154,62 +159,112 @@ private fun ApiRequestPage(api: Api, client: RekuesterClient) {
         }
         FullSizeColumn {
             "Request".Text()
-            val requestContentTabId = Mutable.someInt()
-            FullWidthRow {
-                remember {
-                    listOf(
-                        "Param", "Authorization", "Headers", "Body", "Scripts", "Settings"
-                    )
-                }.forEachIndexed { index, string ->
-                    string.TextButton { requestContentTabId.value = index }
-                }
+            val entities = remember {
+                listOf(
+                    "Param",
+                    "Authorization",
+                    "Headers",
+                    "Body",
+                    "Scripts",
+                    "Settings"
+                )
             }
-            "Response".Text()
-            val responseContentTabId = Mutable.someInt()
-            FullWidthRow {
-                remember {
-                    listOf(
-                        "Overview", "Body", "Cookies", "Headers"
-                    )
-                }.forEachIndexed { index, string ->
-                    string.TextButton {
-                        responseContentTabId.value = index
-                    }
-                }
-            }
-            apiRequestViewModel.currentResult?.let { reqResult ->
-                reqResult.response?.let { result ->
-                    FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        when (responseContentTabId.value) {
-                            0 -> {
-                                "Overview".Text()
-                                "Status: ${result.code}".Text()
-                                "Requested at: ${result.reqTime}".Text()
-                                "Responded at: ${result.respTime}".Text()
-                            }
-
-                            1 -> {
-                                "Requested at: ${result.reqTime}".Text()
-                                "Responded at: ${result.respTime}".Text()
-                                result.body.Text()
-                            }
-
-                            2 -> {}
-                            3 -> {
-                                result.headers.forEach { (key, values) ->
-                                    values.forEach { value ->
-                                        FullWidthRow(modifier = Modifier.clickable {}) {
-                                            key.Text(modifier = Modifier.weight(0.4f))
-                                            value.Text(modifier = Modifier.weight(1f))
-                                        }
-                                        Divider()
-                                    }
-                                }
+            TabBarWithContent(
+                entities = entities,
+                onPage = { pageId ->
+                    entities[pageId].Text()
+                    val paramsFlatList =
+                        remember(api) { mutableStateListOf<Pair<String, String>>() }
+                    LaunchedEffect(Unit) {
+                        apiRequestViewModel.params.forEach { k, vs ->
+                            vs.forEach { v ->
+                                paramsFlatList.add(Pair(k, v))
                             }
                         }
                     }
-                } ?: FullSizeColumn {
-                    "Error: ${reqResult.error}".Text()
+
+                    paramsFlatList.forEachIndexed { index, (k, v) ->
+                        FullWidthRow {
+                            val kk = Mutable.someString(k)
+                            val vv = Mutable.someString(v)
+                            OutlinedTextField(
+                                value = kk.value,
+                                onValueChange = { kk.value = it },
+                                modifier = Modifier.weight(1f)
+                            )
+                            OutlinedTextField(
+                                value = vv.value,
+                                onValueChange = { vv.value = it },
+                                modifier = Modifier.weight(1f)
+                            )
+                            "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
+                                paramsFlatList[index] = Pair(kk.value, vv.value)
+                                kk.value = ""
+                                vv.value = ""
+                            }
+                        }
+                    }
+                    FullWidthRow {
+                        val k = Mutable.someString()
+                        val v = Mutable.someString()
+                        OutlinedTextField(
+                            value = k.value,
+                            onValueChange = { k.value = it },
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = v.value,
+                            onValueChange = { v.value = it },
+                            modifier = Modifier.weight(1f)
+                        )
+                        "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
+                            paramsFlatList.add(Pair(k.value, v.value))
+                        }
+                    }
+                }
+            )
+            "Response".Text()
+            val entities1 = remember {
+                listOf("Overview", "Body", "Cookies", "Headers")
+            }
+            FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
+                TabBarWithContent(entities1) { pageId ->
+                    apiRequestViewModel.currentResult?.let { reqResult ->
+                        reqResult.response?.let { result ->
+
+                            when (pageId) {
+                                0 -> {
+                                    "Overview".Text()
+                                    "Status: ${result.code}".Text()
+                                    "Requested at: ${result.reqTime}".Text()
+                                    "Responded at: ${result.respTime}".Text()
+                                }
+
+                                1 -> {
+                                    "Requested at: ${result.reqTime}".Text()
+                                    "Responded at: ${result.respTime}".Text()
+                                    result.body.Text()
+                                }
+
+                                2 -> {}
+                                3 -> {
+                                    result.headers.forEach { (key, values) ->
+                                        values.forEach { value ->
+                                            FullWidthRow(modifier = Modifier.clickable {}) {
+                                                key.Text(modifier = Modifier.weight(0.4f))
+                                                value.Text(modifier = Modifier.weight(1f))
+                                            }
+                                            Divider()
+                                        }
+                                    }
+                                }
+                            }
+                        } ?: FullSizeColumn {
+                            "Error: ${reqResult.error}".Text()
+                        }
+
+                    }
                 }
 
             }
@@ -331,6 +386,32 @@ fun main() = singleWindowApplication(
     }
 }
 // TODO 增加Api列表的排序选项
-// TODO 增加TabBar for Opened API
-// TODO 增加自定义Params、Headers、Body的编辑功能
+// TODO 增加ApiTabBar for Opened API
+// TODO 增加自定义Params的编辑功能
+// TODO 增加自定义Headers的编辑功能
+// TODO 增加自定义Body的编辑功能
+
+@Composable
+fun TabBarWithContent(
+    entities: List<String>,
+    onPage: @Composable ColumnScope.(Int) -> Unit
+) {
+    FullWidthColumn {
+        var currentPage by remember { mutableStateOf(0) }
+        FullWidthRow {
+            entities.forEachIndexed { index, entity ->
+                entity.TextButton(
+                    modifier = Modifier.then(
+                        if (currentPage == index)
+                            Modifier.border(2.dp, Color.Black)
+                        else Modifier
+                    )
+                ) { currentPage = index }
+            }
+        }
+        FullWidthColumn {
+            onPage(currentPage)
+        }
+    }
+}
 
