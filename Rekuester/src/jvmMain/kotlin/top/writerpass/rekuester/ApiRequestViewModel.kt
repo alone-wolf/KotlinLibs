@@ -36,7 +36,7 @@ class ApiRequestViewModel(
     val requestBody by mutableStateOf(api.requestBody)
 
 
-    var currentResult by mutableStateOf<HttpResponseResult?>(null)
+    var currentResult by mutableStateOf<HttpRequestResult?>(null)
         private set
 
     fun request() {

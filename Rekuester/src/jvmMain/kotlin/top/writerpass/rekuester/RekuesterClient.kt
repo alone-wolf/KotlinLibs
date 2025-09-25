@@ -12,11 +12,16 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.URLBuilder
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.date.GMTDate
 import io.ktor.util.toMap
 import kotlinx.serialization.json.Json
+
+
+data class HttpRequestResult(
+    val response: HttpResponseResult?,
+    val error: String?
+)
 
 data class HttpResponseResult(
     val code: HttpStatusCode,
@@ -57,17 +62,20 @@ class RekuesterClient : AutoCloseable {
         return "${year}/${month.ordinal + 1}/${dayOfMonth} ${hours}:${minutes}:${seconds}.${timestamp % 1000}"
     }
 
-    private suspend fun HttpResponse.toResult(): HttpResponseResult {
+    private suspend fun HttpResponse.toResult(): HttpRequestResult {
         val headers = this.headers.toMap()
         val bodyText = this.bodyAsText()
         val reqTime = this.requestTime.toFormatString()
         val respTime = this.responseTime.toFormatString()
-        return HttpResponseResult(
-            code = this.status,
-            headers = headers,
-            body = bodyText,
-            reqTime = reqTime,
-            respTime = respTime
+        return HttpRequestResult(
+            HttpResponseResult(
+                code = this.status,
+                headers = headers,
+                body = bodyText,
+                reqTime = reqTime,
+                respTime = respTime
+            ),
+            null
         )
     }
 
@@ -78,20 +86,24 @@ class RekuesterClient : AutoCloseable {
         params: Map<String, List<String>> = emptyMap(),
         headers: Map<String, List<String>> = emptyMap(),
         body: Any? = null
-    ): HttpResponseResult {
-        return client.request(address) {
-            this.method = method
-        }.toResult()
+    ): HttpRequestResult {
+        return try {
+            client.request(address) {
+                this.method = method
+            }.toResult()
+        } catch (e: Exception) {
+            HttpRequestResult(null, e.message)
+        }
     }
 
-    suspend fun request(api: Api): HttpResponseResult {
-        val method = api.basicInfo.method
-        val address = URLBuilder(api.basicInfo.address).buildString()
-        val headers = emptyMap<String, List<String>>()
-        return client.request(address) {
-            this.method = method
-        }.toResult()
-    }
+//    suspend fun request(api: Api): HttpResponseResult {
+//        val method = api.basicInfo.method
+//        val address = URLBuilder(api.basicInfo.address).buildString()
+//        val headers = emptyMap<String, List<String>>()
+//        return client.request(address) {
+//            this.method = method
+//        }.toResult()
+//    }
 
     override fun close() {
         client.close()

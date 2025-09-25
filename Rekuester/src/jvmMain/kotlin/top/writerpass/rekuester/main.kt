@@ -66,6 +66,7 @@ import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import java.awt.Dimension
+import java.awt.MenuBar
 import java.util.UUID
 
 @Serializable
@@ -176,36 +177,41 @@ private fun ApiRequestPage(api: Api, client: RekuesterClient) {
                     }
                 }
             }
-            apiRequestViewModel.currentResult?.let { result ->
-                FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                    when (responseContentTabId.value) {
-                        0 -> {
-                            "Overview".Text()
-                            "Status: ${result.code}".Text()
-                            "Requested at: ${result.reqTime}".Text()
-                            "Responded at: ${result.respTime}".Text()
-                        }
+            apiRequestViewModel.currentResult?.let { reqResult ->
+                reqResult.response?.let { result ->
+                    FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        when (responseContentTabId.value) {
+                            0 -> {
+                                "Overview".Text()
+                                "Status: ${result.code}".Text()
+                                "Requested at: ${result.reqTime}".Text()
+                                "Responded at: ${result.respTime}".Text()
+                            }
 
-                        1 -> {
-                            "Requested at: ${result.reqTime}".Text()
-                            "Responded at: ${result.respTime}".Text()
-                            result.body.Text()
-                        }
+                            1 -> {
+                                "Requested at: ${result.reqTime}".Text()
+                                "Responded at: ${result.respTime}".Text()
+                                result.body.Text()
+                            }
 
-                        2 -> {}
-                        3 -> {
-                            result.headers.forEach { (key, values) ->
-                                values.forEach { value ->
-                                    FullWidthRow(modifier = Modifier.clickable {}) {
-                                        key.Text(modifier = Modifier.weight(0.4f))
-                                        value.Text(modifier = Modifier.weight(1f))
+                            2 -> {}
+                            3 -> {
+                                result.headers.forEach { (key, values) ->
+                                    values.forEach { value ->
+                                        FullWidthRow(modifier = Modifier.clickable {}) {
+                                            key.Text(modifier = Modifier.weight(0.4f))
+                                            value.Text(modifier = Modifier.weight(1f))
+                                        }
+                                        Divider()
                                     }
-                                    Divider()
                                 }
                             }
                         }
                     }
+                } ?: FullSizeColumn {
+                    "Error: ${reqResult.error}".Text()
                 }
+
             }
         }
     }
@@ -299,8 +305,12 @@ val LocalMainViewModel =
 val LocalMainUiViewModel =
     staticCompositionLocalOf<MainUiViewModel> { error("No MainUiViewModel provided") }
 
-fun main() = singleWindowApplication {
+fun main() = singleWindowApplication(
+    title = "Rekuester",
+) {
     this.window.minimumSize = Dimension(800, 600)
+    this.window.menuBar = MenuBar().apply {
+    }
     val client = remember { RekuesterClient() }
     val mainViewModel = viewModel { MainViewModel() }
     val mainUiViewModel = viewModel { MainUiViewModel() }
