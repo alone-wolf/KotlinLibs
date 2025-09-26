@@ -1,15 +1,24 @@
-package top.writerpass.rekuester
+package top.writerpass.rekuester.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import top.writerpass.kmplibrary.coroutine.launchIO
+import top.writerpass.rekuester.Api
+import top.writerpass.rekuester.ApiBasicInfo
+import top.writerpass.rekuester.HttpRequestResult
+import top.writerpass.rekuester.Pages
+import top.writerpass.rekuester.RekuesterClient
 
 class ApiRequestViewModel(
+    savedStateHandle: SavedStateHandle,
     private val client: RekuesterClient,
+    private val uuid: String = savedStateHandle.toRoute(Pages.ApiRequestPage::class).uuid,
     private val api: Api
 ) : ViewModel() {
     val isModified = mutableStateOf(false)

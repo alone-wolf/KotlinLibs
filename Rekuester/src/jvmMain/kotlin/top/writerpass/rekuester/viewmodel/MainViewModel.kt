@@ -1,85 +1,28 @@
 @file:OptIn(ExperimentalSerializationApi::class)
 
-package top.writerpass.rekuester
+package top.writerpass.rekuester.viewmodel
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ktor.http.HttpMethod
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import top.writerpass.kmplibrary.coroutine.launchIO
+import top.writerpass.rekuester.Api
+import top.writerpass.rekuester.ApiBasicInfo
+import top.writerpass.rekuester.utils.debounce
 import java.io.File
-import kotlin.coroutines.CoroutineContext
-
-class MainUiViewModel : ViewModel() {
-    var leftListWidth by mutableStateOf(200.dp)
-}
-
-
-class Debouncer(
-    private val scope: CoroutineScope,
-    private val waitMs: Long = 5000L,
-    private val context: CoroutineContext = Dispatchers.Default,
-    private val action: () -> Unit = {}
-) {
-    private var job: Job? = null
-
-    fun submit() {
-        job?.cancel() // 取消上一次
-        job = scope.launch(context) {
-            delay(waitMs)
-            action()
-        }
-    }
-
-    /**
-     * 调用此方法触发防抖
-     * @param action 延迟结束后执行的动作
-     */
-    fun submit(action: () -> Unit) {
-        job?.cancel() // 取消上一次
-        job = scope.launch(context) {
-            delay(waitMs)
-            action()
-        }
-    }
-
-    /** 可选：取消当前任务 */
-    fun cancel() {
-        job?.cancel()
-    }
-}
-
-fun ViewModel.debounce(
-    waitMs: Long = 5000L,
-    context: CoroutineContext = Dispatchers.IO,
-    action: () -> Unit
-) = Debouncer(
-    scope = viewModelScope,
-    waitMs = waitMs,
-    context = context,
-    action = action
-)
 
 class MainViewModel() : ViewModel() {
 
-    private val debouncer = debounce { saveApis() }
-
-    fun touchDataSaving() {
-        debouncer.submit()
-    }
+//    private val debouncer = debounce { saveApis() }
+//
+//    fun touchDataSaving() {
+//        debouncer.submit()
+//    }
 
     val apis = mutableStateListOf(
         Api(
@@ -125,18 +68,17 @@ class MainViewModel() : ViewModel() {
             ), params = emptyMap(), headers = emptyMap(), requestBody = null
         ),
     )
-    var currentApi by mutableStateOf<Api?>(apis.first())
-        private set
-
-    fun updateCurrentApi(api: Api) {
-        currentApi = api
-    }
+//    var currentApi by mutableStateOf<Api?>(apis.first())
+//        private set
+//
+//    fun updateCurrentApi(api: Api) {
+//        currentApi = api
+//    }
 
     fun updateApi(api: Api) {
         val uuid = api.uuid
         val index = apis.indexOfFirst { it.uuid == uuid }
         apis[index] = api
-        updateCurrentApi(api)
     }
 
     fun deleteApi(api: Api) {
@@ -155,7 +97,6 @@ class MainViewModel() : ViewModel() {
             requestBody = null
         )
         apis.add(newApi)
-        updateCurrentApi(newApi)
     }
 
     fun saveApis() {

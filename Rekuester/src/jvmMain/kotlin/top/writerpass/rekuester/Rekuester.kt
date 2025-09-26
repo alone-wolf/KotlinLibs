@@ -2,6 +2,8 @@ package top.writerpass.rekuester
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -40,7 +42,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,10 +53,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.singleWindowApplication
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.DropDownMenu
 import top.writerpass.cmplibrary.compose.FullHeightColumn
+import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullSizeRow
 import top.writerpass.cmplibrary.compose.FullWidthBox
@@ -70,6 +76,13 @@ import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
+import top.writerpass.rekuester.ui.componment.DraggableDivideBar
+import top.writerpass.rekuester.ui.componment.TabBarWithContent
+import top.writerpass.rekuester.ui.page.ApiRequestPage
+import top.writerpass.rekuester.ui.part.ApisListView
+import top.writerpass.rekuester.viewmodel.ApiRequestViewModel
+import top.writerpass.rekuester.viewmodel.MainUiViewModel
+import top.writerpass.rekuester.viewmodel.MainViewModel
 import java.awt.Dimension
 import java.awt.MenuBar
 import java.util.UUID
@@ -100,265 +113,13 @@ data class Api(
     val requestBody: ApiRequestBodyContainer? = null
 )
 
-@Composable
-private fun ApiRequestPage(api: Api, client: RekuesterClient) {
-    FullSizeColumn(modifier = Modifier) {
-        val mainViewModel = LocalMainViewModel.current
-        val apiRequestViewModel = viewModel(key = api.uuid) {
-            ApiRequestViewModel(
-                client = client, api = api
-            )
-        }
 
-        var isFirst by remember { mutableStateOf(true) }
-
-        LaunchedEffect(
-            apiRequestViewModel.label.value,
-            apiRequestViewModel.method.value,
-            apiRequestViewModel.address.value,
-            apiRequestViewModel.params,
-            apiRequestViewModel.headers,
-        ) {
-            if (isFirst) {
-                isFirst = false
-            } else {
-                apiRequestViewModel.isModified.setTrue()
-            }
-        }
-        FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
-            var editLabel by remember { mutableStateOf(false) }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (editLabel) {
-                    apiRequestViewModel.label.OutlinedTextFiled()
-                    Icons.Default.Check.IconButton { editLabel = false }
-                } else {
-                    apiRequestViewModel.label.value.Text()
-                    Icons.Default.Edit.IconButton { editLabel = true }
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            if (apiRequestViewModel.isModified.value) "Save".TextButton {
-                val newApi = apiRequestViewModel.composeNewApi()
-                mainViewModel.updateApi(newApi)
-                apiRequestViewModel.isModified.setFalse()
-            }
-        }
-        FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
-            apiRequestViewModel.method.DropDownMenu(
-                entities = remember {
-                    HttpMethod.DefaultMethods.associateBy { it.value }
-                },
-                any2String = { this.value }
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            apiRequestViewModel.address.OutlinedTextFiled(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(8.dp))
-            "Send".OutlinedButton {
-                apiRequestViewModel.request()
-            }
-        }
-        FullSizeColumn {
-            "Request".Text()
-            val entities = remember {
-                listOf(
-                    "Param",
-                    "Authorization",
-                    "Headers",
-                    "Body",
-                    "Scripts",
-                    "Settings"
-                )
-            }
-            TabBarWithContent(
-                entities = entities,
-                onPage = { pageId ->
-                    entities[pageId].Text()
-                    val paramsFlatList =
-                        remember(api) { mutableStateListOf<Pair<String, String>>() }
-                    LaunchedEffect(Unit) {
-                        apiRequestViewModel.params.forEach { k, vs ->
-                            vs.forEach { v ->
-                                paramsFlatList.add(Pair(k, v))
-                            }
-                        }
-                    }
-
-                    paramsFlatList.forEachIndexed { index, (k, v) ->
-                        FullWidthRow {
-                            val kk = Mutable.someString(k)
-                            val vv = Mutable.someString(v)
-                            OutlinedTextField(
-                                value = kk.value,
-                                onValueChange = { kk.value = it },
-                                modifier = Modifier.weight(1f)
-                            )
-                            OutlinedTextField(
-                                value = vv.value,
-                                onValueChange = { vv.value = it },
-                                modifier = Modifier.weight(1f)
-                            )
-                            "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
-                                paramsFlatList[index] = Pair(kk.value, vv.value)
-                                kk.value = ""
-                                vv.value = ""
-                            }
-                        }
-                    }
-                    FullWidthRow {
-                        val k = Mutable.someString()
-                        val v = Mutable.someString()
-                        OutlinedTextField(
-                            value = k.value,
-                            onValueChange = { k.value = it },
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = v.value,
-                            onValueChange = { v.value = it },
-                            modifier = Modifier.weight(1f)
-                        )
-                        "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
-                            paramsFlatList.add(Pair(k.value, v.value))
-                        }
-                    }
-                }
-            )
-            "Response".Text()
-            val entities1 = remember {
-                listOf("Overview", "Body", "Cookies", "Headers")
-            }
-            FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
-
-                TabBarWithContent(entities1) { pageId ->
-                    apiRequestViewModel.currentResult?.let { reqResult ->
-                        reqResult.response?.let { result ->
-
-                            when (pageId) {
-                                0 -> {
-                                    "Overview".Text()
-                                    "Status: ${result.code}".Text()
-                                    "Requested at: ${result.reqTime}".Text()
-                                    "Responded at: ${result.respTime}".Text()
-                                }
-
-                                1 -> {
-                                    "Requested at: ${result.reqTime}".Text()
-                                    "Responded at: ${result.respTime}".Text()
-                                    result.body.Text()
-                                }
-
-                                2 -> {}
-                                3 -> {
-                                    result.headers.forEach { (key, values) ->
-                                        values.forEach { value ->
-                                            FullWidthRow(modifier = Modifier.clickable {}) {
-                                                key.Text(modifier = Modifier.weight(0.4f))
-                                                value.Text(modifier = Modifier.weight(1f))
-                                            }
-                                            Divider()
-                                        }
-                                    }
-                                }
-                            }
-                        } ?: FullSizeColumn {
-                            "Error: ${reqResult.error}".Text()
-                        }
-
-                    }
-                }
-
-            }
-        }
-    }
-}
-
-@Composable
-private fun LeftList() {
-    val mainViewModel = LocalMainViewModel.current
-    val mainUiViewModel = LocalMainUiViewModel.current
-    FullHeightColumn(modifier = Modifier.width(mainUiViewModel.leftListWidth)) {
-        FullWidthRow(horizontalArrangement = Arrangement.End) {
-            "Load".TextButton {
-                mainViewModel.loadApis()
-            }
-            "Save".TextButton {
-                mainViewModel.saveApis()
-            }
-            Icons.Default.Add.IconButton {
-                mainViewModel.createNewApi()
-            }
-        }
-        LazyColumn(modifier = Modifier.fillMaxHeight().weight(1f)) {
-            items(
-                items = mainViewModel.apis, itemContent = { api ->
-                    val onHover = Mutable.someBoolean()
-                    FullWidthBox(
-                        modifier = Modifier.height(45.dp)
-                            .clickable { mainViewModel.updateCurrentApi(api) }
-                            .padding(horizontal = 16.dp).onPointerHover(
-                                onNotHover = { onHover.value = false },
-                                onHover = { onHover.value = true }),
-                    ) {
-                        api.basicInfo.label.Text(
-                            modifier = Modifier.align(Alignment.CenterStart),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                            AnimatedVisibility(
-                                visible = onHover.value, enter = fadeIn(), exit = fadeOut()
-                            ) {
-                                val onIconHover = Mutable.someBoolean()
-                                Box(
-                                    modifier = Modifier.onPointerHover(
-                                        onHover = { onIconHover.setTrue() },
-                                        onNotHover = { onIconHover.setFalse() })
-                                ) {
-                                    AnimatedContent(onIconHover.value) {
-                                        if (it) {
-                                            Icons.Default.Delete.IconButton {
-                                                mainViewModel.deleteApi(api)
-                                            }
-                                        } else {
-                                            Icons.Outlined.Delete.IconButton {}
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })
-        }
-    }
-}
-
-@Composable
-fun DraggableDivideBar(value: Dp, onDrag: (Dp) -> Unit) {
-    val density = LocalDensity.current
-    val draggableState = rememberDraggableState(onDelta = { delta ->
-        val result = with(density) {
-            (value.toPx() + delta).toDp()
-        }.coerceIn(150.dp, 300.dp)
-        onDrag(result)
-    })
-
-    val onBarHover = Mutable.someBoolean()
-    val barWidth by animateDpAsState(if (onBarHover.value) 5.dp else 2.dp)
-    Box(
-        modifier = Modifier.fillMaxHeight().width(barWidth).background(Color.Gray).onPointerHover(
-            onHover = { onBarHover.value = true },
-            onNotHover = { onBarHover.value = false }).pointerHoverIcon(
-            PointerIcon.Hand
-        ).draggable(
-            state = draggableState, orientation = Orientation.Horizontal
-        )
-    )
-}
-
-val LocalMainViewModel =
-    staticCompositionLocalOf<MainViewModel> { error("No MainViewModel provided") }
-val LocalMainUiViewModel =
-    staticCompositionLocalOf<MainUiViewModel> { error("No MainUiViewModel provided") }
+// TODO 增加Api列表的排序选项
+// TODO 增加ApiTabBar for Opened API
+// TODO 增加自定义Params的编辑功能
+// TODO 增加自定义Headers的编辑功能
+// TODO 增加自定义Body的编辑功能
+// TODO 使用Navigation作为导航
 
 fun main() = singleWindowApplication(
     title = "Rekuester",
@@ -369,49 +130,58 @@ fun main() = singleWindowApplication(
     val client = remember { RekuesterClient() }
     val mainViewModel = viewModel { MainViewModel() }
     val mainUiViewModel = viewModel { MainUiViewModel() }
+    val navController = rememberNavController()
+
 
     CompositionLocalProvider(
         LocalMainViewModel provides mainViewModel,
         LocalMainUiViewModel provides mainUiViewModel,
+        LocalNavController provides navController
     ) {
         FullSizeRow {
-            LeftList()
-            DraggableDivideBar(mainUiViewModel.leftListWidth) { it ->
-                mainUiViewModel.leftListWidth = it
+            ApisListView()
+            DraggableDivideBar(mainUiViewModel.apisListViewWidth) { it ->
+                mainUiViewModel.apisListViewWidth = it
             }
-            mainViewModel.currentApi?.let {
-                ApiRequestPage(it, client)
-            }
-        }
-    }
-}
-// TODO 增加Api列表的排序选项
-// TODO 增加ApiTabBar for Opened API
-// TODO 增加自定义Params的编辑功能
-// TODO 增加自定义Headers的编辑功能
-// TODO 增加自定义Body的编辑功能
-
-@Composable
-fun TabBarWithContent(
-    entities: List<String>,
-    onPage: @Composable ColumnScope.(Int) -> Unit
-) {
-    FullWidthColumn {
-        var currentPage by remember { mutableStateOf(0) }
-        FullWidthRow {
-            entities.forEachIndexed { index, entity ->
-                entity.TextButton(
-                    modifier = Modifier.then(
-                        if (currentPage == index)
-                            Modifier.border(2.dp, Color.Black)
-                        else Modifier
+            NavHost(navController, startDestination = Pages.BlankPage) {
+                composable<Pages.BlankPage>(
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { ExitTransition.None }
+                ) {
+                    FullSizeBox {
+                        "This is a Blank Page, select an API to start".Text(
+                            modifier = Modifier.align(
+                                Alignment.Center
+                            )
+                        )
+                    }
+                }
+                composable<Pages.ApiRequestPage>(
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { ExitTransition.None }
+                ) {
+                    val apiId = it.savedStateHandle.toRoute(Pages.ApiRequestPage::class).uuid
+                    val api = mainViewModel.apis.find { it.uuid == apiId }!!
+                    val apiRequestViewModel = viewModel(
+                        viewModelStoreOwner = it,
+                        key = apiId,
+                        initializer = { ApiRequestViewModel(
+                            savedStateHandle = it.savedStateHandle,
+                            client = client,
+                            uuid = it.savedStateHandle.toRoute(Pages.ApiRequestPage::class).uuid,
+                            api = api
+                        ) }
                     )
-                ) { currentPage = index }
+                    ApiRequestPage(api = api, apiRequestViewModel = apiRequestViewModel)
+                }
             }
-        }
-        FullWidthColumn {
-            onPage(currentPage)
         }
     }
 }
+
+
 
