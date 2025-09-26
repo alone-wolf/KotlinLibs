@@ -110,53 +110,73 @@ fun ApiRequestPage(
             TabBarWithContent(
                 entities = entities,
                 onPage = { pageId ->
-                    entities[pageId].Text()
-                    val paramsFlatList =
-                        remember(api) { mutableStateListOf<Pair<String, String>>() }
-                    LaunchedEffect(Unit) {
-                        apiRequestViewModel.params.forEach { k, vs ->
-                            vs.forEach { v ->
-                                paramsFlatList.add(Pair(k, v))
+                    when (pageId) {
+                        0 -> {
+                            entities[pageId].Text()
+                            val paramsFlatList = remember(api) {
+                                mutableStateListOf<Pair<String, String>>()
                             }
-                        }
-                    }
+                            LaunchedEffect(Unit) {
+                                apiRequestViewModel.params.forEach { k, vs ->
+                                    vs.forEach { v ->
+                                        paramsFlatList.add(Pair(k, v))
+                                    }
+                                }
+                            }
 
-                    paramsFlatList.forEachIndexed { index, (k, v) ->
-                        FullWidthRow {
-                            val kk = Mutable.someString(k)
-                            val vv = Mutable.someString(v)
-                            OutlinedTextField(
-                                value = kk.value,
-                                onValueChange = { kk.value = it },
-                                modifier = Modifier.weight(1f)
-                            )
-                            OutlinedTextField(
-                                value = vv.value,
-                                onValueChange = { vv.value = it },
-                                modifier = Modifier.weight(1f)
-                            )
-                            "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
-                                paramsFlatList[index] = Pair(kk.value, vv.value)
-                                kk.value = ""
-                                vv.value = ""
+                            paramsFlatList.forEachIndexed { index, (k, v) ->
+                                FullWidthRow {
+                                    val kk = Mutable.someString(k)
+                                    val vv = Mutable.someString(v)
+                                    OutlinedTextField(
+                                        value = kk.value,
+                                        onValueChange = { kk.value = it },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    OutlinedTextField(
+                                        value = vv.value,
+                                        onValueChange = { vv.value = it },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    "Del".OutlinedButton(modifier = Modifier.weight(0.25f)) {
+                                        paramsFlatList.removeAt(index)
+                                    }
+                                    "Save".OutlinedButton(modifier = Modifier.weight(0.25f)) {
+                                        paramsFlatList[index] = Pair(kk.value, vv.value)
+                                        kk.value = ""
+                                        vv.value = ""
+                                    }
+                                }
+                            }
+                            FullWidthRow {
+                                val k = Mutable.someString()
+                                val v = Mutable.someString()
+                                OutlinedTextField(
+                                    value = k.value,
+                                    onValueChange = { k.value = it },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                OutlinedTextField(
+                                    value = v.value,
+                                    onValueChange = { v.value = it },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
+                                    paramsFlatList.add(Pair(k.value, v.value))
+                                    k.value = ""
+                                    v.value = ""
+                                }
                             }
                         }
-                    }
-                    FullWidthRow {
-                        val k = Mutable.someString()
-                        val v = Mutable.someString()
-                        OutlinedTextField(
-                            value = k.value,
-                            onValueChange = { k.value = it },
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = v.value,
-                            onValueChange = { v.value = it },
-                            modifier = Modifier.weight(1f)
-                        )
-                        "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
-                            paramsFlatList.add(Pair(k.value, v.value))
+
+                        1 -> {
+                            entities[pageId].Text()
+                            "Not Implemented".Text()
+                        }
+
+                        else -> {
+                            entities[pageId].Text()
+                            "Not Implemented".Text()
                         }
                     }
                 }
