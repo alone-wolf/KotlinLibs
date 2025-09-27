@@ -37,7 +37,6 @@ import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
-import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.ApiStateHolder.rememberApiState
 import top.writerpass.rekuester.LocalNavController
 import top.writerpass.rekuester.Pages
@@ -113,57 +112,57 @@ fun ApiRequestPage(
                     onPage = { pageId ->
                         when (pageId) {
                             0 -> {
-//                                entities[pageId].Text()
-//
-//                                paramsFlatList.forEachIndexed { index, (k, v) ->
-//                                    FullWidthRow {
-//                                        val kk = Mutable.someString(k)
-//                                        val vv = Mutable.someString(v)
-//                                        OutlinedTextField(
-//                                            value = kk.value,
-//                                            onValueChange = { kk.value = it },
-//                                            modifier = Modifier.weight(1f)
-//                                        )
-//                                        OutlinedTextField(
-//                                            value = vv.value,
-//                                            onValueChange = { vv.value = it },
-//                                            modifier = Modifier.weight(1f)
-//                                        )
-//                                        Icons.Default.Delete.IconButton {
-//                                            paramsFlatList.removeAt(index)
-//                                        }
-//                                        Icons.Default.Save.IconButton {
-//                                            paramsFlatList[index] =
-//                                                Pair(kk.value, vv.value)
-//                                            kk.value = ""
-//                                            vv.value = ""
-//                                        }
-//                                    }
-//                                }
-//                                FullWidthRow {
-//                                    val k = Mutable.someString()
-//                                    val v = Mutable.someString()
-//                                    OutlinedTextField(
-//                                        value = k.value,
-//                                        onValueChange = { k.value = it },
-//                                        modifier = Modifier.weight(1f)
-//                                    )
-//                                    OutlinedTextField(
-//                                        value = v.value,
-//                                        onValueChange = { v.value = it },
-//                                        modifier = Modifier.weight(1f)
-//                                    )
-//                                    "Save".OutlinedButton(modifier = Modifier) {
-//                                        paramsFlatList.add(
-//                                            Pair(
-//                                                k.value,
-//                                                v.value
-//                                            )
-//                                        )
-//                                        k.value = ""
-//                                        v.value = ""
-//                                    }
-//                                }
+                                entities[pageId].Text()
+
+                                apiState.params.list.forEachIndexed { index, (k, v) ->
+                                    FullWidthRow {
+                                        val kk = Mutable.someString(k)
+                                        val vv = Mutable.someString(v)
+                                        OutlinedTextField(
+                                            value = kk.value,
+                                            onValueChange = { kk.value = it },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        OutlinedTextField(
+                                            value = vv.value,
+                                            onValueChange = { vv.value = it },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icons.Default.Delete.IconButton {
+                                            apiState.params.removeAt(index)
+                                        }
+                                        Icons.Default.Save.IconButton {
+                                            apiState.params.list[index] =
+                                                Pair(kk.value, vv.value)
+                                            kk.value = ""
+                                            vv.value = ""
+                                        }
+                                    }
+                                }
+                                FullWidthRow {
+                                    val k = Mutable.someString()
+                                    val v = Mutable.someString()
+                                    OutlinedTextField(
+                                        value = k.value,
+                                        onValueChange = { k.value = it },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    OutlinedTextField(
+                                        value = v.value,
+                                        onValueChange = { v.value = it },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    "Save".OutlinedButton(modifier = Modifier) {
+                                        apiState.params.list.add(
+                                            Pair(
+                                                k.value,
+                                                v.value
+                                            )
+                                        )
+                                        k.value = ""
+                                        v.value = ""
+                                    }
+                                }
                             }
 
                             1 -> {

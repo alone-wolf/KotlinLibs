@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.ktor.http.HttpMethod
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -49,7 +48,7 @@ class ApiRequestViewModel(
         }
     }
 
-    fun updateOrInsert(api: Api){
+    fun updateOrInsert(api: Api) {
         runInScope {
             repository.updateOrInsert(api)
         }

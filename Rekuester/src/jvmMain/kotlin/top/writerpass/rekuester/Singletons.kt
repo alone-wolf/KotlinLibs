@@ -9,6 +9,7 @@ import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
 import top.writerpass.rekuester.data.ApisRepository
 import top.writerpass.rekuester.utils.AutoActionMutableState
+import top.writerpass.rekuester.utils.AutoActionMutableStateList
 
 object Singletons {
     val apisRepository = ApisRepository()
@@ -28,12 +29,12 @@ class ApiState(
 ) {
     val isModified = mutableStateOf(false)
 
-    val label = autoTagModifiedMutableStateOf(api.basicInfo.label)
-    val method = autoTagModifiedMutableStateOf(api.basicInfo.method)
-    val address = autoTagModifiedMutableStateOf(api.basicInfo.address)
-    val params = autoTagModifiedMutableStateOf(api.params)
-    val headers = autoTagModifiedMutableStateOf(api.headers)
-    val requestBody = autoTagModifiedMutableStateOf(api.requestBody)
+    val label = autoTagModifiedStateOf(api.basicInfo.label)
+    val method = autoTagModifiedStateOf(api.basicInfo.method)
+    val address = autoTagModifiedStateOf(api.basicInfo.address)
+    val params = autoTagModifiedStateListOf(api.params.flatToList())
+    val headers = autoTagModifiedStateListOf(api.headers.flatToList())
+    val requestBody = autoTagModifiedStateOf(api.requestBody)
 
 
     fun composeNewApi(): Api {
@@ -44,23 +45,33 @@ class ApiState(
                 method = method.value,
                 address = address.value
             ),
-            params = params.value,
-            headers = headers.value,
+            params = params.list.toList().groupToMap(),
+            headers = headers.list.toList().groupToMap(),
             requestBody = requestBody.value
         )
     }
 
     @StateFactoryMarker
-    fun <T> autoTagModifiedMutableStateOf(initial: T): AutoActionMutableState<T> {
+    fun <T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
         return AutoActionMutableState(initial) {
+            isModified.setTrue()
+        }
+    }
+
+    @StateFactoryMarker
+    fun <T> autoTagModifiedStateListOf(initial: List<T>): AutoActionMutableStateList<T> {
+        return AutoActionMutableStateList(initial) {
             isModified.setTrue()
         }
     }
 }
 
-fun <K,V>Map<K,List<V>>.deList():List<Pair<K,V>>{
+fun <K, V> Map<K, List<V>>.flatToList(): List<Pair<K, V>> {
     return this.flatMap { (k, v) -> v.map { Pair(k, it) } }
 }
+
+fun <K, V> List<Pair<K, V>>.groupToMap(): Map<K, List<V>> =
+    groupBy({ it.first }, { it.second })
 
 object ApiStateHolder {
     private val apiStateMap = mutableMapOf<String, ApiState>()
@@ -72,11 +83,11 @@ object ApiStateHolder {
         return apiStateMap.getOrCreate(api.uuid) { ApiState(api) }
     }
 
-    fun clear(){
+    fun clear() {
         apiStateMap.clear()
     }
 
-    fun remove(api: Api){
+    fun remove(api: Api) {
         apiStateMap.remove(api.uuid)
     }
 
