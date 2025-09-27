@@ -30,8 +30,8 @@ class MainViewModel() : ViewModel() {
     }
 
     val allFlow = repository.allFlow
-    fun findAll() = runInScope { repository.findAll() }
-    fun findById(id: String) = runInScope { repository.findById(id) }
+    suspend fun findAll() = repository.findAll()
+//    fun findById(id: String) = runInScope { repository.findById(id) }
     fun deleteApi(index: Int) = runInScope { repository.delete(index) }
     fun deleteApi(id: String) = runInScope { repository.delete(id) }
     fun deleteApi(api: Api) = runInScope { repository.delete(api) }

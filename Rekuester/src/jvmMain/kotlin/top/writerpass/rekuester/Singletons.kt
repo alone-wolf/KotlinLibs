@@ -1,13 +1,14 @@
 package top.writerpass.rekuester
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.StateFactoryMarker
 import kotlinx.serialization.json.Json
+import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
 import top.writerpass.rekuester.data.ApisRepository
+import top.writerpass.rekuester.utils.AutoActionMutableState
 
 object Singletons {
     val apisRepository = ApisRepository()
@@ -25,34 +26,14 @@ class ApiState(
     api: Api,
     val uuid: String = api.uuid,
 ) {
-    private val startAt: Long = System.currentTimeMillis()
-    private val endAt = mutableStateOf(startAt)
-    val isModified = derivedStateOf {
-        startAt != endAt.value
-    }
+    val isModified = mutableStateOf(false)
 
-    inner class AutoTagMutableState<T>(
-        initial: T,
-    ) : MutableState<T> {
-
-        private val state = mutableStateOf(initial)
-
-        override var value: T
-            get() = state.value
-            set(value) {
-                state.value = value
-                endAt.value = System.currentTimeMillis()
-            }
-
-        override fun component1(): T = state.component1()
-        override fun component2(): (T) -> Unit = state.component2()
-    }
-    val label = AutoTagMutableState(api.basicInfo.label)
-    val method = AutoTagMutableState(api.basicInfo.method)
-    val address = AutoTagMutableState(api.basicInfo.address)
-    val params = AutoTagMutableState(api.params)
-    val headers = AutoTagMutableState(api.headers)
-    val requestBody = AutoTagMutableState(api.requestBody)
+    val label = autoTagModifiedMutableStateOf(api.basicInfo.label)
+    val method = autoTagModifiedMutableStateOf(api.basicInfo.method)
+    val address = autoTagModifiedMutableStateOf(api.basicInfo.address)
+    val params = autoTagModifiedMutableStateOf(api.params)
+    val headers = autoTagModifiedMutableStateOf(api.headers)
+    val requestBody = autoTagModifiedMutableStateOf(api.requestBody)
 
 
     fun composeNewApi(): Api {
@@ -68,6 +49,17 @@ class ApiState(
             requestBody = requestBody.value
         )
     }
+
+    @StateFactoryMarker
+    fun <T> autoTagModifiedMutableStateOf(initial: T): AutoActionMutableState<T> {
+        return AutoActionMutableState(initial) {
+            isModified.setTrue()
+        }
+    }
+}
+
+fun <K,V>Map<K,List<V>>.deList():List<Pair<K,V>>{
+    return this.flatMap { (k, v) -> v.map { Pair(k, it) } }
 }
 
 object ApiStateHolder {
@@ -78,6 +70,21 @@ object ApiStateHolder {
 
     fun getApiState(api: Api): ApiState {
         return apiStateMap.getOrCreate(api.uuid) { ApiState(api) }
+    }
+
+    fun clear(){
+        apiStateMap.clear()
+    }
+
+    fun remove(api: Api){
+        apiStateMap.remove(api.uuid)
+    }
+
+    fun flush(api: Api): ApiState {
+        apiStateMap.remove(api.uuid)
+        val new = ApiState(api)
+        apiStateMap[api.uuid] = new
+        return new
     }
 
     @Composable

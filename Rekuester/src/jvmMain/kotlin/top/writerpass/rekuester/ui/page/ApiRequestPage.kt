@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,6 +36,7 @@ import top.writerpass.cmplibrary.compose.OutlinedTextFiled
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
+import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.ApiStateHolder.rememberApiState
 import top.writerpass.rekuester.LocalNavController
@@ -74,7 +78,10 @@ fun ApiRequestPage(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 if (apiState.isModified.value) "Save".TextButton {
-                    apiState.composeNewApi().let { apiRequestViewModel.update(it) }
+                    apiState.composeNewApi().let {
+                        apiRequestViewModel.updateOrInsert(it)
+                        apiState.isModified.setFalse()
+                    }
                 }
             }
             FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
@@ -87,9 +94,7 @@ fun ApiRequestPage(
                 Spacer(modifier = Modifier.width(8.dp))
                 apiState.address.OutlinedTextFiled(modifier = Modifier.weight(1f))
                 Spacer(modifier = Modifier.width(8.dp))
-                "Send".OutlinedButton {
-                    apiRequestViewModel.request()
-                }
+                "Send".OutlinedButton { apiRequestViewModel.request() }
             }
             FullSizeColumn {
                 "Request".Text()
@@ -103,11 +108,11 @@ fun ApiRequestPage(
                         "Settings"
                     )
                 }
-//                TabBarWithContent(
-//                    entities = entities,
-//                    onPage = { pageId ->
-//                        when (pageId) {
-//                            0 -> {
+                TabBarWithContent(
+                    entities = entities,
+                    onPage = { pageId ->
+                        when (pageId) {
+                            0 -> {
 //                                entities[pageId].Text()
 //
 //                                paramsFlatList.forEachIndexed { index, (k, v) ->
@@ -124,10 +129,10 @@ fun ApiRequestPage(
 //                                            onValueChange = { vv.value = it },
 //                                            modifier = Modifier.weight(1f)
 //                                        )
-//                                        "Del".OutlinedButton(modifier = Modifier.weight(0.25f)) {
+//                                        Icons.Default.Delete.IconButton {
 //                                            paramsFlatList.removeAt(index)
 //                                        }
-//                                        "Save".OutlinedButton(modifier = Modifier.weight(0.25f)) {
+//                                        Icons.Default.Save.IconButton {
 //                                            paramsFlatList[index] =
 //                                                Pair(kk.value, vv.value)
 //                                            kk.value = ""
@@ -159,20 +164,20 @@ fun ApiRequestPage(
 //                                        v.value = ""
 //                                    }
 //                                }
-//                            }
-//
-//                            1 -> {
-//                                entities[pageId].Text()
-//                                "Not Implemented".Text()
-//                            }
-//
-//                            else -> {
-//                                entities[pageId].Text()
-//                                "Not Implemented".Text()
-//                            }
-//                        }
-//                    }
-//                )
+                            }
+
+                            1 -> {
+                                entities[pageId].Text()
+                                "Not Implemented".Text()
+                            }
+
+                            else -> {
+                                entities[pageId].Text()
+                                "Not Implemented".Text()
+                            }
+                        }
+                    }
+                )
                 "Response".Text()
                 val entities1 = remember {
                     listOf("Overview", "Body", "Cookies", "Headers")

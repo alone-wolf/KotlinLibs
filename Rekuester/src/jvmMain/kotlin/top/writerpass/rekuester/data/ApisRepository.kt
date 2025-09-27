@@ -52,7 +52,6 @@ private val builtInApis = arrayOf(
 )
 
 class ApisRepository() {
-
     private val dao = object : EmmListDao<String, Api>() {}
 
 
@@ -70,6 +69,8 @@ class ApisRepository() {
     suspend fun insert(api: Api) = dao.insert(api)
     suspend fun inserts(vararg apis: Api) = dao.inserts(*apis)
     suspend fun update(api: Api) = dao.update(api)
+
+    suspend fun updateOrInsert(api: Api) = dao.updateOrInsert(api)
 
     suspend fun overWriteItems(items: List<Api>) = dao.overWriteItems(items)
 }

@@ -9,10 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
+import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeRow
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.navigation.composableNoAnimate
+import top.writerpass.kmplibrary.utils.println
 import top.writerpass.rekuester.data.dao.ItemWithId
 import top.writerpass.rekuester.ui.componment.DraggableDivideBar
 import top.writerpass.rekuester.ui.page.ApiRequestPage
@@ -69,6 +71,12 @@ fun main() = singleWindowApplication(
     val mainViewModel = viewModel { MainViewModel() }
     val mainUiViewModel = viewModel { MainUiViewModel() }
     val navController = rememberNavController()
+
+    LaunchedEffectOdd {
+        mainViewModel.findAll().forEach {
+            it.println()
+        }
+    }
 
 
     CompositionLocalProvider(

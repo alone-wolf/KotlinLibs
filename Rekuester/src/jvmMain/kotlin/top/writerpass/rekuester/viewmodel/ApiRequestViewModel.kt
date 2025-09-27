@@ -49,39 +49,11 @@ class ApiRequestViewModel(
         }
     }
 
-
-//    fun updateApiLabel(label: String) {
-//        runUpdateApi {
-//            val newBasicInfo = basicInfo.copy(label = label)
-//            copy(basicInfo = newBasicInfo)
-//        }
-//    }
-//
-//    fun updateApiMethod(method: HttpMethod) {
-//        runUpdateApi {
-//            val newBasicInfo = basicInfo.copy(method = method)
-//            copy(basicInfo = newBasicInfo)
-//        }
-//    }
-//
-//    fun updateApiAddress(address: String) {
-//        runUpdateApi {
-//            val newBasicInfo = basicInfo.copy(address = address)
-//            copy(basicInfo = newBasicInfo)
-//        }
-//    }
-//
-//    fun updateApiParams(params: Map<String, List<String>>) {
-//        runUpdateApi {
-//            copy(params = params)
-//        }
-//    }
-//
-//    fun updateApiHeaders(headers: Map<String, List<String>>) {
-//        runUpdateApi {
-//            copy(headers = headers)
-//        }
-//    }
+    fun updateOrInsert(api: Api){
+        runInScope {
+            repository.updateOrInsert(api)
+        }
+    }
 
 
     var currentResult by mutableStateOf<HttpRequestResult?>(null)

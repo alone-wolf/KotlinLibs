@@ -67,11 +67,7 @@ fun ApisListView() {
                         modifier = Modifier.height(45.dp)
                             .clickable {
                                 navController.navigate(Pages.ApiRequestPage(api.uuid)) {
-                                    popUpTo<Pages.BlankPage> {
-//                                        saveState = true
-                                    }
-//                                    restoreState = true
-//                                    launchSingleTop = true
+                                    popUpTo<Pages.BlankPage>()
                                 }
                             }
                             .padding(horizontal = 16.dp).onPointerHover(
