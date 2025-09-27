@@ -13,6 +13,7 @@ import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeRow
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.navigation.composableNoAnimate
+import top.writerpass.rekuester.data.dao.ItemWithId
 import top.writerpass.rekuester.ui.componment.DraggableDivideBar
 import top.writerpass.rekuester.ui.page.ApiRequestPage
 import top.writerpass.rekuester.ui.part.ApisListView
@@ -35,7 +36,8 @@ abstract class ApiRequestBodyContainer(
 @Serializable
 data class ApiBasicInfo(
     val label: String,
-    @Serializable(with = HttpMethodSerializer::class) val method: HttpMethod,
+    @Serializable(with = HttpMethodSerializer::class)
+    val method: HttpMethod,
     val address: String, // scheme://host:port
 )
 
@@ -46,7 +48,9 @@ data class Api(
     val params: Map<String, List<String>> = emptyMap(),
     val headers: Map<String, List<String>> = emptyMap(),
     val requestBody: ApiRequestBodyContainer? = null
-)
+): ItemWithId<String> {
+    override val id: String = uuid
+}
 
 
 // TODO 增加Api列表的排序选项

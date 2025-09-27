@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,9 +57,10 @@ fun ApisListView() {
                 mainViewModel.createNewApi()
             }
         }
+        val apis by mainViewModel.allFlow.collectAsState(emptyList())
         LazyColumn(modifier = Modifier.fillMaxHeight().weight(1f)) {
             items(
-                items = mainViewModel.apis,
+                items = apis,
                 itemContent = { api ->
                     val onHover = Mutable.someBoolean()
                     FullWidthBox(
