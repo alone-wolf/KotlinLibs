@@ -57,12 +57,19 @@ fun ApisListView() {
         }
         LazyColumn(modifier = Modifier.fillMaxHeight().weight(1f)) {
             items(
-                items = mainViewModel.apis, itemContent = { api ->
+                items = mainViewModel.apis,
+                itemContent = { api ->
                     val onHover = Mutable.someBoolean()
                     FullWidthBox(
                         modifier = Modifier.height(45.dp)
                             .clickable {
-                                navController.navigate(Pages.ApiRequestPage(api.uuid))
+                                navController.navigate(Pages.ApiRequestPage(api.uuid)) {
+                                    popUpTo<Pages.BlankPage> {
+//                                        saveState = true
+                                    }
+//                                    restoreState = true
+//                                    launchSingleTop = true
+                                }
                             }
                             .padding(horizontal = 16.dp).onPointerHover(
                                 onNotHover = { onHover.value = false },
@@ -96,7 +103,8 @@ fun ApisListView() {
                             }
                         }
                     }
-                })
+                }
+            )
         }
     }
 }

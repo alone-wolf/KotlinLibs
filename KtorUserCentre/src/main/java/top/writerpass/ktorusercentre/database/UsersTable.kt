@@ -3,6 +3,7 @@ package top.writerpass.ktorusercentre.database
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
@@ -14,8 +15,10 @@ import org.jetbrains.exposed.v1.jdbc.SizedIterable
 import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import top.writerpass.ktorusercentre.returnBadRequest
+import top.writerpass.ktorusercentre.returnCreated
 import top.writerpass.ktorusercentre.returnNotFound
 import top.writerpass.ktorusercentre.returnOk
+import kotlin.random.Random
 
 @Serializable
 data class User(
@@ -107,24 +110,24 @@ object UsersDao {
 }
 
 fun Route.installUsersApi(path: String = "/users") = route(path) {
-//    post("/inject") {
-//        val users = mutableListOf<User>()
-//        repeat(100) { id ->
-//            val a = "${id}##${Random.nextFloat()}"
-//            users.add(
-//                User.new(
-//                    username = a,
-//                    email = a,
-//                    passwordHash1 = a,
-//                    isActive = true
-//                )
-//            )
-//        }
-//        transaction {
-//            UsersDao.insert(*users.toTypedArray())
-//        }
-//        call.returnCreated("Inject success")
-//    }
+    post("/inject") {
+        val users = mutableListOf<User>()
+        repeat(100) { id ->
+            val a = "${id}##${Random.nextFloat()}"
+            users.add(
+                User.new(
+                    username = a,
+                    email = a,
+                    passwordHash1 = a,
+                    isActive = true
+                )
+            )
+        }
+        transaction {
+            UsersDao.insert(*users.toTypedArray())
+        }
+        call.returnCreated("Inject success")
+    }
     get {
         val users = transaction {
             UsersDao.findAllUsers().map { it.toData() }

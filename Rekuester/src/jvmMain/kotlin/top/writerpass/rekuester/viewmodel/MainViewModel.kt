@@ -2,10 +2,12 @@
 
 package top.writerpass.rekuester.viewmodel
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ktor.http.HttpMethod
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -13,18 +15,73 @@ import kotlinx.serialization.json.encodeToStream
 import top.writerpass.kmplibrary.coroutine.launchIO
 import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.ApiBasicInfo
-import top.writerpass.rekuester.utils.debounce
+import top.writerpass.rekuester.Singletons
 import java.io.File
 
-class MainViewModel() : ViewModel() {
 
-//    private val debouncer = debounce { saveApis() }
-//
-//    fun touchDataSaving() {
-//        debouncer.submit()
-//    }
+interface BaseDataDao<ID, ITEM> {
+    suspend fun findById(id: ID): ITEM?
+    suspend fun findAll(): List<ITEM>
+    val allFlow: Flow<List<ITEM>>
+    suspend fun delete(id: ID)
+    suspend fun delete(item: ITEM)
+    suspend fun insert(item: ITEM)
+    suspend fun update(item: ITEM)
+    suspend fun update(id: ID, item: ITEM)
+}
 
-    val apis = mutableStateListOf(
+class ApiDao(
+    private val _apis: MutableList<Api> = mutableListOf(),
+    private val _apisFlow: MutableStateFlow<List<Api>> = MutableStateFlow(emptyList())
+) : BaseDataDao<String, Api> {
+    override suspend fun findById(id: String): Api? {
+        return _apis.find { it.uuid == id }
+    }
+
+    override suspend fun findAll(): List<Api> {
+        return _apis.toList()
+    }
+
+    override val allFlow: Flow<List<Api>>
+        get() = _apisFlow.asStateFlow()
+
+    suspend fun delete(index: Int) {
+        _apis.removeAt(index)
+    }
+
+    override suspend fun delete(id: String) {
+        val index = _apis.indexOfFirst { it.uuid == id }
+        delete(index)
+    }
+
+    override suspend fun delete(item: Api) {
+        delete(item.uuid)
+    }
+
+    override suspend fun insert(item: Api) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun update(item: Api) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun update(id: String, item: Api) {
+        TODO("Not yet implemented")
+    }
+
+}
+
+class ApiRepository() {
+
+    private val _apisFlow = MutableStateFlow(emptyList<Api>())
+    val apisFlow = _apisFlow.asStateFlow()
+
+    suspend fun initialLoadApis() {
+        _apisFlow.emit(_apis)
+    }
+
+    private val _apis = mutableListOf(
         Api(
             basicInfo = ApiBasicInfo(
                 label = "GET All Users",
@@ -68,6 +125,47 @@ class MainViewModel() : ViewModel() {
             ), params = emptyMap(), headers = emptyMap(), requestBody = null
         ),
     )
+
+    private suspend fun autoLoadApis(block: suspend () -> Unit) {
+        block()
+        _apisFlow.emit(_apis)
+    }
+
+    suspend fun deleteByIndex(index: Int) = autoLoadApis {
+        _apis.removeAt(index)
+    }
+
+    suspend fun deleteById(uuid: String) = autoLoadApis {
+        val index = _apis.indexOfFirst { it.uuid == uuid }
+        _apis.removeAt(index)
+    }
+
+    suspend fun delete(api: Api) = autoLoadApis {
+        val index = _apis.indexOfFirst { it.uuid == api.uuid }
+        _apis.removeAt(index)
+    }
+
+    suspend fun update(api: Api) {
+        val index = _apis.indexOfFirst { it.uuid == api.uuid }
+        _apis[index] = api
+        _apisFlow.emit(_apis)
+    }
+
+    fun findById(uuid: String): Api? {
+        return _apis.find { it.uuid == uuid }
+    }
+}
+
+class MainViewModel() : ViewModel() {
+    val apis = Singletons.apiRepository._apis
+
+//    private val debouncer = debounce { saveApis() }
+//
+//    fun touchDataSaving() {
+//        debouncer.submit()
+//    }
+
+
 //    var currentApi by mutableStateOf<Api?>(apis.first())
 //        private set
 //

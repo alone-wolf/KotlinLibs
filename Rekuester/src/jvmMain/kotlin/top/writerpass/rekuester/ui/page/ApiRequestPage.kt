@@ -11,16 +11,19 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.toRoute
 import io.ktor.http.HttpMethod
 import top.writerpass.cmplibrary.compose.DropDownMenu
 import top.writerpass.cmplibrary.compose.FullSizeColumn
@@ -33,18 +36,25 @@ import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.LocalMainViewModel
+import top.writerpass.rekuester.LocalNavController
+import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.viewmodel.ApiRequestViewModel
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 @Composable
 fun ApiRequestPage(
-    api: Api,
-    apiRequestViewModel: ApiRequestViewModel
+    navBackStackEntry: NavBackStackEntry,
 ) {
+    val apiUuid = navBackStackEntry.toRoute<Pages.ApiRequestPage>().uuid
+
+    val apiRequestViewModel = viewModel(
+        viewModelStoreOwner = navBackStackEntry,
+        key = apiUuid
+    ) { ApiRequestViewModel(apiUuid) }
+
+    val navController = LocalNavController.current
+
     FullSizeColumn(modifier = Modifier) {
         val mainViewModel = LocalMainViewModel.current
 
@@ -64,6 +74,9 @@ fun ApiRequestPage(
             }
         }
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
+            Icons.Default.KeyboardArrowLeft.IconButton {
+                navController.popBackStack()
+            }
             var editLabel by remember { mutableStateOf(false) }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (editLabel) {
@@ -113,18 +126,8 @@ fun ApiRequestPage(
                     when (pageId) {
                         0 -> {
                             entities[pageId].Text()
-                            val paramsFlatList = remember(api) {
-                                mutableStateListOf<Pair<String, String>>()
-                            }
-                            LaunchedEffect(Unit) {
-                                apiRequestViewModel.params.forEach { k, vs ->
-                                    vs.forEach { v ->
-                                        paramsFlatList.add(Pair(k, v))
-                                    }
-                                }
-                            }
 
-                            paramsFlatList.forEachIndexed { index, (k, v) ->
+                            apiRequestViewModel.paramsFlatList.forEachIndexed { index, (k, v) ->
                                 FullWidthRow {
                                     val kk = Mutable.someString(k)
                                     val vv = Mutable.someString(v)
@@ -139,10 +142,11 @@ fun ApiRequestPage(
                                         modifier = Modifier.weight(1f)
                                     )
                                     "Del".OutlinedButton(modifier = Modifier.weight(0.25f)) {
-                                        paramsFlatList.removeAt(index)
+                                        apiRequestViewModel.paramsFlatList.removeAt(index)
                                     }
                                     "Save".OutlinedButton(modifier = Modifier.weight(0.25f)) {
-                                        paramsFlatList[index] = Pair(kk.value, vv.value)
+                                        apiRequestViewModel.paramsFlatList[index] =
+                                            Pair(kk.value, vv.value)
                                         kk.value = ""
                                         vv.value = ""
                                     }
@@ -162,7 +166,7 @@ fun ApiRequestPage(
                                     modifier = Modifier.weight(1f)
                                 )
                                 "Save".OutlinedButton(modifier = Modifier.weight(0.5f)) {
-                                    paramsFlatList.add(Pair(k.value, v.value))
+                                    apiRequestViewModel.paramsFlatList.add(Pair(k.value, v.value))
                                     k.value = ""
                                     v.value = ""
                                 }
