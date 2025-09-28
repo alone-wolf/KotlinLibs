@@ -69,10 +69,15 @@ fun ApisListView() {
                                 navController.navigate(Pages.ApiRequestPage(api.uuid)) {
                                     popUpTo<Pages.BlankPage>()
                                 }
+                                if (mainViewModel.openedApis.contains(api).not()) {
+                                    mainViewModel.openedApis.add(api)
+                                }
                             }
-                            .padding(horizontal = 16.dp).onPointerHover(
+                            .padding(horizontal = 16.dp)
+                            .onPointerHover(
                                 onNotHover = { onHover.value = false },
-                                onHover = { onHover.value = true }),
+                                onHover = { onHover.value = true }
+                            ),
                     ) {
                         api.basicInfo.label.Text(
                             modifier = Modifier.align(Alignment.CenterStart),

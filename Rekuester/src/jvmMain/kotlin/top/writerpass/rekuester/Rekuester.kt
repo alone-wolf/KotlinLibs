@@ -1,16 +1,40 @@
 package top.writerpass.rekuester
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Https
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.singleWindowApplication
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.FullSizeBox
+import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullSizeRow
+import top.writerpass.cmplibrary.compose.FullWidthRow
+import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.navigation.composableNoAnimate
 import top.writerpass.rekuester.data.dao.ItemWithId
@@ -20,7 +44,6 @@ import top.writerpass.rekuester.ui.part.ApisListView
 import top.writerpass.rekuester.viewmodel.MainUiViewModel
 import top.writerpass.rekuester.viewmodel.MainViewModel
 import java.awt.Dimension
-import java.awt.MenuBar
 import java.util.UUID
 
 @Serializable
@@ -60,46 +83,119 @@ data class Api(
 // TODO 增加自定义Body的编辑功能
 // TODO 使用Navigation作为导航
 
-fun main() = singleWindowApplication(
-    title = "Rekuester",
-) {
-    this.window.minimumSize = Dimension(800, 600)
-    this.window.menuBar = MenuBar().apply {
-    }
-    val mainViewModel = viewModel { MainViewModel() }
-    val mainUiViewModel = viewModel { MainUiViewModel() }
-    val navController = rememberNavController()
-
-
-    CompositionLocalProvider(
-        LocalMainViewModel provides mainViewModel,
-        LocalMainUiViewModel provides mainUiViewModel,
-        LocalNavController provides navController,
-    ) {
-        FullSizeRow {
-            ApisListView()
-            DraggableDivideBar(mainUiViewModel.apisListViewWidth) { it ->
-                mainUiViewModel.apisListViewWidth = it
-            }
-            NavHost(
-                navController = navController,
-                startDestination = Pages.BlankPage
-            ) {
-                composableNoAnimate<Pages.BlankPage> {
-                    FullSizeBox {
-                        "This is a Blank Page, select an API to start".Text(
-                            modifier = Modifier.align(
-                                Alignment.Center
-                            )
-                        )
-                    }
+fun main() = application {
+    Window(
+        onCloseRequest = ::exitApplication,
+        state = rememberWindowState(),
+        visible = true,
+        title = "Rekuester",
+        icon = rememberVectorPainter(Icons.Default.Https),
+        resizable = true,
+        enabled = true,
+        focusable = true,
+        alwaysOnTop = false,
+//        onPreviewKeyEvent = {},
+//        onKeyEvent = {},
+        content = {
+            MenuBar {
+                Menu("File") {
+                    Item("New", onClick = { println("New clicked") })
+                    Item("Open", onClick = { println("Open clicked") })
+                    Item("Exit", onClick = { exitApplication() })
                 }
-                composableNoAnimate<Pages.ApiRequestPage> { navBackStackEntry ->
-                    ApiRequestPage(navBackStackEntry = navBackStackEntry)
+                Menu("Edit") {
+                    Item("Undo", onClick = { println("Undo") })
+                    Item("Redo", onClick = { println("Redo") })
+                }
+                Menu("Collections") {
+                    Item("New Collection", onClick = { println("New Collection") })
+                    Separator()
+                    Item("Rekuester", onClick = { println("New Collection") })
+                    Item("KtorUserCentre", onClick = { println("New Collection") })
+                    Item("KtorUserCentre", onClick = { println("New Collection") })
+                    Item("KtorUserCentre", onClick = { println("New Collection") })
+                }
+                Menu("Preferences") {
+                    CheckboxItem("Auto Check Update", true) {}
+                }
+                Menu("About") {
+                    Item("Version 0.0.1", onClick = { println("About clicked") })
+                    Item("Author", onClick = { println("About clicked") })
+                }
+            }
+
+            this.window.minimumSize = Dimension(800, 600)
+            val mainViewModel = viewModel { MainViewModel() }
+            val mainUiViewModel = viewModel { MainUiViewModel() }
+            val navController = rememberNavController()
+
+
+            CompositionLocalProvider(
+                LocalMainViewModel provides mainViewModel,
+                LocalMainUiViewModel provides mainUiViewModel,
+                LocalNavController provides navController,
+            ) {
+                FullSizeRow {
+                    ApisListView()
+                    DraggableDivideBar(mainUiViewModel.apisListViewWidth) { it ->
+                        mainUiViewModel.apisListViewWidth = it
+                    }
+                    FullSizeColumn {
+                        FullWidthRow(
+                            modifier = Modifier
+                                .horizontalScroll(rememberScrollState())
+                                .height(30.dp)
+                        ) {
+                            mainViewModel.openedApis.forEach { api ->
+                                Row(
+                                    modifier = Modifier
+                                        .width(120.dp)
+                                        .height(30.dp)
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(Color.Gray)
+                                        .clickable {
+                                            navController.navigate(Pages.ApiRequestPage(api.uuid)) {
+                                                popUpTo<Pages.BlankPage>()
+                                            }
+                                        }
+                                        .padding(horizontal = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    api.basicInfo.label.Text(
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Icons.Default.Close.Icon(
+                                        modifier = Modifier.size(20.dp).clickable {
+                                            navController.popBackStack()
+                                            mainViewModel.openedApis.remove(api)
+                                        })
+                                }
+                            }
+                        }
+                        NavHost(
+                            navController = navController,
+                            startDestination = Pages.BlankPage
+                        ) {
+                            composableNoAnimate<Pages.BlankPage> {
+                                FullSizeBox {
+                                    "This is a Blank Page, select an API to start".Text(
+                                        modifier = Modifier.align(
+                                            Alignment.Center
+                                        )
+                                    )
+                                }
+                            }
+                            composableNoAnimate<Pages.ApiRequestPage> { navBackStackEntry ->
+                                ApiRequestPage(navBackStackEntry = navBackStackEntry)
+                            }
+                        }
+                    }
                 }
             }
         }
-    }
+    )
 }
 
 

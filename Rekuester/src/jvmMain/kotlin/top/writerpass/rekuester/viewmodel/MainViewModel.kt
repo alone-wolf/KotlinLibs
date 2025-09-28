@@ -2,6 +2,7 @@
 
 package top.writerpass.rekuester.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ktor.http.HttpMethod
@@ -29,9 +30,12 @@ class MainViewModel() : ViewModel() {
         }
     }
 
+    val openedApis = mutableStateListOf<Api>()
+
     val allFlow = repository.allFlow
     suspend fun findAll() = repository.findAll()
-//    fun findById(id: String) = runInScope { repository.findById(id) }
+
+    //    fun findById(id: String) = runInScope { repository.findById(id) }
     fun deleteApi(index: Int) = runInScope { repository.delete(index) }
     fun deleteApi(id: String) = runInScope { repository.delete(id) }
     fun deleteApi(api: Api) = runInScope { repository.delete(api) }
