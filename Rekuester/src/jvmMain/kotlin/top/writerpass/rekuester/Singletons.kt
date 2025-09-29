@@ -7,12 +7,14 @@ import androidx.compose.runtime.snapshots.StateFactoryMarker
 import kotlinx.serialization.json.Json
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
-import top.writerpass.rekuester.data.ApisRepository
+import top.writerpass.rekuester.data.ApiRepository
+import top.writerpass.rekuester.data.CollectionsRepository
 import top.writerpass.rekuester.utils.AutoActionMutableState
 import top.writerpass.rekuester.utils.AutoActionMutableStateList
 
 object Singletons {
-    val apisRepository = ApisRepository()
+    val apiRepository = ApiRepository()
+    val collectionsRepository = CollectionsRepository()
     val client = RekuesterClient()
 
     val json = Json {
@@ -29,9 +31,9 @@ class ApiState(
 ) {
     val isModified = mutableStateOf(false)
 
-    val label = autoTagModifiedStateOf(api.basicInfo.label)
-    val method = autoTagModifiedStateOf(api.basicInfo.method)
-    val address = autoTagModifiedStateOf(api.basicInfo.address)
+    val label = autoTagModifiedStateOf(api.label)
+    val method = autoTagModifiedStateOf(api.method)
+    val address = autoTagModifiedStateOf(api.address)
     val params = autoTagModifiedStateListOf(api.params.flatToList())
     val headers = autoTagModifiedStateListOf(api.headers.flatToList())
     val requestBody = autoTagModifiedStateOf(api.requestBody)
@@ -40,11 +42,9 @@ class ApiState(
     fun composeNewApi(): Api {
         return Api(
             uuid = uuid,
-            basicInfo = ApiBasicInfo(
-                label = label.value,
-                method = method.value,
-                address = address.value
-            ),
+            label = label.value,
+            method = method.value,
+            address = address.value,
             params = params.list.toList().groupToMap(),
             headers = headers.list.toList().groupToMap(),
             requestBody = requestBody.value

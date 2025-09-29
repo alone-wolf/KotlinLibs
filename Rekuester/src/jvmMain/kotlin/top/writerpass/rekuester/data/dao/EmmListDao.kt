@@ -1,13 +1,14 @@
 package top.writerpass.rekuester.data.dao
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 abstract class EmmListDao<Id, Item : ItemWithId<Id>> : BaseDataDao<Id, Item> {
     private val dataStore = ListDataStore<Id, Item>()
-    override val allFlow: Flow<List<Item>> = dataStore.itemsFlow.asStateFlow()
+    override val allFlow: StateFlow<List<Item>> = dataStore.itemsFlow.asStateFlow()
 
     override suspend fun findAll(): List<Item> = dataStore.items.toList()
     override suspend fun findById(id: Id): Item? {

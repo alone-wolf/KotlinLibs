@@ -11,15 +11,14 @@ import kotlinx.coroutines.flow.stateIn
 import top.writerpass.kmplibrary.coroutine.launchDefault
 import top.writerpass.kmplibrary.coroutine.launchIO
 import top.writerpass.rekuester.Api
-import top.writerpass.rekuester.ApiBasicInfo
 import top.writerpass.rekuester.HttpRequestResult
 import top.writerpass.rekuester.Singletons
-import top.writerpass.rekuester.data.ApisRepository
+import top.writerpass.rekuester.data.ApiRepository
 
 class ApiRequestViewModel(
     uuid: String,
-    private val repository: ApisRepository = Singletons.apisRepository
-) : ViewModel() {
+    private val repository: ApiRepository = Singletons.apiRepository
+) : BaseViewModel() {
     private val client = Singletons.client
 
     val api: StateFlow<Api?> = repository.findByIdFlow(uuid)
@@ -28,10 +27,6 @@ class ApiRequestViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = null
         )
-
-    fun runInScope(action: suspend () -> Unit) {
-        viewModelScope.launchDefault({ action() })
-    }
 
     fun runUpdateApi(action: Api.() -> Api) {
         runInScope {
@@ -62,8 +57,8 @@ class ApiRequestViewModel(
         viewModelScope.launchIO {
             api.value?.let { api ->
                 currentResult = client.request(
-                    method = api.basicInfo.method,
-                    address = api.basicInfo.address,
+                    method = api.method,
+                    address = api.address,
                     params = api.params,
                     headers = api.headers,
                     body = api.requestBody
@@ -76,11 +71,9 @@ class ApiRequestViewModel(
         return api.value?.let { api ->
             Api(
                 uuid = api.uuid,
-                basicInfo = ApiBasicInfo(
-                    label = api.basicInfo.label,
-                    method = api.basicInfo.method,
-                    address = api.basicInfo.address
-                ),
+                label = api.label,
+                method = api.method,
+                address = api.address,
                 params = api.params.toMap(),
                 headers = api.headers.toMap(),
                 requestBody = api.requestBody,

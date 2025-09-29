@@ -1,7 +1,10 @@
 package top.writerpass.rekuester
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController
+import top.writerpass.rekuester.viewmodel.CollectionApiViewModel
+import top.writerpass.rekuester.viewmodel.CollectionsViewModel
 import top.writerpass.rekuester.viewmodel.MainUiViewModel
 import top.writerpass.rekuester.viewmodel.MainViewModel
 
@@ -12,3 +15,8 @@ val LocalMainUiViewModel =
 val LocalNavController =
     staticCompositionLocalOf<NavHostController> { error("No NavHostController provided") }
 
+val LocalCollectionsViewModel =
+    staticCompositionLocalOf<CollectionsViewModel> { error("No CollectionsViewModel provided") }
+
+val LocalCollectionApiViewModel =
+    compositionLocalOf<CollectionApiViewModel> { error("No CollectionApiViewModel provided") }

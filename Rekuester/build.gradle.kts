@@ -41,6 +41,8 @@ kotlin {
                 implementation(ktorLibs.client.auth)
 
                 implementation(ktorLibs.serialization.kotlinx.json)
+
+                implementation(databaseORM.bundles.exposed.sqlite)
             }
         }
         val jvmMain by getting {

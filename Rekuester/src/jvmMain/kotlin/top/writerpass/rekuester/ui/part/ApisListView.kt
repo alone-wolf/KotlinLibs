@@ -35,6 +35,7 @@ import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
+import top.writerpass.rekuester.LocalCollectionApiViewModel
 import top.writerpass.rekuester.LocalMainUiViewModel
 import top.writerpass.rekuester.LocalMainViewModel
 import top.writerpass.rekuester.LocalNavController
@@ -45,70 +46,78 @@ fun ApisListView() {
     val mainViewModel = LocalMainViewModel.current
     val mainUiViewModel = LocalMainUiViewModel.current
     val navController = LocalNavController.current
+    val collectionApiViewModel = LocalCollectionApiViewModel.current
     FullHeightColumn(modifier = Modifier.width(mainUiViewModel.apisListViewWidth)) {
         FullWidthRow(horizontalArrangement = Arrangement.End) {
             "Load".TextButton {
-                mainViewModel.loadApis()
+                mainViewModel.loadData()
             }
             "Save".TextButton {
-                mainViewModel.saveApis()
+                mainViewModel.saveData()
             }
             Icons.Default.Add.IconButton {
-                mainViewModel.createNewApi()
+                collectionApiViewModel.createNewApi()
             }
         }
-        val apis by mainViewModel.allFlow.collectAsState(emptyList())
-        LazyColumn(modifier = Modifier.fillMaxHeight().weight(1f)) {
-            items(
-                items = apis,
-                itemContent = { api ->
-                    val onHover = Mutable.someBoolean()
-                    FullWidthBox(
-                        modifier = Modifier.height(45.dp)
-                            .clickable {
-                                navController.navigate(Pages.ApiRequestPage(api.uuid)) {
-                                    popUpTo<Pages.BlankPage>()
+        val collectionNullable by collectionApiViewModel.itemFlow.collectAsState()
+        if (collectionNullable == null) {
+            Box(modifier = Modifier.fillMaxHeight().weight(1f)) {
+                "No Collection Selected".Text()
+            }
+        } else {
+            val apis = collectionApiViewModel.apis
+            LazyColumn(modifier = Modifier.fillMaxHeight().weight(1f)) {
+                items(
+                    items = apis,
+                    itemContent = { api ->
+                        val onHover = Mutable.someBoolean()
+                        FullWidthBox(
+                            modifier = Modifier.height(45.dp)
+                                .clickable {
+                                    navController.navigate(Pages.ApiRequestPage(api.uuid)) {
+                                        popUpTo<Pages.BlankPage>()
+                                    }
+                                    if (mainViewModel.openedApis.contains(api).not()) {
+                                        mainViewModel.openedApis.add(api)
+                                    }
                                 }
-                                if (mainViewModel.openedApis.contains(api).not()) {
-                                    mainViewModel.openedApis.add(api)
-                                }
-                            }
-                            .padding(horizontal = 16.dp)
-                            .onPointerHover(
-                                onNotHover = { onHover.value = false },
-                                onHover = { onHover.value = true }
-                            ),
-                    ) {
-                        api.basicInfo.label.Text(
-                            modifier = Modifier.align(Alignment.CenterStart),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                            AnimatedVisibility(
-                                visible = onHover.value, enter = fadeIn(), exit = fadeOut()
-                            ) {
-                                val onIconHover = Mutable.someBoolean()
-                                Box(
-                                    modifier = Modifier.onPointerHover(
-                                        onHover = { onIconHover.setTrue() },
-                                        onNotHover = { onIconHover.setFalse() })
+                                .padding(horizontal = 16.dp)
+                                .onPointerHover(
+                                    onNotHover = { onHover.value = false },
+                                    onHover = { onHover.value = true }
+                                ),
+                        ) {
+                            api.label.Text(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                                AnimatedVisibility(
+                                    visible = onHover.value, enter = fadeIn(), exit = fadeOut()
                                 ) {
-                                    AnimatedContent(onIconHover.value) {
-                                        if (it) {
-                                            Icons.Default.Delete.IconButton {
-                                                mainViewModel.deleteApi(api)
+                                    val onIconHover = Mutable.someBoolean()
+                                    Box(
+                                        modifier = Modifier.onPointerHover(
+                                            onHover = { onIconHover.setTrue() },
+                                            onNotHover = { onIconHover.setFalse() })
+                                    ) {
+                                        AnimatedContent(onIconHover.value) {
+                                            if (it) {
+                                                Icons.Default.Delete.IconButton {
+                                                    collectionApiViewModel.deleteApi(api)
+                                                }
+                                            } else {
+                                                Icons.Outlined.Delete.IconButton {}
                                             }
-                                        } else {
-                                            Icons.Outlined.Delete.IconButton {}
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
