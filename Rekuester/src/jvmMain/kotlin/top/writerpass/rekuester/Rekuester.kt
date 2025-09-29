@@ -14,17 +14,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Https
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.isTraySupported
+import androidx.compose.ui.window.rememberTrayState
 import androidx.compose.ui.window.rememberWindowState
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -37,6 +48,7 @@ import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.navigation.composableNoAnimate
+import top.writerpass.kmplibrary.utils.fill2Number
 import top.writerpass.rekuester.data.dao.ItemWithId
 import top.writerpass.rekuester.ui.componment.DraggableDivideBar
 import top.writerpass.rekuester.ui.page.ApiRequestPage
@@ -75,6 +87,28 @@ data class Api(
     override val id: String = uuid
 }
 
+@Serializable
+data class Collection(
+    val uuid: String = UUID.randomUUID().toString(),
+    val label: String,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+class CollectionsViewModel : ViewModel() {
+    val collections = mutableStateListOf<Collection>()
+
+    init {
+        repeat(10) {
+            collections += Collection(
+                label = "Collection#${it.fill2Number}",
+            )
+        }
+    }
+
+    var currentCollection by mutableStateOf<Collection>(collections.first())
+
+}
+
 
 // TODO 增加Api列表的排序选项
 // TODO 增加ApiTabBar for Opened API
@@ -84,36 +118,102 @@ data class Api(
 // TODO 使用Navigation作为导航
 
 fun main() = application {
+
+    var showNewCollectionWizard by remember { mutableStateOf(false) }
+    var showMainWindow by remember { mutableStateOf(true) }
+
+    if (isTraySupported) {
+        Tray(
+            icon = rememberVectorPainter(Icons.Default.Https),
+            state = rememberTrayState(),
+            tooltip = "Rekuester",
+            onAction = { showMainWindow = true },
+            menu = {
+            }
+        )
+    }
+
     Window(
-        onCloseRequest = ::exitApplication,
+        visible = showNewCollectionWizard,
+        onCloseRequest = { showNewCollectionWizard = false },
+        title = "New Collection Wizard",
+        content = {
+
+        }
+    )
+
+
+    Window(
+        onCloseRequest = { showMainWindow = false },
         state = rememberWindowState(),
-        visible = true,
+        visible = showMainWindow,
         title = "Rekuester",
         icon = rememberVectorPainter(Icons.Default.Https),
         resizable = true,
-        enabled = true,
+        enabled = showNewCollectionWizard.not(),
         focusable = true,
         alwaysOnTop = false,
 //        onPreviewKeyEvent = {},
 //        onKeyEvent = {},
         content = {
+            val collectionsViewModel = viewModel { CollectionsViewModel() }
+
             MenuBar {
                 Menu("File") {
-                    Item("New", onClick = { println("New clicked") })
-                    Item("Open", onClick = { println("Open clicked") })
-                    Item("Exit", onClick = { exitApplication() })
+                    Item(
+                        text = "New",
+                        onClick = { println("New clicked") },
+                        shortcut = KeyShortcut(Key.N, ctrl = true)
+                    )
+                    Item(
+                        text = "Open",
+                        onClick = { println("Open clicked") },
+                        shortcut = KeyShortcut(Key.O, ctrl = true)
+                    )
+                    Item(
+                        text = "Close",
+                        onClick = { showMainWindow = false },
+                        shortcut = KeyShortcut(Key.W, meta = true)
+                    )
                 }
                 Menu("Edit") {
                     Item("Undo", onClick = { println("Undo") })
                     Item("Redo", onClick = { println("Redo") })
                 }
                 Menu("Collections") {
-                    Item("New Collection", onClick = { println("New Collection") })
+                    Item(
+                        text = "New Collection",
+                        onClick = {
+                            showNewCollectionWizard = true
+                        },
+                        shortcut = KeyShortcut(Key.N, ctrl = true, shift = true)
+                    )
                     Separator()
-                    Item("Rekuester", onClick = { println("New Collection") })
-                    Item("KtorUserCentre", onClick = { println("New Collection") })
-                    Item("KtorUserCentre", onClick = { println("New Collection") })
-                    Item("KtorUserCentre", onClick = { println("New Collection") })
+                    collectionsViewModel.collections.forEachIndexed { index, collection ->
+                        RadioButtonItem(
+                            text = collection.label,
+                            selected = collectionsViewModel.currentCollection == collection,
+                            onClick = { collectionsViewModel.currentCollection = collection },
+                        )
+                    }
+                }
+                Menu("Theme") {
+                    var selectedTheme by remember { mutableStateOf("System") }
+                    RadioButtonItem(
+                        "Light",
+                        selected = selectedTheme == "Light",
+                        onClick = { selectedTheme = "Light" }
+                    )
+                    RadioButtonItem(
+                        "Dark",
+                        selected = selectedTheme == "Dark",
+                        onClick = { selectedTheme = "Dark" }
+                    )
+                    RadioButtonItem(
+                        "System",
+                        selected = selectedTheme == "System",
+                        onClick = { selectedTheme = "System" }
+                    )
                 }
                 Menu("Preferences") {
                     CheckboxItem("Auto Check Update", true) {}
@@ -170,7 +270,8 @@ fun main() = application {
                                         modifier = Modifier.size(20.dp).clickable {
                                             navController.popBackStack()
                                             mainViewModel.openedApis.remove(api)
-                                        })
+                                        }
+                                    )
                                 }
                             }
                         }
