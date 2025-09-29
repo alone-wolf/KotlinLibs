@@ -29,11 +29,8 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
-import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.isTraySupported
-import androidx.compose.ui.window.rememberTrayState
 import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -120,18 +117,18 @@ class CollectionsViewModel : ViewModel() {
 fun main() = application {
 
     var showNewCollectionWizard by remember { mutableStateOf(false) }
-    var showMainWindow by remember { mutableStateOf(true) }
+//    var showMainWindow by remember { mutableStateOf(true) }
 
-    if (isTraySupported) {
-        Tray(
-            icon = rememberVectorPainter(Icons.Default.Https),
-            state = rememberTrayState(),
-            tooltip = "Rekuester",
-            onAction = { showMainWindow = true },
-            menu = {
-            }
-        )
-    }
+//    if (isTraySupported) {
+//        Tray(
+//            icon = rememberVectorPainter(Icons.Default.Https),
+//            state = rememberTrayState(),
+//            tooltip = "Rekuester",
+//            onAction = { showMainWindow = true },
+//            menu = {
+//            }
+//        )
+//    }
 
     Window(
         visible = showNewCollectionWizard,
@@ -144,9 +141,9 @@ fun main() = application {
 
 
     Window(
-        onCloseRequest = { showMainWindow = false },
+        onCloseRequest = ::exitApplication,
         state = rememberWindowState(),
-        visible = showMainWindow,
+        visible = true,
         title = "Rekuester",
         icon = rememberVectorPainter(Icons.Default.Https),
         resizable = true,
@@ -170,11 +167,11 @@ fun main() = application {
                         onClick = { println("Open clicked") },
                         shortcut = KeyShortcut(Key.O, ctrl = true)
                     )
-                    Item(
-                        text = "Close",
-                        onClick = { showMainWindow = false },
-                        shortcut = KeyShortcut(Key.W, meta = true)
-                    )
+//                    Item(
+//                        text = "Close",
+//                        onClick = { showMainWindow = false },
+//                        shortcut = KeyShortcut(Key.W, meta = true)
+//                    )
                 }
                 Menu("Edit") {
                     Item("Undo", onClick = { println("Undo") })
@@ -268,7 +265,9 @@ fun main() = application {
                                     )
                                     Icons.Default.Close.Icon(
                                         modifier = Modifier.size(20.dp).clickable {
-                                            navController.popBackStack()
+                                            navController.navigate(Pages.BlankPage) {
+                                                popUpTo<Pages.BlankPage>()
+                                            }
                                             mainViewModel.openedApis.remove(api)
                                         }
                                     )

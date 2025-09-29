@@ -33,8 +33,6 @@ kotlin {
 
                 implementation("co.touchlab:kermit:2.0.8")
 
-
-
                 implementation(ktorLibs.client.core)
                 implementation(ktorLibs.client.cio)
                 implementation(ktorLibs.client.contentNegotiation)
@@ -43,7 +41,6 @@ kotlin {
                 implementation(ktorLibs.client.auth)
 
                 implementation(ktorLibs.serialization.kotlinx.json)
-
             }
         }
         val jvmMain by getting {
