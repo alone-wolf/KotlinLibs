@@ -38,6 +38,7 @@ import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.rekuester.ApiStateHolder.rememberApiState
+import top.writerpass.rekuester.LocalMainViewModel
 import top.writerpass.rekuester.LocalNavController
 import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
@@ -50,7 +51,7 @@ fun ApiRequestPage(
     val navController = LocalNavController.current
     val uuid = navBackStackEntry.toRoute<Pages.ApiRequestPage>().uuid
 
-//    val mainViewModel = LocalMainViewModel.current
+    val mainViewModel = LocalMainViewModel.current
     val apiRequestViewModel = viewModel(
         viewModelStoreOwner = navBackStackEntry,
         key = uuid
@@ -79,7 +80,9 @@ fun ApiRequestPage(
                 if (apiState.isModified.value) "Save".TextButton {
                     apiState.composeNewApi().let {
                         apiRequestViewModel.updateOrInsert(it)
+                        mainViewModel.openApiTab(it)
                         apiState.isModified.setFalse()
+                        editLabel = false
                     }
                 }
             }

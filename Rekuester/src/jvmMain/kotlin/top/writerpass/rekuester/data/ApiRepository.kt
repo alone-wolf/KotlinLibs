@@ -4,6 +4,7 @@ import io.ktor.http.HttpMethod
 import top.writerpass.kmplibrary.utils.fill2Number
 import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.data.dao.EmmListDao
+import java.util.UUID
 
 
 private val builtInApis = arrayOf(
@@ -57,12 +58,6 @@ private val builtInApis = arrayOf(
     ),
 )
 
-//abstract class BaseRepository<Id, Item : ItemWithId<Id>>(
-//    private val dao: BaseDataDao<Id, Item>
-//) : BaseDataDao<Id, Item>{
-//
-//}
-
 class ApiRepository() {
     private val dao = object : EmmListDao<String, Api>() {}
 
@@ -70,13 +65,16 @@ class ApiRepository() {
         repeat(10) { index ->
             val items = builtInApis.map {
                 it.copy(
+                    uuid = UUID.randomUUID().toString(),
                     collectionUUID = "uuid-${index.fill2Number}",
                     label = "${it.label}==${index.fill2Number}"
                 )
             }.toTypedArray()
             dao.inserts(*items)
         }
-        val items = builtInApis.map { it.copy() }.toTypedArray()
+        val items = builtInApis.map {
+            it.copy(uuid = UUID.randomUUID().toString())
+        }.toTypedArray()
         dao.inserts(*items)
     }
 
@@ -87,6 +85,7 @@ class ApiRepository() {
     suspend fun delete(index: Int) = dao.delete(index)
     suspend fun delete(id: String) = dao.delete(id)
     suspend fun delete(api: Api) = dao.delete(api)
+
     suspend fun insert(api: Api) = dao.insert(api)
     suspend fun inserts(vararg apis: Api) = dao.inserts(*apis)
     suspend fun update(api: Api) = dao.update(api)

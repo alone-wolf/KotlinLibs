@@ -8,7 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -61,12 +61,15 @@ fun ApisListView() {
         }
         val collectionNullable by collectionApiViewModel.itemFlow.collectAsState()
         if (collectionNullable == null) {
-            Box(modifier = Modifier.fillMaxHeight().weight(1f)) {
+            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 "No Collection Selected".Text()
             }
         } else {
-            val apis = collectionApiViewModel.apis
-            LazyColumn(modifier = Modifier.fillMaxHeight().weight(1f)) {
+            val apis by collectionApiViewModel.apis.collectAsState()
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+            }
+            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 items(
                     items = apis,
                     itemContent = { api ->
@@ -77,9 +80,15 @@ fun ApisListView() {
                                     navController.navigate(Pages.ApiRequestPage(api.uuid)) {
                                         popUpTo<Pages.BlankPage>()
                                     }
-                                    if (mainViewModel.openedApis.contains(api).not()) {
-                                        mainViewModel.openedApis.add(api)
-                                    }
+                                    mainViewModel.openApiTab(api)
+
+//                                    val r = mainViewModel.openedApis.find { it.uuid == api.uuid }
+//                                    if (r == null) {
+//                                        mainViewModel.openedApis.add(api)
+//                                    } else {
+//                                        val index = mainViewModel.openedApis.indexOf(r)
+//                                        mainViewModel.openedApis[index] = api
+//                                    }
                                 }
                                 .padding(horizontal = 16.dp)
                                 .onPointerHover(

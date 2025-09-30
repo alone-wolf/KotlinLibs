@@ -3,12 +3,10 @@ package top.writerpass.rekuester.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import top.writerpass.kmplibrary.coroutine.launchDefault
 import top.writerpass.kmplibrary.coroutine.launchIO
 import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.HttpRequestResult
@@ -66,24 +64,4 @@ class ApiRequestViewModel(
             }
         }
     }
-
-    fun composeNewApi(): Api? {
-        return api.value?.let { api ->
-            Api(
-                uuid = api.uuid,
-                label = api.label,
-                method = api.method,
-                address = api.address,
-                params = api.params.toMap(),
-                headers = api.headers.toMap(),
-                requestBody = api.requestBody,
-            )
-        }
-    }
-
-//    fun request(api: Api) {
-//        viewModelScope.launchIO {
-//            currentResult = client.request(api)
-//        }
-//    }
 }

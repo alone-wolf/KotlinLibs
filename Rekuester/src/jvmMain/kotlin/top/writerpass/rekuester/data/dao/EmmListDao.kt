@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import top.writerpass.kmplibrary.utils.println
 
 abstract class EmmListDao<Id, Item : ItemWithId<Id>> : BaseDataDao<Id, Item> {
     private val dataStore = ListDataStore<Id, Item>()
@@ -23,6 +24,7 @@ abstract class EmmListDao<Id, Item : ItemWithId<Id>> : BaseDataDao<Id, Item> {
     suspend fun delete(index: Int) {
         dataStore.items.removeAt(index)
         dataStore.emitItems()
+        "suspend fun delete(index: Int) index=${index}".println()
     }
 
     override suspend fun delete(id: Id) {

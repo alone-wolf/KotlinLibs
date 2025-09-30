@@ -288,7 +288,7 @@ fun main() {
                                     .horizontalScroll(rememberScrollState())
                                     .height(30.dp)
                             ) {
-                                mainViewModel.openedApis.forEach { api ->
+                                mainViewModel.openedApiTabs.forEach { apiTab ->
                                     Row(
                                         modifier = Modifier
                                             .width(120.dp)
@@ -296,14 +296,14 @@ fun main() {
                                             .clip(RoundedCornerShape(4.dp))
                                             .background(Color.Gray)
                                             .clickable {
-                                                navController.navigate(Pages.ApiRequestPage(api.uuid)) {
+                                                navController.navigate(Pages.ApiRequestPage(apiTab.key)) {
                                                     popUpTo<Pages.BlankPage>()
                                                 }
                                             }
                                             .padding(horizontal = 4.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        api.label.Text(
+                                        apiTab.value.Text(
                                             overflow = TextOverflow.Ellipsis,
                                             maxLines = 1,
                                             modifier = Modifier.weight(1f)
@@ -313,7 +313,7 @@ fun main() {
                                                 navController.navigate(Pages.BlankPage) {
                                                     popUpTo<Pages.BlankPage>()
                                                 }
-                                                mainViewModel.openedApis.remove(api)
+                                                mainViewModel.closeApiTab(apiTab.key)
                                             }
                                         )
                                     }
