@@ -37,8 +37,8 @@ import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
+import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiStateHolder.rememberApiState
-import top.writerpass.rekuester.LocalMainViewModel
 import top.writerpass.rekuester.LocalNavController
 import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
@@ -118,18 +118,29 @@ fun ApiRequestPage(
                             0 -> {
                                 requestPartEntities[pageId].Text()
 
-                                apiState.params.list.forEachIndexed { index, (k, v) ->
-                                    FullWidthRow {
+                                apiState.params.list.forEachIndexed { index, (k, v, d) ->
+                                    FullWidthRow(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         val kk = Mutable.someString(k)
                                         val vv = Mutable.someString(v)
+                                        val dd = Mutable.someString(d)
                                         OutlinedTextField(
                                             value = kk.value,
+                                            placeholder = { "Key".Text() },
                                             onValueChange = { kk.value = it },
                                             modifier = Modifier.weight(1f)
                                         )
                                         OutlinedTextField(
                                             value = vv.value,
+                                            placeholder = { "Value".Text() },
                                             onValueChange = { vv.value = it },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        OutlinedTextField(
+                                            value = dd.value,
+                                            placeholder = { "Description".Text() },
+                                            onValueChange = { dd.value = it },
                                             modifier = Modifier.weight(1f)
                                         )
                                         Icons.Default.Delete.IconButton {
@@ -137,34 +148,52 @@ fun ApiRequestPage(
                                         }
                                         Icons.Default.Save.IconButton {
                                             apiState.params.list[index] =
-                                                Pair(kk.value, vv.value)
+                                                ApiParam(
+                                                    key = kk.value,
+                                                    value = vv.value,
+                                                    description = dd.value
+                                                )
                                             kk.value = ""
                                             vv.value = ""
+                                            dd.value = ""
                                         }
                                     }
                                 }
-                                FullWidthRow {
+                                FullWidthRow(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     val k = Mutable.someString()
                                     val v = Mutable.someString()
+                                    val d = Mutable.someString()
                                     OutlinedTextField(
                                         value = k.value,
+                                        placeholder = { "Key".Text() },
                                         onValueChange = { k.value = it },
                                         modifier = Modifier.weight(1f)
                                     )
                                     OutlinedTextField(
                                         value = v.value,
+                                        placeholder = { "Value".Text() },
                                         onValueChange = { v.value = it },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    OutlinedTextField(
+                                        value = d.value,
+                                        placeholder = { "Description".Text() },
+                                        onValueChange = { d.value = it },
                                         modifier = Modifier.weight(1f)
                                     )
                                     "Save".OutlinedButton(modifier = Modifier) {
                                         apiState.params.list.add(
-                                            Pair(
+                                            ApiParam(
                                                 k.value,
-                                                v.value
+                                                v.value,
+                                                d.value
                                             )
                                         )
                                         k.value = ""
                                         v.value = ""
+                                        d.value = ""
                                     }
                                 }
                             }

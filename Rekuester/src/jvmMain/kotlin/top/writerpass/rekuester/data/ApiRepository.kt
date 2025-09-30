@@ -12,48 +12,48 @@ private val builtInApis = arrayOf(
         label = "GET All Users",
         method = HttpMethod.Companion.Get,
         address = "http://localhost:8080/api/users",
-        params = emptyMap(),
-        headers = emptyMap(),
+        params = emptyList(),
+        headers = emptyList(),
         requestBody = null
     ),
     Api(
         label = "GET User by Id",
         method = HttpMethod.Companion.Get,
         address = "http://localhost:8080/api/users/100",
-        params = emptyMap(),
-        headers = emptyMap(),
+        params = emptyList(),
+        headers = emptyList(),
         requestBody = null
     ),
     Api(
         label = "Delete User by Id",
         method = HttpMethod.Companion.Delete,
         address = "http://localhost:8080/api/users/1",
-        params = emptyMap(),
-        headers = emptyMap(),
+        params = emptyList(),
+        headers = emptyList(),
         requestBody = null
     ),
     Api(
         label = "Delete All Users",
         method = HttpMethod.Companion.Delete,
         address = "http://localhost:8080/api/users",
-        params = emptyMap(),
-        headers = emptyMap(),
+        params = emptyList(),
+        headers = emptyList(),
         requestBody = null
     ),
     Api(
         label = "Inject 100 Users",
         method = HttpMethod.Companion.Post,
         address = "http://localhost:8080/api/users/inject",
-        params = emptyMap(),
-        headers = emptyMap(),
+        params = emptyList(),
+        headers = emptyList(),
         requestBody = null
     ),
     Api(
         label = "Baidu",
         method = HttpMethod.Companion.Get,
         address = "https://baidu.com",
-        params = emptyMap(),
-        headers = emptyMap(),
+        params = emptyList(),
+        headers = emptyList(),
         requestBody = null
     ),
 )

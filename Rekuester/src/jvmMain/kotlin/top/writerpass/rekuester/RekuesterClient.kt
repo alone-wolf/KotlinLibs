@@ -7,11 +7,13 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLBuilder
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.date.GMTDate
 import io.ktor.util.toMap
@@ -79,17 +81,24 @@ class RekuesterClient : AutoCloseable {
         )
     }
 
-
     suspend fun request(
         method: HttpMethod,
         address: String,
-        params: Map<String, List<String>> = emptyMap(),
-        headers: Map<String, List<String>> = emptyMap(),
+        params: List<ApiParam> = emptyList(),
+        headers: List<ApiHeader> = emptyList(),
         body: Any? = null
     ): HttpRequestResult {
         return try {
-            client.request(address) {
+            val finalUrl = URLBuilder(address).apply {
+                params.forEach {
+                    parameters.append(it.key, it.value)
+                }
+            }.buildString()
+            client.request(finalUrl) {
                 this.method = method
+                headers.forEach {
+                    header(it.key, it.value)
+                }
             }.toResult()
         } catch (e: Exception) {
             HttpRequestResult(null, e.message)

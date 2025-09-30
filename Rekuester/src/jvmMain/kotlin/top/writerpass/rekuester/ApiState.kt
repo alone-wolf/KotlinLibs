@@ -5,8 +5,6 @@ import androidx.compose.runtime.snapshots.StateFactoryMarker
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.utils.AutoActionMutableState
 import top.writerpass.rekuester.utils.AutoActionMutableStateList
-import top.writerpass.rekuester.utils.flatToList
-import top.writerpass.rekuester.utils.pairListToMap
 
 class ApiState(
     api: Api,
@@ -18,8 +16,8 @@ class ApiState(
     val label = autoTagModifiedStateOf(api.label)
     val method = autoTagModifiedStateOf(api.method)
     val address = autoTagModifiedStateOf(api.address)
-    val params = autoTagModifiedStateListOf(api.params.flatToList())
-    val headers = autoTagModifiedStateListOf(api.headers.flatToList())
+    val params = autoTagModifiedStateListOf(api.params)
+    val headers = autoTagModifiedStateListOf(api.headers)
     val requestBody = autoTagModifiedStateOf(api.requestBody)
 
 
@@ -30,8 +28,8 @@ class ApiState(
             label = label.value,
             method = method.value,
             address = address.value,
-            params = params.list.toList().pairListToMap(),
-            headers = headers.list.toList().pairListToMap(),
+            params = params.list.toList(),
+            headers = headers.list.toList(),
             requestBody = requestBody.value,
             tabOpened = true,
         )

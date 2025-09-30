@@ -45,8 +45,8 @@ class CollectionApiViewModel(
             label = "untitled",
             method = HttpMethod.Get,
             address = "http://",
-            params = emptyMap(),
-            headers = emptyMap(),
+            params = emptyList(),
+            headers = emptyList(),
             requestBody = null
         )
         insertApi(newApi)

@@ -49,15 +49,9 @@ fun ApisListView() {
     val collectionApiViewModel = LocalCollectionApiViewModel.current
     FullHeightColumn(modifier = Modifier.width(mainUiViewModel.apisListViewWidth)) {
         FullWidthRow(horizontalArrangement = Arrangement.End) {
-            "Load".TextButton {
-                mainViewModel.loadData()
-            }
-            "Save".TextButton {
-                mainViewModel.saveData()
-            }
-            Icons.Default.Add.IconButton {
-                collectionApiViewModel.createNewApi()
-            }
+            "Load".TextButton { mainViewModel.loadData() }
+            "Save".TextButton { mainViewModel.saveData() }
+            Icons.Default.Add.IconButton { collectionApiViewModel.createNewApi() }
         }
         val collectionNullable by collectionApiViewModel.itemFlow.collectAsState()
         if (collectionNullable == null) {
@@ -81,14 +75,6 @@ fun ApisListView() {
                                         popUpTo<Pages.BlankPage>()
                                     }
                                     mainViewModel.openApiTab(api)
-
-//                                    val r = mainViewModel.openedApis.find { it.uuid == api.uuid }
-//                                    if (r == null) {
-//                                        mainViewModel.openedApis.add(api)
-//                                    } else {
-//                                        val index = mainViewModel.openedApis.indexOf(r)
-//                                        mainViewModel.openedApis[index] = api
-//                                    }
                                 }
                                 .padding(horizontal = 16.dp)
                                 .onPointerHover(

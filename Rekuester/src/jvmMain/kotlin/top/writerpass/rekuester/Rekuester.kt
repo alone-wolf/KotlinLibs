@@ -3,9 +3,7 @@ package top.writerpass.rekuester
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Https
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.isTraySupported
@@ -36,12 +34,20 @@ abstract class ApiRequestBodyContainer(
     val type: BodyType
 )
 
-//@Serializable
-//data class ApiBasicInfo(
-//    val label: String,
-//    val method: HttpMethod,
-//    val address: String, // scheme://host:port
-//)
+
+@Serializable
+data class ApiParam(
+    val key: String,
+    val value: String,
+    val description: String
+)
+
+@Serializable
+data class ApiHeader(
+    val key: String,
+    val value: String,
+    val description: String
+)
 
 @Serializable
 data class Api(
@@ -51,50 +57,13 @@ data class Api(
     @Serializable(with = HttpMethodSerializer::class)
     val method: HttpMethod,
     val address: String,
-    val params: Map<String, List<String>> = emptyMap(),
-    val headers: Map<String, List<String>> = emptyMap(),
+    val params: List<ApiParam> = emptyList(),
+    val headers: List<ApiHeader> = emptyList(),
     val requestBody: ApiRequestBodyContainer? = null,
     val tabOpened: Boolean = false,
 ) : ItemWithId<String> {
     override val id: String = uuid
 }
-
-//// 主表
-//object ApisTable : Table("apis") {
-//    val uuid = varchar("uuid", 36)
-//    var label = varchar("label", 100)
-//    var method = varchar("method", 10)
-//    var address = varchar("address", 255)
-//    val requestBody = text("request_body").nullable()
-//
-//    override val primaryKey = PrimaryKey(uuid)
-//}
-//
-//// Params 表 (1 Api -> N Param)
-//object ApiParamsTable : Table("api_params") {
-//    val id = integer("id").autoIncrement()
-//    val apiUuid = varchar("api_uuid", 36).references(
-//        ref = ApisTable.uuid,
-//        onDelete = ReferenceOption.CASCADE
-//    )
-//    val key = varchar("key", 255)
-//    val value = varchar("value", 1024)
-//
-//    override val primaryKey = PrimaryKey(id)
-//}
-//
-//// Headers 表 (1 Api -> N Header)
-//object ApiHeadersTable : Table("api_headers") {
-//    val id = integer("id").autoIncrement()
-//    val apiUuid = varchar("api_uuid", 36).references(
-//        ref = ApisTable.uuid,
-//        onDelete = ReferenceOption.CASCADE
-//    )
-//    val key = varchar("key", 255)
-//    val value = varchar("value", 1024)
-//
-//    override val primaryKey = PrimaryKey(id)
-//}
 
 @Serializable
 data class Collection(
@@ -112,7 +81,6 @@ data class Collection(
 // TODO 增加自定义Headers的编辑功能
 // TODO 增加自定义Body的编辑功能
 // TODO 使用Navigation作为导航
-
 
 
 fun main() {
