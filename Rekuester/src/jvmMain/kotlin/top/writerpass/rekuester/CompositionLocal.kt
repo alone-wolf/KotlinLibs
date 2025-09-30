@@ -2,6 +2,7 @@ package top.writerpass.rekuester
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.window.ApplicationScope
 import androidx.navigation.NavHostController
 import top.writerpass.rekuester.viewmodel.CollectionApiViewModel
 import top.writerpass.rekuester.viewmodel.CollectionsViewModel
@@ -20,3 +21,8 @@ val LocalCollectionsViewModel =
 
 val LocalCollectionApiViewModel =
     compositionLocalOf<CollectionApiViewModel> { error("No CollectionApiViewModel provided") }
+
+val LocalApplicationScope =
+    staticCompositionLocalOf<ApplicationScope> { error("No ApplicationScope provided") }
+
+

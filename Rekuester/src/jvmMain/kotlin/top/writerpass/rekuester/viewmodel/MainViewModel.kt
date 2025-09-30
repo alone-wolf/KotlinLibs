@@ -2,8 +2,10 @@
 
 package top.writerpass.rekuester.viewmodel
 
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.encodeToStream
 import top.writerpass.kmplibrary.coroutine.launchIO
@@ -11,23 +13,21 @@ import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.Singletons
 import java.io.File
 
-data class ApiTab(
-    val uuid: String,
-    val label: String
-)
-
 class MainViewModel() : BaseViewModel() {
     private val apiRepository = Singletons.apiRepository
 
-    //    val openedApis = mutableStateListOf<Api>()
-    val openedApiTabs = mutableStateMapOf<String, String>()
+    val openedApiTabsFlow = apiRepository.allFlow.map { it.filter { it.tabOpened } }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = emptyList()
+    )
 
-    fun openApiTab(api: Api) {
-        openedApiTabs[api.uuid] = api.label
+    fun openApiTab(api: Api) = runInScope {
+        apiRepository.update(api.copy(tabOpened = true))
     }
 
-    fun closeApiTab(uuid: String) {
-        openedApiTabs.remove(uuid)
+    fun closeApiTab(api: Api) = runInScope {
+        apiRepository.update(api.copy(tabOpened = false))
     }
 
     fun saveData() {

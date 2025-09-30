@@ -1,61 +1,29 @@
 package top.writerpass.rekuester
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Https
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyShortcut
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Tray
-import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.isTraySupported
 import androidx.compose.ui.window.rememberTrayState
-import androidx.compose.ui.window.rememberWindowState
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
-import top.writerpass.cmplibrary.compose.FullSizeBox
-import top.writerpass.cmplibrary.compose.FullSizeColumn
-import top.writerpass.cmplibrary.compose.FullSizeRow
-import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.Icon
-import top.writerpass.cmplibrary.compose.Text
-import top.writerpass.cmplibrary.navigation.composableNoAnimate
 import top.writerpass.rekuester.data.dao.ItemWithId
-import top.writerpass.rekuester.ui.componment.DraggableDivideBar
-import top.writerpass.rekuester.ui.page.ApiRequestPage
-import top.writerpass.rekuester.ui.part.ApisListView
-import top.writerpass.rekuester.viewmodel.CollectionApiViewModel
+import top.writerpass.rekuester.ui.window.CollectionManagerWindow
+import top.writerpass.rekuester.ui.window.MainWindow
+import top.writerpass.rekuester.ui.window.NewCollectionWizardWindow
 import top.writerpass.rekuester.viewmodel.CollectionsViewModel
 import top.writerpass.rekuester.viewmodel.MainUiViewModel
 import top.writerpass.rekuester.viewmodel.MainViewModel
-import java.awt.Dimension
 import java.util.UUID
 
 @Serializable
@@ -85,7 +53,8 @@ data class Api(
     val address: String,
     val params: Map<String, List<String>> = emptyMap(),
     val headers: Map<String, List<String>> = emptyMap(),
-    val requestBody: ApiRequestBodyContainer? = null
+    val requestBody: ApiRequestBodyContainer? = null,
+    val tabOpened: Boolean = false,
 ) : ItemWithId<String> {
     override val id: String = uuid
 }
@@ -144,203 +113,45 @@ data class Collection(
 // TODO 增加自定义Body的编辑功能
 // TODO 使用Navigation作为导航
 
-fun main() {
-//    Database.connect(
-//        url = "jdbc:sqlite:rekuester.db",
-//        driver = "org.sqlite.JDBC",
-//    )
 
-//    transaction { SchemaUtils.create() }
+
+fun main() {
+    val viewModelStoreOwner = object : ViewModelStoreOwner {
+        override val viewModelStore: ViewModelStore = ViewModelStore()
+    }
 
     application {
 
-        var showNewCollectionWizard by remember { mutableStateOf(false) }
-//    var showMainWindow by remember { mutableStateOf(true) }
+        CompositionLocalProvider(
+            LocalViewModelStoreOwner provides viewModelStoreOwner,
+            LocalApplicationScope provides this,
+        ) {
+            val mainViewModel = viewModel { MainViewModel() }
+            val mainUiViewModel = viewModel { MainUiViewModel() }
+            val collectionsViewModel = viewModel { CollectionsViewModel() }
+            val navController = rememberNavController()
 
-        if (isTraySupported) {
-            Tray(
-                icon = rememberVectorPainter(Icons.Default.Https),
-                state = rememberTrayState(),
-                tooltip = "Rekuester",
-                onAction = { },
-                menu = {}
-            )
+            CompositionLocalProvider(
+                LocalMainViewModel provides mainViewModel,
+                LocalMainUiViewModel provides mainUiViewModel,
+                LocalCollectionsViewModel provides collectionsViewModel,
+                LocalNavController provides navController,
+            ) {
+                if (isTraySupported) {
+                    Tray(
+                        icon = rememberVectorPainter(Icons.Default.Https),
+                        state = rememberTrayState(),
+                        tooltip = "Rekuester",
+                        onAction = { },
+                        menu = {}
+                    )
+                }
+
+                NewCollectionWizardWindow()
+                CollectionManagerWindow()
+                MainWindow()
+            }
         }
-
-        Window(
-            visible = showNewCollectionWizard,
-            onCloseRequest = { showNewCollectionWizard = false },
-            title = "New Collection Wizard",
-            content = {
-            }
-        )
-
-
-        Window(
-            onCloseRequest = ::exitApplication,
-            state = rememberWindowState(),
-            visible = true,
-            title = "Rekuester",
-            icon = rememberVectorPainter(Icons.Default.Https),
-            resizable = true,
-            enabled = showNewCollectionWizard.not(),
-            focusable = true,
-            alwaysOnTop = false,
-            content = {
-                val collectionsViewModel = viewModel { CollectionsViewModel() }
-                val collectionApiViewModel = viewModel(
-                    key = collectionsViewModel.currentCollectionUUID
-                ) {
-                    CollectionApiViewModel(collectionsViewModel.currentCollectionUUID)
-                }
-
-
-                MenuBar {
-                    Menu("File") {
-                        Item(
-                            text = "New",
-                            onClick = { println("New clicked") },
-                            shortcut = KeyShortcut(Key.N, ctrl = true)
-                        )
-                        Item(
-                            text = "Open",
-                            onClick = { println("Open clicked") },
-                            shortcut = KeyShortcut(Key.O, ctrl = true)
-                        )
-//                    Item(
-//                        text = "Close",
-//                        onClick = { showMainWindow = false },
-//                        shortcut = KeyShortcut(Key.W, meta = true)
-//                    )
-                    }
-                    Menu("Edit") {
-                        Item("Undo", onClick = { println("Undo") })
-                        Item("Redo", onClick = { println("Redo") })
-                    }
-                    Menu("Collections") {
-                        Item(
-                            text = "New Collection",
-                            onClick = {
-                                showNewCollectionWizard = true
-                            },
-                            shortcut = KeyShortcut(Key.N, ctrl = true, shift = true)
-                        )
-                        Separator()
-                        val collections by collectionsViewModel.collectionsFlow.collectAsState()
-                        collections.forEachIndexed { index, collection ->
-                            RadioButtonItem(
-                                text = collection.label,
-                                selected = collectionsViewModel.currentCollectionUUID == collection.uuid,
-                                onClick = {
-                                    collectionsViewModel.currentCollectionUUID = collection.uuid
-                                },
-                            )
-                        }
-                    }
-                    Menu("Theme") {
-                        var selectedTheme by remember { mutableStateOf("System") }
-                        RadioButtonItem(
-                            "Light",
-                            selected = selectedTheme == "Light",
-                            onClick = { selectedTheme = "Light" }
-                        )
-                        RadioButtonItem(
-                            "Dark",
-                            selected = selectedTheme == "Dark",
-                            onClick = { selectedTheme = "Dark" }
-                        )
-                        RadioButtonItem(
-                            "System",
-                            selected = selectedTheme == "System",
-                            onClick = { selectedTheme = "System" }
-                        )
-                    }
-                    Menu("Preferences") {
-                        CheckboxItem("Auto Check Update", true) {}
-                    }
-                    Menu("About") {
-                        Item("Version 0.0.1", onClick = { println("About clicked") })
-                        Item("Author", onClick = { println("About clicked") })
-                    }
-                }
-
-                window.minimumSize = Dimension(800, 600)
-                val mainViewModel = viewModel { MainViewModel() }
-                val mainUiViewModel = viewModel { MainUiViewModel() }
-                val navController = rememberNavController()
-
-
-                CompositionLocalProvider(
-                    LocalMainViewModel provides mainViewModel,
-                    LocalMainUiViewModel provides mainUiViewModel,
-                    LocalNavController provides navController,
-                    LocalCollectionsViewModel provides collectionsViewModel,
-                    LocalCollectionApiViewModel provides collectionApiViewModel
-                ) {
-                    FullSizeRow {
-                        ApisListView()
-                        DraggableDivideBar(mainUiViewModel.apisListViewWidth) { it ->
-                            mainUiViewModel.apisListViewWidth = it
-                        }
-                        FullSizeColumn {
-                            FullWidthRow(
-                                modifier = Modifier
-                                    .horizontalScroll(rememberScrollState())
-                                    .height(30.dp)
-                            ) {
-                                mainViewModel.openedApiTabs.forEach { apiTab ->
-                                    Row(
-                                        modifier = Modifier
-                                            .width(120.dp)
-                                            .height(30.dp)
-                                            .clip(RoundedCornerShape(4.dp))
-                                            .background(Color.Gray)
-                                            .clickable {
-                                                navController.navigate(Pages.ApiRequestPage(apiTab.key)) {
-                                                    popUpTo<Pages.BlankPage>()
-                                                }
-                                            }
-                                            .padding(horizontal = 4.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        apiTab.value.Text(
-                                            overflow = TextOverflow.Ellipsis,
-                                            maxLines = 1,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        Icons.Default.Close.Icon(
-                                            modifier = Modifier.size(20.dp).clickable {
-                                                navController.navigate(Pages.BlankPage) {
-                                                    popUpTo<Pages.BlankPage>()
-                                                }
-                                                mainViewModel.closeApiTab(apiTab.key)
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                            NavHost(
-                                navController = navController,
-                                startDestination = Pages.BlankPage
-                            ) {
-                                composableNoAnimate<Pages.BlankPage> {
-                                    FullSizeBox {
-                                        "This is a Blank Page, select an API to start".Text(
-                                            modifier = Modifier.align(
-                                                Alignment.Center
-                                            )
-                                        )
-                                    }
-                                }
-                                composableNoAnimate<Pages.ApiRequestPage> { navBackStackEntry ->
-                                    ApiRequestPage(navBackStackEntry = navBackStackEntry)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        )
     }
 }
 

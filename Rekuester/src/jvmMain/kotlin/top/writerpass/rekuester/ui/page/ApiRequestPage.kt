@@ -44,6 +44,19 @@ import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.viewmodel.ApiRequestViewModel
 
+private val requestPartEntities = listOf(
+    "Param",
+    "Authorization",
+    "Headers",
+    "Body",
+    "Scripts",
+    "Settings"
+)
+
+private val responsePartEntities = listOf(
+    "Overview", "Body", "Cookies", "Headers"
+)
+
 @Composable
 fun ApiRequestPage(
     navBackStackEntry: NavBackStackEntry,
@@ -51,7 +64,6 @@ fun ApiRequestPage(
     val navController = LocalNavController.current
     val uuid = navBackStackEntry.toRoute<Pages.ApiRequestPage>().uuid
 
-    val mainViewModel = LocalMainViewModel.current
     val apiRequestViewModel = viewModel(
         viewModelStoreOwner = navBackStackEntry,
         key = uuid
@@ -80,7 +92,6 @@ fun ApiRequestPage(
                 if (apiState.isModified.value) "Save".TextButton {
                     apiState.composeNewApi().let {
                         apiRequestViewModel.updateOrInsert(it)
-                        mainViewModel.openApiTab(it)
                         apiState.isModified.setFalse()
                         editLabel = false
                     }
@@ -100,22 +111,12 @@ fun ApiRequestPage(
             }
             FullSizeColumn {
                 "Request".Text()
-                val entities = remember {
-                    listOf(
-                        "Param",
-                        "Authorization",
-                        "Headers",
-                        "Body",
-                        "Scripts",
-                        "Settings"
-                    )
-                }
                 TabBarWithContent(
-                    entities = entities,
+                    entities = requestPartEntities,
                     onPage = { pageId ->
                         when (pageId) {
                             0 -> {
-                                entities[pageId].Text()
+                                requestPartEntities[pageId].Text()
 
                                 apiState.params.list.forEachIndexed { index, (k, v) ->
                                     FullWidthRow {
@@ -169,24 +170,21 @@ fun ApiRequestPage(
                             }
 
                             1 -> {
-                                entities[pageId].Text()
+                                requestPartEntities[pageId].Text()
                                 "Not Implemented".Text()
                             }
 
                             else -> {
-                                entities[pageId].Text()
+                                requestPartEntities[pageId].Text()
                                 "Not Implemented".Text()
                             }
                         }
                     }
                 )
                 "Response".Text()
-                val entities1 = remember {
-                    listOf("Overview", "Body", "Cookies", "Headers")
-                }
                 FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
-                    TabBarWithContent(entities1) { pageId ->
+                    TabBarWithContent(responsePartEntities) { pageId ->
                         apiRequestViewModel.currentResult?.let { reqResult ->
                             reqResult.response?.let { result ->
 

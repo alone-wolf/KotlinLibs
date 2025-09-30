@@ -42,7 +42,7 @@ kotlin {
 
                 implementation(ktorLibs.serialization.kotlinx.json)
 
-                implementation(databaseORM.bundles.exposed.sqlite)
+//                implementation(databaseORM.bundles.exposed.sqlite)
             }
         }
         val jvmMain by getting {
