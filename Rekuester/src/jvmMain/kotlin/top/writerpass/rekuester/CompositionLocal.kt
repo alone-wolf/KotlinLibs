@@ -3,6 +3,7 @@ package top.writerpass.rekuester
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.window.ApplicationScope
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import top.writerpass.rekuester.viewmodel.CollectionApiViewModel
 import top.writerpass.rekuester.viewmodel.CollectionsViewModel
@@ -25,4 +26,7 @@ val LocalCollectionApiViewModel =
 val LocalApplicationScope =
     staticCompositionLocalOf<ApplicationScope> { error("No ApplicationScope provided") }
 
+val LocalAppViewModelStoreOwner = staticCompositionLocalOf<ViewModelStoreOwner> {
+    error("No ViewModelStoreOwner #1 provided")
+}
 

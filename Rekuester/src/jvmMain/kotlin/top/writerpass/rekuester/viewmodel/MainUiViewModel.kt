@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 
 class MainUiViewModel : BaseViewModel() {
-    var apisListViewWidth by mutableStateOf(200.dp)
+    var sideListWidth by mutableStateOf(200.dp)
     var showNewCollectionWizard by mutableStateOf(false)
     var showCollectionManager by mutableStateOf(false)
 }

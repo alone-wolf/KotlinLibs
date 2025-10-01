@@ -47,7 +47,7 @@ fun ApisListView() {
     val mainUiViewModel = LocalMainUiViewModel.current
     val navController = LocalNavController.current
     val collectionApiViewModel = LocalCollectionApiViewModel.current
-    FullHeightColumn(modifier = Modifier.width(mainUiViewModel.apisListViewWidth)) {
+    FullHeightColumn(modifier = Modifier.width(mainUiViewModel.sideListWidth)) {
         FullWidthRow(horizontalArrangement = Arrangement.End) {
             "Load".TextButton { mainViewModel.loadData() }
             "Save".TextButton { mainViewModel.saveData() }

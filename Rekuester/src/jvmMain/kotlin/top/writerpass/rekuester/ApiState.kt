@@ -1,6 +1,8 @@
 package top.writerpass.rekuester
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.StateFactoryMarker
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.utils.AutoActionMutableState
@@ -19,6 +21,8 @@ class ApiState(
     val params = autoTagModifiedStateListOf(api.params)
     val headers = autoTagModifiedStateListOf(api.headers)
     val requestBody = autoTagModifiedStateOf(api.requestBody)
+
+    var requestResult by mutableStateOf<HttpRequestResult?>(null)
 
 
     fun composeNewApi(): Api {

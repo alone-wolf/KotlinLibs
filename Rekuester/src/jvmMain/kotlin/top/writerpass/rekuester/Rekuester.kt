@@ -8,8 +8,6 @@ import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.isTraySupported
 import androidx.compose.ui.window.rememberTrayState
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -84,14 +82,10 @@ data class Collection(
 
 
 fun main() {
-    val viewModelStoreOwner = object : ViewModelStoreOwner {
-        override val viewModelStore: ViewModelStore = ViewModelStore()
-    }
-
     application {
-
         CompositionLocalProvider(
-            LocalViewModelStoreOwner provides viewModelStoreOwner,
+            LocalViewModelStoreOwner provides Singletons.viewModelStoreOwner,
+            LocalAppViewModelStoreOwner provides Singletons.viewModelStoreOwner,
             LocalApplicationScope provides this,
         ) {
             val mainViewModel = viewModel { MainViewModel() }
@@ -110,7 +104,7 @@ fun main() {
                         icon = rememberVectorPainter(Icons.Default.Https),
                         state = rememberTrayState(),
                         tooltip = "Rekuester",
-                        onAction = { },
+                        onAction = {},
                         menu = {}
                     )
                 }

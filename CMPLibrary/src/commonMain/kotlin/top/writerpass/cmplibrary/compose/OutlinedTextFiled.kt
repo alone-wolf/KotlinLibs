@@ -13,11 +13,13 @@ fun MutableState<String>.OutlinedTextFiled(
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
     label: String? = null,
+    placeholder: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = { value = it },
+        placeholder = placeholder?.let { { it.Text() } },
         enabled = enabled,
         maxLines = maxLines,
         label = label?.let { { it.Text() } },

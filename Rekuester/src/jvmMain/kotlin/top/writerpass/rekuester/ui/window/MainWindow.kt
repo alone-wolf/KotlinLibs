@@ -29,10 +29,10 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeColumn
@@ -55,12 +55,93 @@ import top.writerpass.rekuester.viewmodel.CollectionApiViewModel
 import java.awt.Dimension
 
 @Composable
-fun MainWindow(){
+fun FrameWindowScope.MainWindowMenu() {
+    val mainUiViewModel = LocalMainUiViewModel.current
+    val collectionsViewModel = LocalCollectionsViewModel.current
+    MenuBar {
+        Menu("File") {
+            Item(
+                text = "New",
+                onClick = { println("New clicked") },
+                shortcut = KeyShortcut(Key.N, ctrl = true)
+            )
+            Item(
+                text = "Open",
+                onClick = { println("Open clicked") },
+                shortcut = KeyShortcut(Key.O, ctrl = true)
+            )
+//                    Item(
+//                        text = "Exit",
+//                        onClick = applicationScope::exitApplication,
+//                        shortcut = KeyShortcut(Key.W, meta = true)
+//                    )
+        }
+        Menu("Edit") {
+            Item("Undo", onClick = { println("Undo") })
+            Item("Redo", onClick = { println("Redo") })
+        }
+        Menu("Collections") {
+            Item(
+                text = "New Collection",
+                onClick = { mainUiViewModel.showNewCollectionWizard = true },
+                shortcut = KeyShortcut(Key.N, ctrl = true, shift = true)
+            )
+            Item(
+                text = "Collection Manager",
+                onClick = { mainUiViewModel.showCollectionManager = true },
+                shortcut = KeyShortcut(Key.M, ctrl = true, shift = true)
+            )
+            Separator()
+            val collections by collectionsViewModel.collectionsFlow.collectAsState()
+            collections.forEachIndexed { index, collection ->
+                RadioButtonItem(
+                    text = collection.label,
+                    selected = collectionsViewModel.currentCollectionUUID == collection.uuid,
+                    onClick = {
+                        collectionsViewModel.currentCollectionUUID = collection.uuid
+                    },
+                )
+            }
+        }
+        Menu("Theme") {
+            var selectedTheme by remember { mutableStateOf("System") }
+            RadioButtonItem(
+                "Light",
+                selected = selectedTheme == "Light",
+                onClick = { selectedTheme = "Light" }
+            )
+            RadioButtonItem(
+                "Dark",
+                selected = selectedTheme == "Dark",
+                onClick = { selectedTheme = "Dark" }
+            )
+            RadioButtonItem(
+                "System",
+                selected = selectedTheme == "System",
+                onClick = { selectedTheme = "System" }
+            )
+        }
+        Menu("Preferences") {
+            CheckboxItem("Auto Check Update", true) {}
+        }
+        Menu("About") {
+            Item("Version 0.0.1", onClick = { println("About clicked") })
+            Item("Author", onClick = { println("About clicked") })
+        }
+    }
+}
+
+@Composable
+fun MainWindow() {
     val mainUiViewModel = LocalMainUiViewModel.current
     val mainViewModel = LocalMainViewModel.current
     val collectionsViewModel = LocalCollectionsViewModel.current
     val navController = LocalNavController.current
     val applicationScope = LocalApplicationScope.current
+
+    val currentCollectionUUID = collectionsViewModel.currentCollectionUUID
+    val collectionApiViewModel = CollectionApiViewModel
+        .viewModelInstance(currentCollectionUUID)
 
     Window(
         onCloseRequest = applicationScope::exitApplication,
@@ -73,95 +154,17 @@ fun MainWindow(){
         focusable = true,
         alwaysOnTop = false,
         content = {
-            val collectionApiViewModel = viewModel(
-                key = collectionsViewModel.currentCollectionUUID
-            ) {
-                CollectionApiViewModel(collectionsViewModel.currentCollectionUUID)
-            }
-
-
-            MenuBar {
-                Menu("File") {
-                    Item(
-                        text = "New",
-                        onClick = { println("New clicked") },
-                        shortcut = KeyShortcut(Key.N, ctrl = true)
-                    )
-                    Item(
-                        text = "Open",
-                        onClick = { println("Open clicked") },
-                        shortcut = KeyShortcut(Key.O, ctrl = true)
-                    )
-//                    Item(
-//                        text = "Exit",
-//                        onClick = applicationScope::exitApplication,
-//                        shortcut = KeyShortcut(Key.W, meta = true)
-//                    )
-                }
-                Menu("Edit") {
-                    Item("Undo", onClick = { println("Undo") })
-                    Item("Redo", onClick = { println("Redo") })
-                }
-                Menu("Collections") {
-                    Item(
-                        text = "New Collection",
-                        onClick = { mainUiViewModel.showNewCollectionWizard = true },
-                        shortcut = KeyShortcut(Key.N, ctrl = true, shift = true)
-                    )
-                    Item(
-                        text = "Collection Manager",
-                        onClick = { mainUiViewModel.showCollectionManager = true },
-                        shortcut = KeyShortcut(Key.M, ctrl = true, shift = true)
-                    )
-                    Separator()
-                    val collections by collectionsViewModel.collectionsFlow.collectAsState()
-                    collections.forEachIndexed { index, collection ->
-                        RadioButtonItem(
-                            text = collection.label,
-                            selected = collectionsViewModel.currentCollectionUUID == collection.uuid,
-                            onClick = {
-                                collectionsViewModel.currentCollectionUUID = collection.uuid
-                            },
-                        )
-                    }
-                }
-                Menu("Theme") {
-                    var selectedTheme by remember { mutableStateOf("System") }
-                    RadioButtonItem(
-                        "Light",
-                        selected = selectedTheme == "Light",
-                        onClick = { selectedTheme = "Light" }
-                    )
-                    RadioButtonItem(
-                        "Dark",
-                        selected = selectedTheme == "Dark",
-                        onClick = { selectedTheme = "Dark" }
-                    )
-                    RadioButtonItem(
-                        "System",
-                        selected = selectedTheme == "System",
-                        onClick = { selectedTheme = "System" }
-                    )
-                }
-                Menu("Preferences") {
-                    CheckboxItem("Auto Check Update", true) {}
-                }
-                Menu("About") {
-                    Item("Version 0.0.1", onClick = { println("About clicked") })
-                    Item("Author", onClick = { println("About clicked") })
-                }
-            }
-
             window.minimumSize = Dimension(800, 600)
 
+            MainWindowMenu()
 
             CompositionLocalProvider(
                 LocalCollectionApiViewModel provides collectionApiViewModel
             ) {
                 FullSizeRow {
                     ApisListView()
-                    DraggableDivideBar(mainUiViewModel.apisListViewWidth) { it ->
-                        mainUiViewModel.apisListViewWidth = it
+                    DraggableDivideBar(mainUiViewModel.sideListWidth) { it ->
+                        mainUiViewModel.sideListWidth = it
                     }
                     FullSizeColumn {
                         FullWidthRow(

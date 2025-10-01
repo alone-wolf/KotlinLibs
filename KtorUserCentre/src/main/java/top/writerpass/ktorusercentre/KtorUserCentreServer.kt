@@ -7,6 +7,7 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
+import io.ktor.server.request.uri
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
@@ -21,6 +22,7 @@ import top.writerpass.ktorusercentre.database.UsersDao
 import top.writerpass.ktorusercentre.database.UsersTable
 import top.writerpass.ktorusercentre.database.installUsersApi
 import top.writerpass.ktorusercentre.ktor_server.ktorServer
+import top.writerpass.ktorusercentre.ktor_server.log
 
 
 @Serializable
@@ -59,6 +61,10 @@ val server = ktorServer {
     }
     routing {
         route("/api") {
+            get("/t") {
+                call.request.uri.log()
+                call.returnOk("")
+            }
             installUsersApi()
         }
         route("/auth") {

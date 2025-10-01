@@ -1,6 +1,8 @@
 package top.writerpass.rekuester.viewmodel
 
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.ktor.http.HttpMethod
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -11,6 +13,16 @@ import top.writerpass.rekuester.Singletons
 class CollectionApiViewModel(
     private val connectionUUID: String
 ) : BaseViewModel() {
+
+    companion object {
+        @Composable
+        fun viewModelInstance(collectionUUID: String): CollectionApiViewModel {
+            return viewModel(key = collectionUUID) {
+                CollectionApiViewModel(collectionUUID)
+            }
+        }
+    }
+
     val itemFlow = Singletons.collectionsRepository.allFlow
         .map { it.find { it.uuid == connectionUUID } }
         .stateIn(

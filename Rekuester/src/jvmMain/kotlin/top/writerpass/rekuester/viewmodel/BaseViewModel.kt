@@ -12,4 +12,5 @@ abstract class BaseViewModel(
     fun runInScope(block: suspend () -> Unit) {
         viewModelScope.launch(defaultDispatcher) { block() }
     }
+
 }

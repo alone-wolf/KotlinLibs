@@ -49,7 +49,7 @@ fun CollectionManagerWindow() {
             val mainUiViewModel = LocalMainUiViewModel.current
             val navController = LocalNavController.current
             val collectionsViewModel = LocalCollectionsViewModel.current
-            FullHeightColumn(modifier = Modifier.width(mainUiViewModel.apisListViewWidth)) {
+            FullHeightColumn(modifier = Modifier.width(mainUiViewModel.sideListWidth)) {
                 FullWidthRow(horizontalArrangement = Arrangement.End) {
 //                        "Load".TextButton {
 //                            mainViewModel.loadData()
