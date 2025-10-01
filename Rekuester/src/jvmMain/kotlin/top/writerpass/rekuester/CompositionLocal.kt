@@ -16,17 +16,12 @@ val LocalMainUiViewModel =
     staticCompositionLocalOf<MainUiViewModel> { error("No MainUiViewModel provided") }
 val LocalNavController =
     staticCompositionLocalOf<NavHostController> { error("No NavHostController provided") }
-
 val LocalCollectionsViewModel =
     staticCompositionLocalOf<CollectionsViewModel> { error("No CollectionsViewModel provided") }
-
 val LocalCollectionApiViewModel =
     compositionLocalOf<CollectionApiViewModel> { error("No CollectionApiViewModel provided") }
-
 val LocalApplicationScope =
     staticCompositionLocalOf<ApplicationScope> { error("No ApplicationScope provided") }
-
-val LocalAppViewModelStoreOwner = staticCompositionLocalOf<ViewModelStoreOwner> {
-    error("No ViewModelStoreOwner #1 provided")
-}
+val LocalAppViewModelStoreOwner =
+    staticCompositionLocalOf<ViewModelStoreOwner> { error("No ViewModelStoreOwner #1 provided") }
 

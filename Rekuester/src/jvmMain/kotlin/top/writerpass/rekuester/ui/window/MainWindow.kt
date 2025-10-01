@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package top.writerpass.rekuester.ui.window
 
 import androidx.compose.foundation.background
@@ -13,9 +15,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Https
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
@@ -167,23 +173,36 @@ fun MainWindow() {
                         mainUiViewModel.sideListWidth = it
                     }
                     FullSizeColumn {
+                        val scrollState = rememberScrollState()
                         FullWidthRow(
                             modifier = Modifier
-                                .horizontalScroll(rememberScrollState())
+                                .horizontalScroll(scrollState)
                                 .height(30.dp)
                         ) {
                             val openedApiTabs by mainViewModel.openedApiTabsFlow.collectAsState()
-                            openedApiTabs.forEach { api ->
+                            val tabWidthPx = with(LocalDensity.current) {
+                                120.dp.roundToPx()
+                            }
+                            openedApiTabs.forEachIndexed { index, api ->
+                                val isSelected by remember {
+                                    derivedStateOf {
+                                        mainViewModel.openedTabApiUUID.value == api.uuid
+                                    }
+                                }
+                                LaunchedEffect(isSelected) {
+                                    scrollState.animateScrollTo(index * tabWidthPx)
+                                }
                                 Row(
                                     modifier = Modifier
                                         .width(120.dp)
                                         .height(30.dp)
                                         .clip(RoundedCornerShape(4.dp))
-                                        .background(Color.Gray)
+                                        .background(if (isSelected) Color.DarkGray else Color.Gray)
                                         .clickable {
                                             navController.navigate(Pages.ApiRequestPage(api.uuid)) {
                                                 popUpTo<Pages.BlankPage>()
                                             }
+                                            mainViewModel.openApiTab(api)
                                         }
                                         .padding(horizontal = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically

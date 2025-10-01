@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,10 +62,15 @@ fun ApiRequestPage(
 ) {
     val navController = LocalNavController.current
     val uuid = navBackStackEntry.toRoute<Pages.ApiRequestPage>().uuid
-    val apiRequestViewModel = ApiRequestViewModel.viewModelInstance(uuid)
+    val apiRequestViewModel = ApiRequestViewModel.instance(uuid)
 
-    apiRequestViewModel.apiNullable?.let { api ->
-        apiRequestViewModel.apiStateNullable?.let { apiState ->
+    apiRequestViewModel.let { viewModel ->
+        val apiNullable by viewModel.apiNullableFlow.collectAsState()
+        val apiStateNullable by viewModel.apiStateNullableFlow.collectAsState()
+        if (apiNullable != null && apiStateNullable != null) {
+            val api = apiNullable!!
+            val apiState = apiStateNullable!!
+
             FullSizeColumn(modifier = Modifier) {
                 FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
                     Icons.Default.KeyboardArrowLeft.IconButton {

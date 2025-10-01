@@ -2,6 +2,7 @@
 
 package top.writerpass.rekuester.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -18,16 +19,20 @@ class MainViewModel() : BaseViewModel() {
 
     val openedApiTabsFlow = apiRepository.allFlow.map { it.filter { it.tabOpened } }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 
+    val openedTabApiUUID = mutableStateOf("")
+
     fun openApiTab(api: Api) = runInScope {
         apiRepository.update(api.copy(tabOpened = true))
+        openedTabApiUUID.value = api.uuid
     }
 
     fun closeApiTab(api: Api) = runInScope {
         apiRepository.update(api.copy(tabOpened = false))
+        openedTabApiUUID.value = ""
     }
 
     fun saveData() {
