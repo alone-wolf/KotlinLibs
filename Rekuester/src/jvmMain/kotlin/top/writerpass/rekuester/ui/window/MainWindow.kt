@@ -4,13 +4,15 @@ package top.writerpass.rekuester.ui.window
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -32,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.FrameWindowScope
@@ -43,7 +44,6 @@ import androidx.navigation.compose.NavHost
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullSizeRow
-import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.navigation.composableNoAnimate
@@ -173,55 +173,63 @@ fun MainWindow() {
                         mainUiViewModel.sideListWidth = it
                     }
                     FullSizeColumn {
-                        val scrollState = rememberScrollState()
-                        FullWidthRow(
-                            modifier = Modifier
-                                .horizontalScroll(scrollState)
-                                .height(30.dp)
-                        ) {
-                            val openedApiTabs by mainViewModel.openedApiTabsFlow.collectAsState()
-                            val tabWidthPx = with(LocalDensity.current) {
-                                120.dp.roundToPx()
+                        val openedApiTabs by mainViewModel.openedApiTabsFlow.collectAsState()
+                        val lazyListState = rememberLazyListState()
+                        LaunchedEffect(mainViewModel.openedTabApiUUID) {
+                            val index =
+                                openedApiTabs.indexOfFirst { it.uuid == mainViewModel.openedTabApiUUID }
+                            if (index != -1) {
+                                lazyListState.animateScrollToItem(index)
                             }
-                            openedApiTabs.forEachIndexed { index, api ->
-                                val isSelected by remember {
-                                    derivedStateOf {
-                                        mainViewModel.openedTabApiUUID.value == api.uuid
+                            if (mainViewModel.openedTabApiUUID == "") {
+                                navController.navigate(Pages.BlankPage) {
+                                    popUpTo(Pages.BlankPage) {
+                                        inclusive = true
                                     }
                                 }
-                                LaunchedEffect(isSelected) {
-                                    scrollState.animateScrollTo(index * tabWidthPx)
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .width(120.dp)
-                                        .height(30.dp)
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(if (isSelected) Color.DarkGray else Color.Gray)
-                                        .clickable {
-                                            navController.navigate(Pages.ApiRequestPage(api.uuid)) {
-                                                popUpTo<Pages.BlankPage>()
-                                            }
-                                            mainViewModel.openApiTab(api)
-                                        }
-                                        .padding(horizontal = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    api.label.Text(
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 1,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Icons.Default.Close.Icon(
-                                        modifier = Modifier.size(20.dp).clickable {
-                                            navController.navigate(Pages.BlankPage) {
-                                                popUpTo<Pages.BlankPage>()
-                                            }
-                                            mainViewModel.closeApiTab(api)
-                                        }
-                                    )
+                            } else {
+                                navController.navigate(Pages.ApiRequestPage(mainViewModel.openedTabApiUUID)) {
+                                    popUpTo(Pages.BlankPage)
                                 }
                             }
+                        }
+                        LazyRow(
+                            modifier = Modifier.height(30.dp),
+                            state = lazyListState,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            items(
+                                items = openedApiTabs,
+                                key = { it.uuid },
+                                itemContent = { api ->
+                                    val isSelected by remember {
+                                        derivedStateOf {
+                                            mainViewModel.openedTabApiUUID == api.uuid
+                                        }
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .width(120.dp)
+                                            .height(30.dp)
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(if (isSelected) Color.LightGray else Color.Gray)
+                                            .clickable { mainViewModel.openApiTab(api) }
+                                            .padding(horizontal = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        api.label.Text(
+                                            overflow = TextOverflow.Ellipsis,
+                                            maxLines = 1,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icons.Default.Close.Icon(
+                                            modifier = Modifier.size(20.dp).clickable {
+                                                mainViewModel.closeApiTab(api)
+                                            }
+                                        )
+                                    }
+                                }
+                            )
                         }
                         NavHost(
                             navController = navController,

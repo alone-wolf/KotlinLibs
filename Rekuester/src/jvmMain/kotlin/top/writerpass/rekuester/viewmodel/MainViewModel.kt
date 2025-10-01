@@ -2,7 +2,10 @@
 
 package top.writerpass.rekuester.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -23,24 +26,33 @@ class MainViewModel() : BaseViewModel() {
         initialValue = emptyList()
     )
 
-    val openedTabApiUUID = mutableStateOf("")
+    var openedTabApiUUID by mutableStateOf("")
+        private set
+    val openedTabStack = mutableStateListOf<String>()
 
     fun openApiTab(api: Api) = runInScope {
         apiRepository.update(api.copy(tabOpened = true))
-        openedTabApiUUID.value = api.uuid
+        openedTabApiUUID = api.uuid
+        val index = openedTabStack.indexOf(api.uuid)
+        if (index != -1) {
+            openedTabStack.removeAt(index)
+        }
+        openedTabStack.add(api.uuid)
     }
 
     fun closeApiTab(api: Api) = runInScope {
         apiRepository.update(api.copy(tabOpened = false))
-        openedTabApiUUID.value = ""
+        openedTabStack.remove(api.uuid)
+        if (api.uuid == openedTabApiUUID) {
+            openedTabApiUUID = openedTabStack.lastOrNull() ?: ""
+        }
     }
 
     fun saveData() {
         viewModelScope.launchIO {
             val json = Singletons.json
             json.encodeToStream(
-                value = apiRepository.findAll(),
-                stream = File("apis.json").outputStream()
+                value = apiRepository.findAll(), stream = File("apis.json").outputStream()
             )
             json.encodeToStream(
                 value = Singletons.collectionsRepository.findAll(),
