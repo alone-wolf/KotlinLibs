@@ -5,18 +5,19 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.ktor.http.HttpMethod
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.Singletons
 
 class CollectionApiViewModel(
-    private val connectionUUID: String
+    private val collectionUUID: String
 ) : BaseViewModel() {
 
     companion object {
         @Composable
-        fun viewModelInstance(collectionUUID: String): CollectionApiViewModel {
+        fun instance(collectionUUID: String): CollectionApiViewModel {
             return viewModel(key = collectionUUID) {
                 CollectionApiViewModel(collectionUUID)
             }
@@ -24,7 +25,7 @@ class CollectionApiViewModel(
     }
 
     val itemFlow = Singletons.collectionsRepository.allFlow
-        .map { it.find { it.uuid == connectionUUID } }
+        .map { it.find { it.uuid == collectionUUID } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
@@ -36,7 +37,8 @@ class CollectionApiViewModel(
     suspend fun findAll() = apiRepository.findAll()
 
     val apis = allFlow
-        .map { it.filter { it.collectionUUID == connectionUUID } }
+        .map { it.filter { it.collectionUUID == collectionUUID } }
+        .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
@@ -53,7 +55,7 @@ class CollectionApiViewModel(
 
     fun createNewApi() {
         val newApi = Api(
-            collectionUUID = connectionUUID,
+            collectionUUID = collectionUUID,
             label = "untitled",
             method = HttpMethod.Get,
             address = "http://",

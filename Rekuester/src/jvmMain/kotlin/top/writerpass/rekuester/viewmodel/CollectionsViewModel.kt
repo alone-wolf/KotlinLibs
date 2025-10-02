@@ -29,7 +29,7 @@ class CollectionsViewModel : BaseViewModel() {
     }
 
     var currentCollectionUUID by mutableStateOf("default")
-    val currentCollection by derivedStateOf {
-        collectionsFlow.value.find { it.uuid == currentCollectionUUID }
-    }
+//    val currentCollection by derivedStateOf {
+//        collectionsFlow.value.find { it.uuid == currentCollectionUUID }
+//    }
 }

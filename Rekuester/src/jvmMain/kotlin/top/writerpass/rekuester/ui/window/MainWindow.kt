@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.ArrowLeft
 import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Https
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -70,7 +69,6 @@ import top.writerpass.rekuester.ui.componment.DraggableDivideBar
 import top.writerpass.rekuester.ui.page.ApiRequestPage
 import top.writerpass.rekuester.ui.part.ApisListView
 import top.writerpass.rekuester.viewmodel.CollectionApiViewModel
-import top.writerpass.rekuester.viewmodel.MainViewModel
 import java.awt.Dimension
 
 @Composable
@@ -251,14 +249,12 @@ fun OpenedApiTabsRow(){
 @Composable
 fun MainWindow() {
     val mainUiViewModel = LocalMainUiViewModel.current
-    val mainViewModel = LocalMainViewModel.current
     val collectionsViewModel = LocalCollectionsViewModel.current
     val navController = LocalNavController.current
     val applicationScope = LocalApplicationScope.current
 
     val currentCollectionUUID = collectionsViewModel.currentCollectionUUID
-    val collectionApiViewModel = CollectionApiViewModel
-        .viewModelInstance(currentCollectionUUID)
+    val collectionApiViewModel = CollectionApiViewModel.instance(currentCollectionUUID)
 
     Window(
         onCloseRequest = applicationScope::exitApplication,
