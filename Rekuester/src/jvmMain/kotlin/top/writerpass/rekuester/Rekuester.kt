@@ -1,19 +1,14 @@
 package top.writerpass.rekuester
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Https
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.isTraySupported
-import androidx.compose.ui.window.rememberTrayState
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
 import top.writerpass.rekuester.data.dao.ItemWithId
+import top.writerpass.rekuester.ui.ApplicationTray
 import top.writerpass.rekuester.ui.window.CollectionManagerWindow
 import top.writerpass.rekuester.ui.window.MainWindow
 import top.writerpass.rekuester.ui.window.NewCollectionWizardWindow
@@ -80,7 +75,6 @@ data class Collection(
 // TODO 增加自定义Body的编辑功能
 // TODO 使用Navigation作为导航
 
-
 fun main() {
     application {
         CompositionLocalProvider(
@@ -99,16 +93,7 @@ fun main() {
                 LocalCollectionsViewModel provides collectionsViewModel,
                 LocalNavController provides navController,
             ) {
-                if (isTraySupported) {
-                    Tray(
-                        icon = rememberVectorPainter(Icons.Default.Https),
-                        state = rememberTrayState(),
-                        tooltip = "Rekuester",
-                        onAction = {},
-                        menu = {}
-                    )
-                }
-
+                ApplicationTray()
                 NewCollectionWizardWindow()
                 CollectionManagerWindow()
                 MainWindow()

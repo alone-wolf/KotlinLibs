@@ -123,15 +123,14 @@ fun MainWindow() {
     val mainUiViewModel = LocalMainUiViewModel.current
     val collectionsViewModel = LocalCollectionsViewModel.current
     val navController = LocalNavController.current
-    val applicationScope = LocalApplicationScope.current
 
     val currentCollectionUUID = collectionsViewModel.currentCollectionUUID
     val collectionApiViewModel = CollectionApiViewModel.instance(currentCollectionUUID)
 
     Window(
-        onCloseRequest = applicationScope::exitApplication,
+        onCloseRequest = { mainUiViewModel.showMainWindow = false },
         state = rememberWindowState(),
-        visible = true,
+        visible = mainUiViewModel.showMainWindow,
         title = "Rekuester",
         icon = rememberVectorPainter(Icons.Default.Https),
         resizable = true,

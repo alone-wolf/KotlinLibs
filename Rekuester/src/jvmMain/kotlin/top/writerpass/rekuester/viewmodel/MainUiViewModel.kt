@@ -9,6 +9,8 @@ class MainUiViewModel : BaseViewModel() {
     var sideListWidth by mutableStateOf(200.dp)
     var showNewCollectionWizard by mutableStateOf(false)
     var showCollectionManager by mutableStateOf(false)
+
+    var showMainWindow by mutableStateOf(true)
 }
 
 

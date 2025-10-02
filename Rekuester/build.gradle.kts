@@ -62,13 +62,17 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Rekuester"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.2"
+//            includeAllModules = true
 
             linux {
                 iconFile.set(project.file("desktopAppIcons/LinuxIcon.png"))
             }
             windows {
                 iconFile.set(project.file("desktopAppIcons/WindowsIcon.ico"))
+                dirChooser = true
+                menu = true
+                shortcut = true
             }
             macOS {
                 iconFile.set(project.file("desktopAppIcons/MacosIcon.icns"))
