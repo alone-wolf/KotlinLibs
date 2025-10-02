@@ -68,7 +68,7 @@ fun ApiRequestPage(
         val apiNullable by viewModel.apiNullableFlow.collectAsState()
         val apiStateNullable by viewModel.apiStateNullableFlow.collectAsState()
         if (apiNullable != null && apiStateNullable != null) {
-            val api = apiNullable!!
+//            val api = apiNullable!!
             val apiState = apiStateNullable!!
 
             FullSizeColumn(modifier = Modifier) {

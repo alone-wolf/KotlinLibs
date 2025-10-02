@@ -24,7 +24,7 @@ class CollectionApiViewModel(
         }
     }
 
-    val itemFlow = Singletons.collectionsRepository.allFlow
+    val collectionNullableFlow = Singletons.collectionsRepository.allFlow
         .map { it.find { it.uuid == collectionUUID } }
         .stateIn(
             scope = viewModelScope,
@@ -36,7 +36,7 @@ class CollectionApiViewModel(
     val allFlow = apiRepository.allFlow
     suspend fun findAll() = apiRepository.findAll()
 
-    val apis = allFlow
+    val apisFlow = allFlow
         .map { it.filter { it.collectionUUID == collectionUUID } }
         .distinctUntilChanged()
         .stateIn(

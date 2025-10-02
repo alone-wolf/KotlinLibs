@@ -53,13 +53,13 @@ fun ApisListView() {
             "Save".TextButton { mainViewModel.saveData() }
             Icons.Default.Add.IconButton { collectionApiViewModel.createNewApi() }
         }
-        val collectionNullable by collectionApiViewModel.itemFlow.collectAsState()
+        val collectionNullable by collectionApiViewModel.collectionNullableFlow.collectAsState()
         if (collectionNullable == null) {
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 "No Collection Selected".Text()
             }
         } else {
-            val apis by collectionApiViewModel.apis.collectAsState()
+            val apis by collectionApiViewModel.apisFlow.collectAsState()
             Row(modifier = Modifier.fillMaxWidth()) {
 
             }

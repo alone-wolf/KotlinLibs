@@ -47,7 +47,6 @@ fun CollectionManagerWindow() {
         title = "Collection Manager",
         content = {
             val mainUiViewModel = LocalMainUiViewModel.current
-            val navController = LocalNavController.current
             val collectionsViewModel = LocalCollectionsViewModel.current
             FullHeightColumn(modifier = Modifier.width(mainUiViewModel.sideListWidth)) {
                 FullWidthRow(horizontalArrangement = Arrangement.End) {
