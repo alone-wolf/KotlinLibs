@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package top.writerpass.rekuester.ui.part
 
 import androidx.compose.animation.AnimatedContent
@@ -18,11 +20,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullHeightColumn
@@ -59,15 +71,20 @@ fun ApisListView() {
                 "No Collection Selected".Text()
             }
         } else {
+            val collection = collectionNullable!!
             val apis by collectionApiViewModel.apisFlow.collectAsState()
-            Row(modifier = Modifier.fillMaxWidth()) {
-
+            Row(
+                modifier = Modifier.fillMaxWidth().height(30.dp).padding(start = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                collection.label.Text(maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 items(
                     items = apis,
                     itemContent = { api ->
                         val onHover = Mutable.someBoolean()
+                        var showMenu by remember { mutableStateOf(false) }
                         FullWidthBox(
                             modifier = Modifier.height(45.dp)
                                 .clickable {
@@ -75,6 +92,11 @@ fun ApisListView() {
                                         popUpTo<Pages.BlankPage>()
                                     }
                                     mainViewModel.openApiTab(api)
+                                }
+                                .onPointerEvent(PointerEventType.Press) { e ->
+                                    if (e.buttons.isSecondaryPressed) {
+                                        showMenu = true
+                                    }
                                 }
                                 .padding(horizontal = 16.dp)
                                 .onPointerHover(
@@ -108,6 +130,26 @@ fun ApisListView() {
                                         }
                                     }
                                 }
+                            }
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false },
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Clone") },
+                                    onClick = { showMenu = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Open") },
+                                    onClick = { showMenu = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Open All") },
+                                    onClick = {
+                                        mainViewModel.openApiTabs(apis)
+                                        showMenu = false
+                                    }
+                                )
                             }
                         }
                     }

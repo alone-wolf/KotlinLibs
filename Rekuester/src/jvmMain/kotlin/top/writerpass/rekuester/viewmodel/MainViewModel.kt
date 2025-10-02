@@ -40,6 +40,12 @@ class MainViewModel() : BaseViewModel() {
         openedTabStack.add(api.uuid)
     }
 
+    fun openApiTabs(apis: List<Api>) = apis
+        .filter { it.tabOpened.not() }
+        .forEach { api ->
+            openApiTab(api)
+        }
+
     fun closeApiTab(api: Api) = runInScope {
         apiRepository.update(api.copy(tabOpened = false))
         openedTabStack.remove(api.uuid)
