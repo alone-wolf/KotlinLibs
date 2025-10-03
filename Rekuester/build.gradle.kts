@@ -77,6 +77,8 @@ compose.desktop {
             macOS {
                 iconFile.set(project.file("desktopAppIcons/MacosIcon.icns"))
                 bundleID = "top.writerpass.rekuester"
+                dockName = "Rekuester"
+                setDockNameSameAsPackageName = true
             }
         }
     }
