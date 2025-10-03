@@ -1,12 +1,14 @@
 package top.writerpass.rekuester
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.application
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
+import top.writerpass.kmplibrary.coroutine.launchIO
 import top.writerpass.rekuester.data.dao.ItemWithId
 import top.writerpass.rekuester.ui.ApplicationTray
 import top.writerpass.rekuester.ui.window.CollectionManagerWindow
@@ -77,6 +79,12 @@ data class Collection(
 
 fun main() {
     application {
+        val scope = rememberCoroutineScope()
+        val helper = object : Helper("top.writerpass.rekuester") {}
+        scope.launchIO {
+            helper.checkLock()
+        }
+
         CompositionLocalProvider(
             LocalViewModelStoreOwner provides Singletons.viewModelStoreOwner,
             LocalAppViewModelStoreOwner provides Singletons.viewModelStoreOwner,
