@@ -4,11 +4,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.StateFactoryMarker
+import io.ktor.http.HttpHeaders
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.utils.AutoActionMutableState
 import top.writerpass.rekuester.utils.AutoActionMutableStateList
 import top.writerpass.rekuester.utils.autoActionStateListOf
 import top.writerpass.rekuester.utils.autoActionStateOf
+import java.util.UUID
+
+val HttpHeaders.RekuesterToken: String
+    get() = "Rekuester-Token"
+
+fun defaultRequestHeaders(): Map<String, String> {
+    return mapOf(
+        HttpHeaders.UserAgent to "Rekuester/1.0.0",
+        HttpHeaders.Accept to "*/*",
+        HttpHeaders.AcceptEncoding to "gzip, deflate, br",
+        HttpHeaders.Connection to "keep-alive",
+        HttpHeaders.RekuesterToken to UUID.randomUUID().toString()
+    )
+}
 
 class ApiState(
     api: Api,
@@ -23,7 +38,6 @@ class ApiState(
     val params = autoTagModifiedStateListOf(api.params)
     val headers = autoTagModifiedStateListOf(api.headers)
     val requestBody = autoTagModifiedStateOf(api.requestBody)
-
     var requestResult by mutableStateOf<HttpRequestResult?>(null)
 
     suspend fun request(client: RekuesterClient) {
@@ -53,18 +67,14 @@ class ApiState(
     @StateFactoryMarker
     inline fun <reified T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
         return autoActionStateOf(initial) {
-            if (!isModified.value) {
-                isModified.setTrue()
-            }
+            if (!isModified.value) isModified.setTrue()
         }
     }
 
     @StateFactoryMarker
     inline fun <reified T> autoTagModifiedStateListOf(initial: List<T>): AutoActionMutableStateList<T> {
         return autoActionStateListOf(initial) {
-            if (!isModified.value) {
-                isModified.setTrue()
-            }
+            if (!isModified.value) isModified.setTrue()
         }
     }
 }
