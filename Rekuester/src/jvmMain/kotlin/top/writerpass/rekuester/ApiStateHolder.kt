@@ -10,6 +10,8 @@ object ApiStateHolder {
         apiStateMap[apiState.uuid] = apiState
     }
 
+    val BLANK = ApiState(Api.BLANK)
+
     fun getApiState(api: Api): ApiState {
         return apiStateMap.getOrCreate(api.uuid) { ApiState(api) }
     }

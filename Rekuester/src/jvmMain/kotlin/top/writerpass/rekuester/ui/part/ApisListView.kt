@@ -47,17 +47,15 @@ import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
+import top.writerpass.rekuester.Collection
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 import top.writerpass.rekuester.LocalMainUiViewModel
 import top.writerpass.rekuester.LocalMainViewModel
-import top.writerpass.rekuester.LocalNavController
-import top.writerpass.rekuester.Pages
 
 @Composable
 fun ApisListView() {
     val mainViewModel = LocalMainViewModel.current
     val mainUiViewModel = LocalMainUiViewModel.current
-    val navController = LocalNavController.current
     val collectionApiViewModel = LocalCollectionApiViewModel.current
     FullHeightColumn(modifier = Modifier.width(mainUiViewModel.sideListWidth)) {
         FullWidthRow(horizontalArrangement = Arrangement.End) {
@@ -65,34 +63,28 @@ fun ApisListView() {
             "Save".TextButton { mainViewModel.saveData() }
             Icons.Default.Add.IconButton { collectionApiViewModel.createNewApi() }
         }
-        val collectionNullable by collectionApiViewModel.collectionNullableFlow.collectAsState()
-        if (collectionNullable == null) {
+        val collection by collectionApiViewModel.collectionFlow.collectAsState()
+        if (collection == Collection.BLANK) {
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 "No Collection Selected".Text()
             }
         } else {
-            val collection = collectionNullable!!
-            val apis by collectionApiViewModel.apisFlow.collectAsState()
             Row(
                 modifier = Modifier.fillMaxWidth().height(30.dp).padding(start = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 collection.label.Text(maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
+            val apisList by collectionApiViewModel.apisListFlow.collectAsState()
             LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 items(
-                    items = apis,
+                    items = apisList,
                     itemContent = { api ->
                         val onHover = Mutable.someBoolean()
                         var showMenu by remember { mutableStateOf(false) }
                         FullWidthBox(
                             modifier = Modifier.height(45.dp)
-                                .clickable {
-                                    navController.navigate(Pages.ApiRequestPage(api.uuid)) {
-                                        popUpTo<Pages.BlankPage>()
-                                    }
-                                    mainViewModel.openApiTab(api)
-                                }
+                                .clickable { collectionApiViewModel.openApiTab(api) }
                                 .onPointerEvent(PointerEventType.Press) { e ->
                                     if (e.buttons.isSecondaryPressed) {
                                         showMenu = true
@@ -146,7 +138,7 @@ fun ApisListView() {
                                 DropdownMenuItem(
                                     text = { Text("Open All") },
                                     onClick = {
-                                        mainViewModel.openApiTabs(apis)
+//                                        mainViewModel.openApiTabs(apis)
                                         showMenu = false
                                     }
                                 )

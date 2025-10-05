@@ -7,7 +7,7 @@ import top.writerpass.rekuester.data.ApiRepository
 import top.writerpass.rekuester.data.CollectionsRepository
 
 object Singletons {
-    val apiRepository = ApiRepository()
+    val apisRepository = ApiRepository()
     val collectionsRepository = CollectionsRepository()
     val client = RekuesterClient()
 

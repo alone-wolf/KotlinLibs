@@ -12,7 +12,7 @@ import top.writerpass.rekuester.data.CollectionsRepository
 
 class CollectionsViewModel : BaseViewModel() {
     private val collectionsRepository: CollectionsRepository = Singletons.collectionsRepository
-    private val apiRepository: ApiRepository = Singletons.apiRepository
+    private val apiRepository: ApiRepository = Singletons.apisRepository
     val collectionsFlow = collectionsRepository.allFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),

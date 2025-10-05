@@ -22,17 +22,14 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import androidx.navigation.compose.NavHost
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullSizeRow
 import top.writerpass.cmplibrary.compose.Text
-import top.writerpass.cmplibrary.navigation.composableNoAnimate
 import top.writerpass.rekuester.LocalApplicationScope
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 import top.writerpass.rekuester.LocalCollectionsViewModel
 import top.writerpass.rekuester.LocalMainUiViewModel
-import top.writerpass.rekuester.LocalNavController
 import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.ui.componment.DraggableDivideBar
 import top.writerpass.rekuester.ui.page.ApiRequestPage
@@ -45,6 +42,7 @@ import java.awt.Dimension
 fun FrameWindowScope.MainWindowMenu() {
     val mainUiViewModel = LocalMainUiViewModel.current
     val collectionsViewModel = LocalCollectionsViewModel.current
+    val applicationScope = LocalApplicationScope.current
     MenuBar {
         Menu("File") {
             Item(
@@ -57,11 +55,10 @@ fun FrameWindowScope.MainWindowMenu() {
                 onClick = { println("Open clicked") },
                 shortcut = KeyShortcut(Key.O, ctrl = true)
             )
-//                    Item(
-//                        text = "Exit",
-//                        onClick = applicationScope::exitApplication,
-//                        shortcut = KeyShortcut(Key.W, meta = true)
-//                    )
+            Item(
+                text = "Exit",
+                onClick = applicationScope::exitApplication,
+            )
         }
         Menu("Edit") {
             Item("Undo", onClick = { println("Undo") })
@@ -122,8 +119,6 @@ fun FrameWindowScope.MainWindowMenu() {
 fun MainWindow() {
     val mainUiViewModel = LocalMainUiViewModel.current
     val collectionsViewModel = LocalCollectionsViewModel.current
-    val navController = LocalNavController.current
-
     val currentCollectionUUID = collectionsViewModel.currentCollectionUUID
     val collectionApiViewModel = CollectionApiViewModel.instance(currentCollectionUUID)
 
@@ -152,22 +147,22 @@ fun MainWindow() {
                     }
                     FullSizeColumn {
                         OpenedApiTabsRow()
-
-                        NavHost(
-                            navController = navController,
-                            startDestination = Pages.BlankPage
-                        ) {
-                            composableNoAnimate<Pages.BlankPage> {
-                                FullSizeBox {
-                                    "This is a Blank Page, select an API to start".Text(
-                                        modifier = Modifier.align(
-                                            Alignment.Center
+                        FullSizeBox {
+                            val currentPage by collectionApiViewModel.currentPageFlow.collectAsState()
+                            when (currentPage) {
+                                is Pages.BlankPage -> {
+                                    FullSizeBox {
+                                        "This is a Blank Page, select an API to start".Text(
+                                            modifier = Modifier.align(
+                                                Alignment.Center
+                                            )
                                         )
-                                    )
+                                    }
                                 }
-                            }
-                            composableNoAnimate<Pages.ApiRequestPage> { navBackStackEntry ->
-                                ApiRequestPage(navBackStackEntry = navBackStackEntry)
+
+                                is Pages.ApiRequestPage -> {
+                                    ApiRequestPage((currentPage as Pages.ApiRequestPage).apiUuid)
+                                }
                             }
                         }
                     }

@@ -13,43 +13,56 @@ import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.Singletons
 import top.writerpass.rekuester.data.ApiRepository
 
-class ApiRequestViewModel(
-    uuid: String,
-    private val repository: ApiRepository = Singletons.apiRepository
+class ApiViewModel(
+    apiUuid: String,
 ) : BaseViewModel() {
+    private val repository: ApiRepository = Singletons.apisRepository
 
-    companion object {
+
+    companion object Companion {
         @Composable
-        fun instance(apiUUID: String): ApiRequestViewModel {
+        fun instance(apiUuid: String): ApiViewModel {
             val viewModelStoreOwner = LocalAppViewModelStoreOwner.current
 
             return viewModel(
                 viewModelStoreOwner = viewModelStoreOwner,
-                key = apiUUID,
-                initializer = {
-                    ApiRequestViewModel(apiUUID)
-                }
+                key = apiUuid,
+                initializer = { ApiViewModel(apiUuid) }
             )
         }
     }
 
     private val client = Singletons.client
 
-    val apiNullableFlow = repository.allFlow
-        .map { it.find { it.uuid == uuid } }
+    val apiFlow = Singletons.apisRepository
+        .allFlow.map { it.find { it.uuid == apiUuid } ?: Api.BLANK }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = Api.BLANK
+        )
+    val apiStateFlow = apiFlow.map { ApiStateHolder.getApiState(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = ApiStateHolder.BLANK
         )
 
-    val apiStateNullableFlow = apiNullableFlow
-        .map { it?.let { ApiStateHolder.getApiState(it) } }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
+//    val apiNullableFlow = repository.allFlow
+//        .map { it.find { it.uuid == uuid } }
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.WhileSubscribed(),
+//            initialValue = null
+//        )
+
+//    val apiStateNullableFlow = apiNullableFlow
+//        .map { it?.let { ApiStateHolder.getApiState(it) } }
+//        .stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.WhileSubscribed(),
+//            initialValue = null
+//        )
 
 //    val api = repository.findByIdFlow(uuid)
 //        .stateIn(
@@ -94,26 +107,7 @@ class ApiRequestViewModel(
 
     fun request() {
         viewModelScope.launchIO {
-            val apiNullable = apiNullableFlow.value
-            val apiStateNullable = apiStateNullableFlow.value
-            if (apiNullable != null && apiStateNullable != null) {
-                apiStateNullable.requestResult = client.request(
-                    method = apiNullable.method,
-                    address = apiNullable.address,
-                    params = apiNullable.params,
-                    headers = apiNullable.headers,
-                    body = apiNullable.requestBody
-                )
-            }
-//            apiNullable?.let { api ->
-//                apiStateNullable?.requestResult = client.request(
-//                    method = api.method,
-//                    address = api.address,
-//                    params = api.params,
-//                    headers = api.headers,
-//                    body = api.requestBody
-//                )
-//            }
+            apiStateFlow.value.request(client)
         }
     }
 }

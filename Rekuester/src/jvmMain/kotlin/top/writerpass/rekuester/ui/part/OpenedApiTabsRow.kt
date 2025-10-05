@@ -48,34 +48,21 @@ import kotlinx.coroutines.launch
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.Text
-import top.writerpass.rekuester.LocalMainViewModel
-import top.writerpass.rekuester.LocalNavController
-import top.writerpass.rekuester.Pages
+import top.writerpass.rekuester.LocalCollectionApiViewModel
+
 
 @Composable
 fun OpenedApiTabsRow() {
-    val mainViewModel = LocalMainViewModel.current
-    val navController = LocalNavController.current
+    val collectionApiViewModel = LocalCollectionApiViewModel.current
     val density = LocalDensity.current
-    val openedApiTabs by mainViewModel.openedApiTabsFlow.collectAsState()
+    val openedApiTabs by collectionApiViewModel.openedApiTabsFlow.collectAsState()
     val lazyListState = rememberLazyListState()
-    LaunchedEffect(mainViewModel.openedTabApiUUID) {
+    LaunchedEffect(collectionApiViewModel.currentApiTabUuid) {
         val index = openedApiTabs.indexOfFirst {
-            it.uuid == mainViewModel.openedTabApiUUID
+            it.uuid == collectionApiViewModel.currentApiTabUuid
         }
         if (index != -1) {
             lazyListState.animateScrollToItem(index)
-        }
-        if (mainViewModel.openedTabApiUUID == "") {
-            navController.navigate(Pages.BlankPage) {
-                popUpTo(Pages.BlankPage) {
-                    inclusive = true
-                }
-            }
-        } else {
-            navController.navigate(Pages.ApiRequestPage(mainViewModel.openedTabApiUUID)) {
-                popUpTo(Pages.BlankPage)
-            }
         }
     }
     FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
@@ -100,7 +87,7 @@ fun OpenedApiTabsRow() {
                 key = { it.uuid },
                 itemContent = { api ->
                     val isSelected by remember {
-                        derivedStateOf { mainViewModel.openedTabApiUUID == api.uuid }
+                        derivedStateOf { collectionApiViewModel.currentApiTabUuid == api.uuid }
                     }
                     var showMenu by remember { mutableStateOf(false) }
                     var menuOffset by remember { mutableStateOf(DpOffset.Zero) }
@@ -122,7 +109,7 @@ fun OpenedApiTabsRow() {
                                     Modifier.background(Color.LightGray)
                                 }
                             )
-                            .clickable { mainViewModel.openApiTab(api) }
+                            .clickable { collectionApiViewModel.openApiTab(api) }
                             .onPointerEvent(PointerEventType.Press) { e ->
                                 if (e.buttons.isSecondaryPressed) {
                                     val pos = e.changes.first().position
@@ -142,7 +129,7 @@ fun OpenedApiTabsRow() {
                         )
                         Icons.Default.Close.Icon(
                             modifier = Modifier.size(20.dp).clickable {
-                                mainViewModel.closeApiTab(api)
+                                collectionApiViewModel.closeApiTab(api)
                             }
                         )
                         DropdownMenu(
@@ -153,7 +140,7 @@ fun OpenedApiTabsRow() {
                             DropdownMenuItem(
                                 text = { Text("关闭") },
                                 onClick = {
-                                    mainViewModel.closeApiTab(api)
+                                    collectionApiViewModel.closeApiTab(api)
                                     showMenu = false
                                 }
                             )
@@ -161,14 +148,14 @@ fun OpenedApiTabsRow() {
                                 text = { Text("关闭其他") },
                                 onClick = {
                                     openedApiTabs.filter { it.uuid != api.uuid }
-                                        .forEach { mainViewModel.closeApiTab(it) }
+                                        .forEach { collectionApiViewModel.closeApiTab(it) }
                                     showMenu = false
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("关闭所有") },
                                 onClick = {
-                                    openedApiTabs.forEach { mainViewModel.closeApiTab(it) }
+                                    openedApiTabs.forEach { collectionApiViewModel.closeApiTab(it) }
                                     showMenu = false
                                 }
                             )

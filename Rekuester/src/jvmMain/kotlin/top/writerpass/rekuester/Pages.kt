@@ -2,10 +2,11 @@ package top.writerpass.rekuester
 
 import kotlinx.serialization.Serializable
 
-object Pages{
+@Serializable
+sealed interface Pages {
     @Serializable
-    object BlankPage
+    object BlankPage : Pages
 
     @Serializable
-    class ApiRequestPage(val uuid: String)
+    class ApiRequestPage(val apiUuid: String) : Pages
 }

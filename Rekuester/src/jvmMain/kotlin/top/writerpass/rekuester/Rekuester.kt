@@ -1,14 +1,12 @@
 package top.writerpass.rekuester
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.application
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
-import top.writerpass.kmplibrary.coroutine.launchIO
 import top.writerpass.rekuester.data.dao.ItemWithId
 import top.writerpass.rekuester.ui.ApplicationTray
 import top.writerpass.rekuester.ui.window.CollectionManagerWindow
@@ -55,9 +53,22 @@ data class Api(
     val params: List<ApiParam> = emptyList(),
     val headers: List<ApiHeader> = emptyList(),
     val requestBody: ApiRequestBodyContainer? = null,
-    val tabOpened: Boolean = false,
+//    val tabOpened: Boolean = false,
 ) : ItemWithId<String> {
     override val id: String = uuid
+
+    companion object {
+        val BLANK = Api(
+            uuid = "--",
+            collectionUUID = "--",
+            label = "untitled",
+            method = HttpMethod.Get,
+            address = "http://",
+            params = emptyList(),
+            headers = emptyList(),
+            requestBody = null,
+        )
+    }
 }
 
 @Serializable
@@ -67,11 +78,18 @@ data class Collection(
     val createdAt: Long = System.currentTimeMillis()
 ) : ItemWithId<String> {
     override val id: String = uuid
+
+    companion object {
+        val BLANK = Collection(
+            uuid = "--",
+            label = "untitled",
+            createdAt = System.currentTimeMillis(),
+        )
+    }
 }
 
 
 // TODO 增加Api列表的排序选项
-// TODO 增加ApiTabBar for Opened API
 // TODO 增加自定义Params的编辑功能
 // TODO 增加自定义Headers的编辑功能
 // TODO 增加自定义Body的编辑功能
@@ -79,12 +97,6 @@ data class Collection(
 
 fun main() {
     application {
-        val scope = rememberCoroutineScope()
-        val helper = object : Helper("top.writerpass.rekuester") {}
-        scope.launchIO {
-            helper.checkLock()
-        }
-
         CompositionLocalProvider(
             LocalViewModelStoreOwner provides Singletons.viewModelStoreOwner,
             LocalAppViewModelStoreOwner provides Singletons.viewModelStoreOwner,

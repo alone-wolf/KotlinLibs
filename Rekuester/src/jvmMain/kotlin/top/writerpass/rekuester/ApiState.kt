@@ -24,6 +24,16 @@ class ApiState(
 
     var requestResult by mutableStateOf<HttpRequestResult?>(null)
 
+    suspend fun request(client: RekuesterClient) {
+        requestResult = client.request(
+            method = method.value,
+            address = address.value,
+            params = params.list.toList(),
+            headers = headers.list.toList(),
+            body = requestBody.value
+        )
+    }
+
 
     fun composeNewApi(): Api {
         return Api(
@@ -35,7 +45,6 @@ class ApiState(
             params = params.list.toList(),
             headers = headers.list.toList(),
             requestBody = requestBody.value,
-            tabOpened = true,
         )
     }
 

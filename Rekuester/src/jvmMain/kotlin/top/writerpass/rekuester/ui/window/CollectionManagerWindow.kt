@@ -35,7 +35,6 @@ import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalCollectionsViewModel
 import top.writerpass.rekuester.LocalMainUiViewModel
-import top.writerpass.rekuester.LocalNavController
 
 @Composable
 fun CollectionManagerWindow() {
