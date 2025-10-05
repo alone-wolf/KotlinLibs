@@ -7,6 +7,8 @@ import androidx.compose.runtime.snapshots.StateFactoryMarker
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.utils.AutoActionMutableState
 import top.writerpass.rekuester.utils.AutoActionMutableStateList
+import top.writerpass.rekuester.utils.autoActionStateListOf
+import top.writerpass.rekuester.utils.autoActionStateOf
 
 class ApiState(
     api: Api,
@@ -49,16 +51,20 @@ class ApiState(
     }
 
     @StateFactoryMarker
-    fun <T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
-        return AutoActionMutableState(initial) {
-            isModified.setTrue()
+    inline fun <reified T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
+        return autoActionStateOf(initial) {
+            if (!isModified.value) {
+                isModified.setTrue()
+            }
         }
     }
 
     @StateFactoryMarker
-    fun <T> autoTagModifiedStateListOf(initial: List<T>): AutoActionMutableStateList<T> {
-        return AutoActionMutableStateList(initial) {
-            isModified.setTrue()
+    inline fun <reified T> autoTagModifiedStateListOf(initial: List<T>): AutoActionMutableStateList<T> {
+        return autoActionStateListOf(initial) {
+            if (!isModified.value) {
+                isModified.setTrue()
+            }
         }
     }
 }

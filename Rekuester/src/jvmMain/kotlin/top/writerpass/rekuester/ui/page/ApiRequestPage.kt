@@ -10,9 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -61,11 +59,9 @@ fun ApiRequestPage(apiUuid: String) {
             val editLabel = remember { mutableStateOf(false) }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (editLabel.value) {
-                    apiState.label.OutlinedTextFiled()
-                    Icons.Default.Check.IconButton { editLabel.setFalse() }
+                    apiState.label.OutlinedTextFiled(maxLines = 1)
                 } else {
-                    apiState.label.value.Text()
-                    Icons.Default.Edit.IconButton { editLabel.setTrue() }
+                    apiState.label.value.Text(modifier = Modifier.clickable { editLabel.setTrue() })
                 }
             }
             Spacer(modifier = Modifier.weight(1f))

@@ -72,16 +72,18 @@ class CollectionApiViewModel(
         viewModelScope.launch {
             apisMapFlow.collect { apisMap ->
                 // 清除已不存在的 tab（例如某 API 被删除）
-                val validTabs = _openedApiTabs.filter { it.uuid in apisMap.keys }
-                if (validTabs.size != _openedApiTabs.size) {
-                    _openedApiTabs.clear()
-                    _openedApiTabs.addAll(validTabs)
-                    _openedApiTabsFlow.value = validTabs.toList()
-                } else {
-                    // 无结构变化则不触发更新（可选优化）
-                    // 如果你希望即使 Api 数据更新时 Tab 内容也立即刷新，可直接：
-                    _openedApiTabsFlow.value = validTabs.toList()
+
+                val newList = mutableListOf<Api>()
+                _openedApiTabs.forEach { api ->
+                    val newApi = apisMap[api.uuid]
+                    if (newApi != null) {
+                        newList.add(newApi)
+                    }
                 }
+
+                _openedApiTabs.clear()
+                _openedApiTabs.addAll(newList)
+                _openedApiTabsFlow.value = newList.toList()
             }
         }
     }
@@ -100,12 +102,26 @@ class CollectionApiViewModel(
         currentApiTabUuid = api.uuid
     }
 
+    fun openApiTabs(apis: List<Api>) {
+        if (apis.isEmpty()) return
+        apis.forEach { api ->
+            if (_openedApiTabs.find { it.uuid == api.uuid } == null) {
+                _openedApiTabs.add(api)
+            }
+        }
+        _openedApiTabsFlow.value = _openedApiTabs.toList()
+        val lastApi = apis.last()
+        _currentPage.value = Pages.ApiRequestPage(lastApi.uuid)
+        currentApiTabUuid = lastApi.uuid
+    }
+
     fun closeApiTab(api: Api) {
         val removed = _openedApiTabs.removeIf { it.uuid == api.uuid }
         if (removed) {
             _openedApiTabsFlow.value = _openedApiTabs.toList()
         }
         if (_openedApiTabs.isEmpty()) {
+            currentApiTabUuid = "--"
             _currentPage.value = Pages.BlankPage
         }
     }

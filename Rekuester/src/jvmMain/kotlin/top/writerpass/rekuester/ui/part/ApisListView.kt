@@ -138,7 +138,7 @@ fun ApisListView() {
                                 DropdownMenuItem(
                                     text = { Text("Open All") },
                                     onClick = {
-//                                        mainViewModel.openApiTabs(apis)
+                                        collectionApiViewModel.openApiTabs(apisList)
                                         showMenu = false
                                     }
                                 )

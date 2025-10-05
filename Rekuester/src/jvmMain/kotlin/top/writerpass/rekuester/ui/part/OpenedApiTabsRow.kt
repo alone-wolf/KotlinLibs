@@ -48,8 +48,10 @@ import kotlinx.coroutines.launch
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 
+private val tabWidth = 120.dp
 
 @Composable
 fun OpenedApiTabsRow() {
@@ -57,6 +59,20 @@ fun OpenedApiTabsRow() {
     val density = LocalDensity.current
     val openedApiTabs by collectionApiViewModel.openedApiTabsFlow.collectAsState()
     val lazyListState = rememberLazyListState()
+    val tabWidthPx = with(density) { tabWidth.toPx() }
+    val scope = rememberCoroutineScope()
+
+    val isListAtHead by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex == 0
+        }
+    }
+    val isListAtTail by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex == openedApiTabs.size - 1
+        }
+    }
+
     LaunchedEffect(collectionApiViewModel.currentApiTabUuid) {
         val index = openedApiTabs.indexOfFirst {
             it.uuid == collectionApiViewModel.currentApiTabUuid
@@ -66,8 +82,6 @@ fun OpenedApiTabsRow() {
         }
     }
     FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
-        val scope = rememberCoroutineScope()
-        val tabWidthPx = with(density) { 120.dp.toPx() }
         LazyRow(
             modifier = Modifier.height(30.dp).weight(1f)
                 .onPointerEvent(PointerEventType.Scroll) { event ->
@@ -91,9 +105,10 @@ fun OpenedApiTabsRow() {
                     }
                     var showMenu by remember { mutableStateOf(false) }
                     var menuOffset by remember { mutableStateOf(DpOffset.Zero) }
+                    val apiState = ApiStateHolder.rememberApiState(api)
                     Row(
                         modifier = Modifier.Companion
-                            .width(120.dp)
+                            .width(tabWidth)
                             .height(30.dp)
                             .clip(
                                 RoundedCornerShape(
@@ -106,7 +121,7 @@ fun OpenedApiTabsRow() {
                                 if (isSelected) {
                                     Modifier
                                 } else {
-                                    Modifier.background(Color.LightGray)
+                                    Modifier.background(Color.Gray)
                                 }
                             )
                             .clickable { collectionApiViewModel.openApiTab(api) }
@@ -122,11 +137,19 @@ fun OpenedApiTabsRow() {
                             .padding(horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        api.label.Text(
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                            modifier = Modifier.weight(1f)
-                        )
+                        if (apiState.isModified.value) {
+                            "~${api.label}".Text(
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f)
+                            )
+                        } else {
+                            api.label.Text(
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                         Icons.Default.Close.Icon(
                             modifier = Modifier.size(20.dp).clickable {
                                 collectionApiViewModel.closeApiTab(api)
@@ -147,6 +170,7 @@ fun OpenedApiTabsRow() {
                             DropdownMenuItem(
                                 text = { Text("关闭其他") },
                                 onClick = {
+                                    collectionApiViewModel.openApiTab(api)
                                     openedApiTabs.filter { it.uuid != api.uuid }
                                         .forEach { collectionApiViewModel.closeApiTab(it) }
                                     showMenu = false
@@ -164,10 +188,10 @@ fun OpenedApiTabsRow() {
                 }
             )
         }
-        Icons.Default.ArrowLeft.Icon(modifier = Modifier.Companion.clickable {
+        Icons.Default.ArrowLeft.Icon(modifier = Modifier.clickable {
             scope.launch { lazyListState.animateScrollBy(-tabWidthPx * 1.5f) }
         })
-        Icons.Default.ArrowRight.Icon(modifier = Modifier.Companion.clickable {
+        Icons.Default.ArrowRight.Icon(modifier = Modifier.clickable {
             scope.launch { lazyListState.animateScrollBy(tabWidthPx * 1.5f) }
         })
     }

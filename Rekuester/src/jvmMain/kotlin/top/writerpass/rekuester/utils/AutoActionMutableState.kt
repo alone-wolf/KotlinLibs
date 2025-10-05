@@ -26,9 +26,7 @@ class AutoActionMutableState<T>(
 inline fun <reified T> autoActionStateOf(
     initial: T,
     noinline action: () -> Unit
-): AutoActionMutableState<T> {
-    return AutoActionMutableState(initial, action)
-}
+) = AutoActionMutableState(initial, action)
 
 class AutoActionMutableStateList<T>(
     initial: List<T> = emptyList(),
@@ -70,6 +68,4 @@ class AutoActionMutableStateList<T>(
 inline fun <reified T> autoActionStateListOf(
     initial: List<T> = emptyList(),
     noinline action: () -> Unit
-): AutoActionMutableStateList<T> {
-    return AutoActionMutableStateList(initial, action)
-}
+) = AutoActionMutableStateList(initial, action)

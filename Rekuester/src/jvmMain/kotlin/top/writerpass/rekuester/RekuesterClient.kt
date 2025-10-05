@@ -105,15 +105,6 @@ class RekuesterClient : AutoCloseable {
         }
     }
 
-//    suspend fun request(api: Api): HttpResponseResult {
-//        val method = api.basicInfo.method
-//        val address = URLBuilder(api.basicInfo.address).buildString()
-//        val headers = emptyMap<String, List<String>>()
-//        return client.request(address) {
-//            this.method = method
-//        }.toResult()
-//    }
-
     override fun close() {
         client.close()
     }
