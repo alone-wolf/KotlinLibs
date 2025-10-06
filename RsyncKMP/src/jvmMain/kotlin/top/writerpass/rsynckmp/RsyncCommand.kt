@@ -6,12 +6,12 @@ data class RsyncCommand(
     val options: List<String>,
     val ssh: SshConfig? = null
 ) {
-    fun toCommandString(): String {
+    fun toCommandString(): List<String> {
         val base = mutableListOf("rsync")
         base += options
         ssh?.let { base += listOf("-e", it.toCommandPart()) }
         base += sources
         base += destination
-        return base.joinToString(" ")
+        return base.toList()
     }
 }

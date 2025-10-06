@@ -6,8 +6,8 @@ import top.writerpass.rsynckmp.rsync
 
 fun main() = runBlocking {
     val cmd = rsync {
-        source("wolf@192.168.50.10:/mnt/primary/images/Windows\\ 10/cn_windows_10_enterprise_ltsc_2019_x64_dvd_9c09ff24.iso")
-        destination("~/Downloads/aa")
+        source("~/Downloads/blobsaver-arm-3.6.0.dmg")
+        destination("~/Downloads/blobsaver-arm-3.6.0.dmg1111")
         archive = true
         compress = true
         progress = true
@@ -17,7 +17,6 @@ fun main() = runBlocking {
     }
 
     val result = cmd.executeWithResult()
-    println("Exit: ${result.exitCode}")
     result.parseDryRun().forEach { println("${it.type}: ${it.path}") }
 
     // 异步执行示例
