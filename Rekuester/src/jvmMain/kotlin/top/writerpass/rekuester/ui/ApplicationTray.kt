@@ -7,6 +7,8 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.isTraySupported
 import androidx.compose.ui.window.rememberTrayState
+import top.writerpass.cmplibrary.utils.Mutable.setFalse
+import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalApplicationScope
 import top.writerpass.rekuester.LocalMainUiViewModel
 
@@ -20,15 +22,15 @@ fun ApplicationTray() {
                 icon = rememberVectorPainter(Icons.Default.Https),
                 state = rememberTrayState(),
                 tooltip = "Rekuester",
-                onAction = { mainUiViewModel.showMainWindow = true },
+                onAction = { mainUiViewModel.showMainWindow.setTrue() },
                 menu = {
-                    if (mainUiViewModel.showMainWindow) {
+                    if (mainUiViewModel.showMainWindow.value) {
                         Item("Hide Main Window") {
-                            mainUiViewModel.showMainWindow = false
+                            mainUiViewModel.showMainWindow.setFalse()
                         }
                     } else {
                         Item("Show Main Window") {
-                            mainUiViewModel.showMainWindow = true
+                            mainUiViewModel.showMainWindow.setTrue()
                         }
                     }
                     Separator()

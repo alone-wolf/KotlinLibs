@@ -10,8 +10,11 @@ class MainUiViewModel : BaseViewModel() {
     var showNewCollectionWizard by mutableStateOf(false)
     var showCollectionManager by mutableStateOf(false)
 
-    var showMainWindow by mutableStateOf(true)
+    val showMainWindow = mutableStateOf(true)
+
+    val exitOnClose = mutableStateOf(true)
 }
+
 
 
 

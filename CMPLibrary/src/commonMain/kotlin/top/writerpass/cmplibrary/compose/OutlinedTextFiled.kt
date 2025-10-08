@@ -8,7 +8,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 
 @Composable
-fun MutableState<String>.OutlinedTextFiled(
+fun MutableState<String>.OutlinedTextFiled1(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
@@ -29,7 +29,7 @@ fun MutableState<String>.OutlinedTextFiled(
 }
 
 @Composable
-fun <T : Any> MutableState<T>.OutlinedTextFiled(
+fun <T : Any> MutableState<T>.OutlinedTextFiled1(
     label: String? = null,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,

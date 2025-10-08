@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,6 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.ktor.http.HttpMethod
 import top.writerpass.cmplibrary.compose.DropDownMenu
@@ -26,24 +30,60 @@ import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.IconButton
 import top.writerpass.cmplibrary.compose.OutlinedButton
-import top.writerpass.cmplibrary.compose.OutlinedTextFiled
+import top.writerpass.cmplibrary.compose.OutlinedTextFiled1
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
+import top.writerpass.rekuester.ApiHeader
 import top.writerpass.rekuester.ApiParam
+import top.writerpass.rekuester.ApiState
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.viewmodel.ApiViewModel
 
 private val requestPartEntities = listOf(
-    "Param",
+    "Params",
     "Authorization",
     "Headers",
     "Body",
     "Scripts",
     "Settings"
 )
+
+sealed interface AuthTypes {
+    val label: String
+
+    object InheritAuthFromParent : AuthTypes {
+        override val label: String = "Inherit auth from parent"
+    }
+
+    object NoAuth : AuthTypes {
+        override val label: String = "No authentication"
+    }
+
+    object Basic : AuthTypes {
+        override val label: String = "Basic Auth"
+    }
+
+    object Bearer : AuthTypes {
+        override val label: String = "Bearer Token"
+    }
+
+    object JWT : AuthTypes {
+        override val label: String = "JWT Token"
+    }
+
+    object ApiKey : AuthTypes {
+        override val label: String = "API Key"
+    }
+
+    // 如果你希望支持自定义类型，可以用 data class
+    data class Custom(val customLabel: String) : AuthTypes {
+        override val label: String = customLabel
+    }
+}
+
 
 private val responsePartEntities = listOf(
     "Overview", "Body", "Cookies", "Headers"
@@ -54,12 +94,13 @@ fun ApiRequestPage(apiUuid: String) {
     val apiViewModel = ApiViewModel.instance(apiUuid)
     val api by apiViewModel.apiFlow.collectAsState()
     val apiState by apiViewModel.apiStateFlow.collectAsState()
+
     FullSizeColumn(modifier = Modifier) {
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
             val editLabel = remember { mutableStateOf(false) }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (editLabel.value) {
-                    apiState.label.OutlinedTextFiled(maxLines = 1)
+                    apiState.label.OutlinedTextFiled1(maxLines = 1)
                 } else {
                     apiState.label.value.Text(modifier = Modifier.clickable { editLabel.setTrue() })
                 }
@@ -81,7 +122,26 @@ fun ApiRequestPage(apiUuid: String) {
                 any2String = { this.value }
             )
             Spacer(modifier = Modifier.width(8.dp))
-            apiState.address.OutlinedTextFiled(modifier = Modifier.weight(1f))
+            OutlinedTextField(
+                value = apiState.urlBinding.text.value,
+                placeholder = { "Address".Text() },
+                onValueChange = { apiState.urlBinding.onTextChange(it) },
+                modifier = Modifier
+                    .weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            //
+                            apiState.urlBinding.onUrlEditStart()
+                        }
+                    },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+                keyboardActions = KeyboardActions(
+                    onGo = {
+                        apiViewModel.request()
+                    }
+                ),
+                maxLines = 1
+            )
             Spacer(modifier = Modifier.width(8.dp))
             "Send".OutlinedButton {
                 apiViewModel.request()
@@ -96,86 +156,12 @@ fun ApiRequestPage(apiUuid: String) {
                 entities = requestPartEntities,
                 onPage = { pageId ->
                     when (pageId) {
-                        0 -> {
-                            requestPartEntities[pageId].Text()
-
-                            apiState.params.list.forEachIndexed { index, (k, v, d) ->
-                                FullWidthRow(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    val kk = Mutable.someString(k)
-                                    val vv = Mutable.someString(v)
-                                    val dd = Mutable.someString(d)
-                                    OutlinedTextField(
-                                        value = kk.value,
-                                        placeholder = { "Key".Text() },
-                                        onValueChange = { kk.value = it },
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    OutlinedTextField(
-                                        value = vv.value,
-                                        placeholder = { "Value".Text() },
-                                        onValueChange = { vv.value = it },
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    OutlinedTextField(
-                                        value = dd.value,
-                                        placeholder = { "Description".Text() },
-                                        onValueChange = { dd.value = it },
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Icons.Default.Delete.IconButton {
-                                        apiState.params.removeAt(index)
-                                    }
-                                    Icons.Default.Save.IconButton {
-                                        apiState.params.list[index] = ApiParam(
-                                            key = kk.value,
-                                            value = vv.value,
-                                            description = dd.value
-                                        )
-                                    }
-                                }
-                            }
-                            FullWidthRow(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                val k = Mutable.someString()
-                                val v = Mutable.someString()
-                                val d = Mutable.someString()
-                                k.OutlinedTextFiled(
-                                    placeholder = "Key",
-                                    modifier = Modifier.weight(1f)
-                                )
-                                v.OutlinedTextFiled(
-                                    placeholder = "Value",
-                                    modifier = Modifier.weight(1f)
-                                )
-                                d.OutlinedTextFiled(
-                                    placeholder = "Description",
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Icons.Default.Save.IconButton {
-                                    if (k.value.isNotBlank()) {
-
-                                        apiState.params.list.add(
-                                            ApiParam(
-                                                k.value,
-                                                v.value,
-                                                d.value
-                                            )
-                                        )
-                                        k.value = ""
-                                        v.value = ""
-                                        d.value = ""
-                                    }
-                                }
-                            }
-                        }
-
+                        0 -> RequestPartParams(apiState)
                         1 -> {
-                            requestPartEntities[pageId].Text()
-                            "Not Implemented".Text()
+                            // authorization
                         }
+
+                        2 -> RequestPartHeaders(apiState)
 
                         else -> {
                             requestPartEntities[pageId].Text()
@@ -216,7 +202,7 @@ fun ApiRequestPage(apiUuid: String) {
                                                 key.Text(modifier = Modifier.weight(0.4f))
                                                 value.Text(modifier = Modifier.weight(1f))
                                             }
-                                            Divider()
+                                            HorizontalDivider()
                                         }
                                     }
                                 }
@@ -224,10 +210,192 @@ fun ApiRequestPage(apiUuid: String) {
                         } ?: FullSizeColumn {
                             "Error: ${reqResult.error}".Text()
                         }
-
                     }
                 }
+            }
+        }
+    }
+}
 
+@Composable
+fun RequestPartParams(apiState: ApiState) {
+    "Params".Text()
+
+    apiState.params.list.forEachIndexed { index, (k, v, d) ->
+        FullWidthRow(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val kk = Mutable.someString(k)
+            val vv = Mutable.someString(v)
+            val dd = Mutable.someString(d)
+            OutlinedTextField(
+                value = kk.value,
+                placeholder = { "Key".Text() },
+                onValueChange = { kk.value = it },
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            apiState.urlBinding.onParamsEditStart()
+                        }
+                    }
+            )
+            OutlinedTextField(
+                value = vv.value,
+                placeholder = { "Value".Text() },
+                onValueChange = { vv.value = it },
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            apiState.urlBinding.onParamsEditStart()
+                        }
+                    }
+            )
+            OutlinedTextField(
+                value = dd.value,
+                placeholder = { "Description".Text() },
+                onValueChange = { dd.value = it },
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            apiState.urlBinding.onParamsEditStart()
+                        }
+                    }
+            )
+            Icons.Default.Delete.IconButton {
+                apiState.params.removeAt(index)
+            }
+            Icons.Default.Save.IconButton {
+                apiState.params.list[index] = ApiParam(
+                    key = kk.value,
+                    value = vv.value,
+                    description = dd.value
+                )
+            }
+        }
+    }
+    FullWidthRow(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val k = Mutable.someString()
+        val v = Mutable.someString()
+        val d = Mutable.someString()
+        k.OutlinedTextFiled1(
+            placeholder = "Key",
+            modifier = Modifier.weight(1f)
+        )
+        v.OutlinedTextFiled1(
+            placeholder = "Value",
+            modifier = Modifier.weight(1f)
+        )
+        d.OutlinedTextFiled1(
+            placeholder = "Description",
+            modifier = Modifier.weight(1f)
+        )
+        Icons.Default.Save.IconButton {
+            if (k.value.isNotBlank()) {
+
+                apiState.params.list.add(
+                    ApiParam(
+                        k.value,
+                        v.value,
+                        d.value
+                    )
+                )
+                k.value = ""
+                v.value = ""
+                d.value = ""
+            }
+        }
+    }
+}
+
+@Composable
+fun RequestPartHeaders(apiState: ApiState) {
+    "Headers".Text()
+
+    apiState.headers.list.forEachIndexed { index, (k, v, d) ->
+        FullWidthRow(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val kk = Mutable.someString(k)
+            val vv = Mutable.someString(v)
+            val dd = Mutable.someString(d)
+            OutlinedTextField(
+                value = kk.value,
+                placeholder = { "Key".Text() },
+                onValueChange = { kk.value = it },
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            apiState.urlBinding.onParamsEditStart()
+                        }
+                    }
+            )
+            OutlinedTextField(
+                value = vv.value,
+                placeholder = { "Value".Text() },
+                onValueChange = { vv.value = it },
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            apiState.urlBinding.onParamsEditStart()
+                        }
+                    }
+            )
+            OutlinedTextField(
+                value = dd.value,
+                placeholder = { "Description".Text() },
+                onValueChange = { dd.value = it },
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            apiState.urlBinding.onParamsEditStart()
+                        }
+                    }
+            )
+            Icons.Default.Delete.IconButton {
+                apiState.headers.removeAt(index)
+            }
+            Icons.Default.Save.IconButton {
+                apiState.headers.list[index] = ApiHeader(
+                    key = kk.value,
+                    value = vv.value,
+                    description = dd.value
+                )
+            }
+        }
+    }
+    FullWidthRow(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val k = Mutable.someString()
+        val v = Mutable.someString()
+        val d = Mutable.someString()
+        k.OutlinedTextFiled1(
+            placeholder = "Key",
+            modifier = Modifier.weight(1f)
+        )
+        v.OutlinedTextFiled1(
+            placeholder = "Value",
+            modifier = Modifier.weight(1f)
+        )
+        d.OutlinedTextFiled1(
+            placeholder = "Description",
+            modifier = Modifier.weight(1f)
+        )
+        Icons.Default.Save.IconButton {
+            if (k.value.isNotBlank()) {
+
+                apiState.headers.list.add(
+                    ApiHeader(
+                        k.value,
+                        v.value,
+                        d.value
+                    )
+                )
+                k.value = ""
+                v.value = ""
+                d.value = ""
             }
         }
     }

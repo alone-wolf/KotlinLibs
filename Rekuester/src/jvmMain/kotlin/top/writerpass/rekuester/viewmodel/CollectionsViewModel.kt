@@ -23,11 +23,11 @@ class CollectionsViewModel : BaseViewModel() {
         runInScope {
             collectionsRepository.initialLoadData()
             apiRepository.initialLoadData()
-            currentCollectionUUID = collectionsFlow.value.firstOrNull()?.uuid ?: "default"
+            currentCollectionUuid = collectionsFlow.value.firstOrNull()?.uuid ?: "default"
         }
     }
 
-    var currentCollectionUUID by mutableStateOf("default")
+    var currentCollectionUuid by mutableStateOf("default")
 //    val currentCollection by derivedStateOf {
 //        collectionsFlow.value.find { it.uuid == currentCollectionUUID }
 //    }

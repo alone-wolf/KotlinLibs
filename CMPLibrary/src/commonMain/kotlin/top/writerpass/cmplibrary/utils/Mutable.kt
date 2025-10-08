@@ -21,6 +21,10 @@ object Mutable {
         value = false
     }
 
+    fun MutableState<Boolean>.switch() {
+        value = value.not()
+    }
+
     @Composable
     fun <T> something(default: T): MutableState<T> {
         return remember { mutableStateOf(default) }

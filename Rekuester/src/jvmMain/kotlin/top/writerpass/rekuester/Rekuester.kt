@@ -32,7 +32,7 @@ abstract class ApiRequestBodyContainer(
 data class ApiParam(
     val key: String,
     val value: String,
-    val description: String
+    val description: String = ""
 )
 
 @Serializable
