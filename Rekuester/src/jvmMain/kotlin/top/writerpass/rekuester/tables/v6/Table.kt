@@ -15,12 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -33,13 +32,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -152,42 +152,32 @@ fun Table6Wrapper1() {
         },
         onItemContent = { rowId, columnId, isHeader, item ->
             val isEditing = Mutable.someBoolean()
-            val textValue = Mutable.someString(item)
-            val lastFocusState = Mutable.someBoolean()
+            val textFieldValue = Mutable.something(
+                TextFieldValue(
+                    item,
+                    TextRange(item.length)
+                )
+            )
             val focusRequester = remember { FocusRequester() }
 
             if (isEditing.value) {
-                val textStyle = LocalTextStyle.current
-                val textStyle1 = textStyle.copy(
-                    lineHeight = textStyle.fontSize
-                )
                 LaunchedEffectOdd {
                     focusRequester.requestFocus()
                 }
-                TextField(
-                    value = textValue.value,
-                    onValueChange = { textValue.value = it },
-                    modifier = Modifier.fillMaxSize()
-                        .focusRequester(focusRequester)
-                        .onFocusChanged {
-                            if (lastFocusState.value.not() && it.isFocused) {
-                                // 刚获得
-                                lastFocusState.value = it.isFocused
-                            } else if (lastFocusState.value && it.isFocused.not()) {
-                                // 刚失去
-                                isEditing.setFalse()
-                            }
-                        },
+
+                BasicTextField(
+                    value = textFieldValue.value,
+                    onValueChange = { textFieldValue.value = it },
+                    modifier = Modifier.fillMaxSize().focusRequester(focusRequester),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
                     keyboardActions = KeyboardActions(
                         onGo = { isEditing.setFalse() }
                     ),
                     singleLine = true,
-                    textStyle = textStyle1
                 )
             } else {
                 Text(
-                    text = textValue.value,
+                    text = textFieldValue.value.text,
                     modifier = Modifier.fillMaxSize().then(
                         if (isHeader) {
                             Modifier.align(Alignment.Center)
@@ -199,7 +189,7 @@ fun Table6Wrapper1() {
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
-                    textAlign = if (isHeader) TextAlign.Center else null
+                    textAlign = if (isHeader) TextAlign.Center else null,
                 )
             }
         }
