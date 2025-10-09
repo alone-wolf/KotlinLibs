@@ -32,6 +32,4 @@ dependencies {
     implementation(ktorLibs.server.cio)
     implementation(ktorLibs.server.contentNegotiation)
 }
-repositories {
-    mavenCentral()
-}
+

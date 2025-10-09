@@ -175,11 +175,6 @@ class RowState(default: Float = 60f) {
     var height by mutableFloatStateOf(default)
 }
 
-class CellState(
-    val columnState: ColumnState,
-    val rowState: RowState
-)
-
 //@Composable
 //fun LazyItemScope.TabRow(
 //    rowState: RowState
