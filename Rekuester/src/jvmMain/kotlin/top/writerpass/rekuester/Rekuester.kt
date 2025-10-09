@@ -1,30 +1,22 @@
 package top.writerpass.rekuester
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.singleWindowApplication
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import io.ktor.http.*
+import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
-import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.kmplibrary.utils.getOrCreate
 import top.writerpass.rekuester.data.dao.ItemWithId
+import top.writerpass.rekuester.tables.v6.Table6Wrapper1
 import top.writerpass.rekuester.ui.ApplicationTray
 import top.writerpass.rekuester.ui.window.CollectionManagerWindow
 import top.writerpass.rekuester.ui.window.MainWindow
@@ -32,7 +24,7 @@ import top.writerpass.rekuester.ui.window.NewCollectionWizardWindow
 import top.writerpass.rekuester.viewmodel.CollectionsViewModel
 import top.writerpass.rekuester.viewmodel.MainUiViewModel
 import top.writerpass.rekuester.viewmodel.MainViewModel
-import java.util.*
+import java.util.UUID
 
 @Serializable
 enum class BodyType {
@@ -140,15 +132,7 @@ fun main1() {
 }
 
 fun main() = singleWindowApplication {
-    CMPTable1(
-        listOf(
-            listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-            listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-            listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-            listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-            listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-        )
-    )
+    Table6Wrapper1()
 }
 
 
@@ -167,13 +151,6 @@ fun RowScope.TableCell(
     )
 }
 
-class ColumnState(default: Float = 120f) {
-    var width by mutableFloatStateOf(default)
-}
-
-class RowState(default: Float = 60f) {
-    var height by mutableFloatStateOf(default)
-}
 
 //@Composable
 //fun LazyItemScope.TabRow(
@@ -196,98 +173,9 @@ class RowState(default: Float = 60f) {
 //    }
 //}
 
-object TableState {
-    val defaultWidth = 120f
-    val defaultHeight = 40f
-    val rowStateMap = mutableStateMapOf<Int, RowState>()
-    fun getRowState(index: Int): RowState {
-        return rowStateMap.getOrCreate(index) { RowState(defaultHeight) }
-    }
 
-    @Composable
-    fun rememberRowState(index: Int): RowState = remember { getRowState(index) }
+//
 
-    val columnStateMap = mutableStateMapOf<Int, ColumnState>()
-    fun getColumnState(index: Int): ColumnState {
-        return columnStateMap.getOrCreate(index) { ColumnState(defaultWidth) }
-    }
-
-    @Composable
-    fun rememberColumnState(index: Int): ColumnState = remember { getColumnState(index) }
-
-    val tableHeight: Float by derivedStateOf {
-        var sum = 0f
-        rowStateMap.values.forEach { it -> sum += it.height }
-        sum
-    }
-
-    val tableWidth: Float by derivedStateOf {
-        var sum = 0f
-        columnStateMap.values.forEach { it -> sum += it.width }
-        sum
-    }
-}
-
-@Composable
-fun CMPTable1(
-    dataSet: List<List<Any>>,
-    state: TableState = TableState,
-) {
-    Column(
-        modifier = Modifier
-            .size(
-                width = state.tableWidth.dp,
-                height = state.tableHeight.dp
-            )
-            .padding(18.dp)
-    ) {
-        val density = LocalDensity.current
-        HorizontalDivider()
-        dataSet.forEachIndexed { i, dataRow ->
-            val rowState = state.rememberRowState(i)
-            FullWidthRow(modifier = Modifier.height(rowState.height.dp)) {
-                VerticalDivider()
-                dataRow.forEachIndexed { i, data ->
-                    val columnState = state.rememberColumnState(i)
-                    val dateValue = remember { data.toString() }
-                    val draggableState = rememberDraggableState(onDelta = { delta ->
-                        val r = columnState.width * density.density + delta
-                        columnState.width = r
-                    })
-                    Text(
-                        text = dateValue,
-                        modifier = Modifier
-                            .width(columnState.width.dp)
-                            .fillMaxHeight()
-                            .background(Color.LightGray)
-                    )
-                    VerticalDivider(
-                        color = Color.Black,
-                        modifier = Modifier
-                            .pointerHoverIcon(PointerIcon.Hand)
-                            .draggable(
-                                state = draggableState,
-                                orientation = Orientation.Horizontal
-                            )
-                    )
-                }
-            }
-            val draggableState1 = rememberDraggableState(onDelta = { delta ->
-                val r = rowState.height * density.density + delta
-                rowState.height = r
-            })
-            HorizontalDivider(
-                color = Color.Black,
-                modifier = Modifier
-                    .pointerHoverIcon(PointerIcon.Hand)
-                    .draggable(
-                        state = draggableState1,
-                        orientation = Orientation.Vertical
-                    )
-            )
-        }
-    }
-}
 
 //@Composable
 //fun RowScope.TableCell(
