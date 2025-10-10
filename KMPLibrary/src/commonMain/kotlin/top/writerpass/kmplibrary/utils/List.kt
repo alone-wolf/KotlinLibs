@@ -29,3 +29,11 @@ fun <T : Any> List<T>.clearItemsBeforeActions(): List<T> {
         .apply { clear() }
         .toList()
 }
+
+operator fun <T> List<T>.times(int: Int): List<T> {
+    val m = mutableListOf<T>()
+    repeat(int) {
+        m.addAll(this)
+    }
+    return m.toList()
+}

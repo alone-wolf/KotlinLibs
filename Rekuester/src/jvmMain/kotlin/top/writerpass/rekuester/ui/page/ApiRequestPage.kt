@@ -47,6 +47,7 @@ import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.ApiHeader
 import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiState
+import top.writerpass.rekuester.tables.v8.HeaderTableSheet
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.viewmodel.ApiViewModel
 
@@ -229,58 +230,31 @@ fun ApiRequestPage(apiUuid: String) {
 fun RequestPartParams(apiState: ApiState) {
     "Params".Text()
 
-    apiState.params.list.forEachIndexed { index, (k, v, d) ->
-        FullWidthRow(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            val kk = Mutable.someString(k)
-            val vv = Mutable.someString(v)
-            val dd = Mutable.someString(d)
-            OutlinedTextField(
-                value = kk.value,
-                placeholder = { "Key".Text() },
-                onValueChange = { kk.value = it },
-                modifier = Modifier.weight(1f)
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            apiState.urlBinding.onParamsEditStart()
-                        }
-                    }
-            )
-            OutlinedTextField(
-                value = vv.value,
-                placeholder = { "Value".Text() },
-                onValueChange = { vv.value = it },
-                modifier = Modifier.weight(1f)
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            apiState.urlBinding.onParamsEditStart()
-                        }
-                    }
-            )
-            OutlinedTextField(
-                value = dd.value,
-                placeholder = { "Description".Text() },
-                onValueChange = { dd.value = it },
-                modifier = Modifier.weight(1f)
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            apiState.urlBinding.onParamsEditStart()
-                        }
-                    }
-            )
-            Icons.Default.Delete.IconButton {
-                apiState.params.removeAt(index)
+    HeaderTableSheet(
+        rowCount = apiState.params.list.size,
+        columnCount = 3,
+        headers = listOf("Key", "Value", "Description"),
+        onItem = { rowId, columnId ->
+            val row = apiState.params.list[rowId]
+            when (columnId) {
+                0 -> row.key
+                1 -> row.value
+                2 -> row.description
+                else -> "--"
             }
-            Icons.Default.Save.IconButton {
-                apiState.params.list[index] = ApiParam(
-                    key = kk.value,
-                    value = vv.value,
-                    description = dd.value
-                )
+        },
+        onItemChange = { rowId, columnId, item ->
+            val apiParam = apiState.params.list[rowId]
+            val newApiParam = when(columnId){
+                0-> apiParam.copy(key = item)
+                1-> apiParam.copy(value = item)
+                2-> apiParam.copy(description = item)
+                else -> apiParam
             }
+            apiState.params.list[rowId] = newApiParam
         }
-    }
+    )
+
     FullWidthRow(
         verticalAlignment = Alignment.CenterVertically
     ) {

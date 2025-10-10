@@ -1,4 +1,4 @@
-package top.writerpass.rekuester.tables.v6
+package top.writerpass.rekuester.tables.v7
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,13 +8,14 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,6 +53,7 @@ import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
+import top.writerpass.kmplibrary.utils.times
 import java.awt.Cursor
 
 @JvmName("sumOfDp")
@@ -71,7 +73,7 @@ class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-object TableState {
+class TableState {
     val defaultWidth = 120.dp
     val defaultHeight = 40.dp
     val rowStateMap = mutableStateMapOf<Int, RowState>()
@@ -97,133 +99,129 @@ object TableState {
     val tableWidth: Dp by derivedStateOf {
         columnStateMap.values.sumOf { it.width }
     }
+
+//    val columnMaxWidth:Dp by derivedStateOf {
+//        columnStateMap.values
+//    }
 }
 
-val dataSet = listOf(
-    listOf(
-        "HeadAHeadAHeadAHeadA",
-        "HeadB",
-        "HeadC",
-        "HeadD",
-        "HeadE",
-        "HeadF"
-    ),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-)
+private val dataSet = listOf(
+    listOf("HeadAHeadAHeadAHeadA", "HeadB", "HeadC", "HeadD", "HeadE", "HeadF"),
+) + listOf(listOf("AA", "BB", "CC", "DD", "EE", "FF")) * 1000
 
-const val default = "--"
 
-@Composable
-fun Table6Wrapper() {
-    Table6(
-        rowCount = dataSet.size,
-        columnCount = dataSet.first().size,
-        onItem = { rowId, columnId ->
-            dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: default
-        },
-        onItemContent = { rowId, columnId, isHeader, item ->
-            Text(
-                text = item,
-                modifier = Modifier.then(if (isHeader) Modifier.align(Alignment.Center) else Modifier),
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
-                textAlign = if (isHeader) TextAlign.Center else null
-            )
-        }
-    )
-}
+private const val default = "--"
 
-@Composable
-fun Table6Wrapper1() {
-    val focusManager = LocalFocusManager.current
-    Table6(
-        modifier = Modifier.clickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ) {
-            focusManager.clearFocus()
-        },
-        rowCount = dataSet.size,
-        columnCount = dataSet.first().size,
-        onItem = { rowId, columnId ->
-            dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: default
-        },
-        onItemContent = { rowId, columnId, isHeader, item ->
-            val isEditing = Mutable.someBoolean()
-            val textFieldValue = Mutable.something(
-                TextFieldValue(
-                    item,
-                    TextRange(item.length)
-                )
-            )
-            val focusRequester = remember { FocusRequester() }
+//@Composable
+//fun Table7Wrapper() {
+//    Table7(
+//        rowCount = dataSet.size,
+//        columnCount = dataSet.first().size,
+//        onItem = { rowId, columnId ->
+//            dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: default
+//        },
+//        onItemContent = { rowId, columnId, isHeader, item ->
+//            Text(
+//                text = item,
+//                modifier = Modifier.then(if (isHeader) Modifier.align(Alignment.Center) else Modifier),
+//                maxLines = 1,
+//                overflow = TextOverflow.Clip,
+//                textAlign = if (isHeader) TextAlign.Center else null
+//            )
+//        }
+//    )
+//}
 
-            if (isEditing.value) {
-                LaunchedEffectOdd {
-                    focusRequester.requestFocus()
-                }
-
-                BasicTextField(
-                    value = textFieldValue.value,
-                    onValueChange = { textFieldValue.value = it },
-                    modifier = Modifier.fillMaxSize().focusRequester(focusRequester),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-                    keyboardActions = KeyboardActions(
-                        onGo = { isEditing.setFalse() }
-                    ),
-                    singleLine = true,
-                )
-            } else {
-                Text(
-                    text = textFieldValue.value.text,
-                    modifier = Modifier.fillMaxSize().then(
-                        if (isHeader) {
-                            Modifier.align(Alignment.Center)
-                        } else {
-                            Modifier.clickable {
-                                isEditing.setTrue()
-                            }
-                        }
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Clip,
-                    textAlign = if (isHeader) TextAlign.Center else null,
-                )
-            }
-        }
-    )
-}
+//@Composable
+//fun Table7Wrapper1() {
+//    val focusManager = LocalFocusManager.current
+//    Table7(
+//        modifier = Modifier.clickable(
+//            indication = null,
+//            interactionSource = remember { MutableInteractionSource() }
+//        ) {
+//            focusManager.clearFocus(true)
+//        },
+//        rowCount = dataSet.size,
+//        columnCount = dataSet.first().size,
+//        onItem = { rowId, columnId ->
+//            dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: default
+//        },
+//        onItemContent = { rowId, columnId, isHeader, item ->
+//            val isEditing = Mutable.someBoolean()
+//            val textFieldValue = Mutable.something(
+//                TextFieldValue(
+//                    item,
+//                    TextRange(item.length)
+//                )
+//            )
+//            val focusRequester = remember { FocusRequester() }
+//
+//            if (isEditing.value) {
+//                LaunchedEffectOdd {
+//                    focusRequester.requestFocus()
+//                }
+//
+//                BasicTextField(
+//                    value = textFieldValue.value,
+//                    onValueChange = { textFieldValue.value = it },
+//                    modifier = Modifier.fillMaxSize().focusRequester(focusRequester),
+//                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+//                    keyboardActions = KeyboardActions(
+//                        onGo = { isEditing.setFalse() }
+//                    ),
+//                    singleLine = true,
+//                )
+//            } else {
+//                Box(
+//                    modifier = Modifier.fillMaxSize().then(
+//                        if (isHeader) {
+//                            Modifier.align(Alignment.Center)
+//                        } else {
+//                            Modifier.clickable { isEditing.setTrue() }
+//                        }
+//                    )
+//                ) {
+//                    Text(
+//                        text = textFieldValue.value.text,
+//                        maxLines = 1,
+//                        overflow = TextOverflow.Clip,
+//                        modifier = Modifier.then(
+//                            if (isHeader) Modifier.align(Alignment.Center) else Modifier
+//                        )
+//                    )
+//                }
+//            }
+//        }
+//    )
+//}
 
 @Composable
-fun <T : Any> Table6(
+fun <T : Any> Table7(
     modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    tableState: TableState = remember { TableState() },
     rowCount: Int,
     columnCount: Int,
     onItem: (rowId: Int, columnId: Int) -> T,
     onItemContent: @Composable BoxScope.(rowId: Int, columnId: Int, isHeader: Boolean, item: T) -> Unit,
-    state: TableState = TableState,
 ) {
-    Column(
+    val density = LocalDensity.current
+
+    LazyColumn(
         modifier = modifier
-            .size(
-                width = state.tableWidth,
-                height = state.tableHeight
-            )
-            .padding(18.dp)
+            .width(width = tableState.tableWidth)
+            .padding(18.dp),
+        state = state
     ) {
-        val density = LocalDensity.current
-        HorizontalDivider()
-        (0 until rowCount).forEach { rowIndex ->
-            val rowState = state.rememberRowState(rowIndex)
-            val isHeaderRow = rowIndex == 0
+        item { HorizontalDivider() }
+        items(count = rowCount, key = { it }, itemContent = { rowIndex ->
+            val rowState = tableState.rememberRowState(rowIndex)
+            val isHeaderRow = remember { rowIndex == 0 }
             FullWidthRow(modifier = Modifier.height(rowState.height)) {
                 VerticalDivider()
                 (0 until columnCount).forEach { columnIndex ->
-                    val columnState = state.rememberColumnState(columnIndex)
+                    val columnState = tableState.rememberColumnState(columnIndex)
                     val item = remember { onItem(rowIndex, columnIndex) }
                     Box(
                         Modifier.width(columnState.width)
@@ -265,6 +263,9 @@ fun <T : Any> Table6(
                 }
             }
             HorizontalDivider()
-        }
+        })
     }
 }
+
+
+

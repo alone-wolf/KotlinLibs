@@ -1,22 +1,13 @@
 package top.writerpass.rekuester
 
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.singleWindowApplication
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import io.ktor.http.HttpMethod
+import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import top.writerpass.rekuester.data.dao.ItemWithId
-import top.writerpass.rekuester.tables.v6.Table6Wrapper1
 import top.writerpass.rekuester.ui.ApplicationTray
 import top.writerpass.rekuester.ui.window.CollectionManagerWindow
 import top.writerpass.rekuester.ui.window.MainWindow
@@ -24,7 +15,7 @@ import top.writerpass.rekuester.ui.window.NewCollectionWizardWindow
 import top.writerpass.rekuester.viewmodel.CollectionsViewModel
 import top.writerpass.rekuester.viewmodel.MainUiViewModel
 import top.writerpass.rekuester.viewmodel.MainViewModel
-import java.util.UUID
+import java.util.*
 
 @Serializable
 enum class BodyType {
@@ -104,7 +95,7 @@ data class Collection(
 // TODO 增加自定义Body的编辑功能
 // TODO 使用Navigation作为导航
 
-fun main1() {
+fun main() {
     application {
         CompositionLocalProvider(
             LocalViewModelStoreOwner provides Singletons.viewModelStoreOwner,
@@ -131,96 +122,25 @@ fun main1() {
     }
 }
 
-fun main() = singleWindowApplication {
-    Table6Wrapper1()
-}
-
-
-@Composable
-fun RowScope.TableCell(
-    text: String,
-    weight: Float
-) {
-    VerticalDivider()
-    Text(
-        text = text,
-        modifier = Modifier
-//            .border(width = 1.dp, color =  Color.Black)
-            .weight(weight)
-            .padding(8.dp)
-    )
-}
-
-
-//@Composable
-//fun LazyItemScope.TabRow(
-//    rowState: RowState
-//) {
-//    HorizontalDivider()
-//    Row(modifier = Modifier.background(Color.Gray).height(rowState.height.dp)) {
-//        TableCell({})
-//        TableCell({})
-//        VerticalDivider()
+//fun main() = singleWindowApplication {
+//    val state = remember {
+//        mutableStateMapOf<String,String>()
 //    }
-//}
-
-//object CellStyleHolder{
-//    private val rowStateMap = mutableMapOf<Int, RowState>()
-//    private val columnStateMap = mutableMapOf<Int, ColumnState>()
-//
-//    fun getState(x:Int,y:Int): CellState{
-//
-//    }
-//}
-
-
-//
-
-
-//@Composable
-//fun RowScope.TableCell(
-//    content: @Composable RowScope.() -> Unit
-//) {
-//    VerticalDivider()
-//    content()
-//}
-
-
-//@Composable
-//fun TableScreen() {
-//    // Just a fake data... a Pair of Int and String
-//    val tableData = (1..100).mapIndexed { index, item ->
-//        index to "Item $index"
-//    }
-//    // Each cell of a column must have the same weight.
-//    val column1Weight = .3f // 30%
-//    val column2Weight = .7f // 70%
-//    // The LazyColumn will be our table. Notice the use of the weights below
-//    LazyColumn(Modifier.fillMaxSize().padding(16.dp)) {
-//        // Here is the header
-//        item {
-//            HorizontalDivider()
-//            Row(modifier = Modifier.background(Color.Gray).height(IntrinsicSize.Min)) {
-//                TableCell(text = "Column 1", weight = column1Weight)
-//                TableCell(text = "Column 2", weight = column2Weight)
-//                VerticalDivider()
+//    FullSizeColumn {
+//        state.entries.forEach { (k,v)->
+//            "${k}:${v}".Text()
+//        }
+//        DataTableEditable(
+//            Modifier, 3, 5,
+//            onItem = { _, _ ->
+//                "--"
+//            },
+//            onItemChange = {rowId, columnId, itemString ->
+//                state["$rowId-$columnId"] = itemString
 //            }
-//        }
-//        // Here are all the lines of your table.
-//        items(tableData) { (id, text) ->
-//            HorizontalDivider()
-//            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-//                TableCell(text = id.toString(), weight = column1Weight)
-//                TableCell(text = text, weight = column2Weight)
-//                VerticalDivider()
-//            }
-//        }
-//        item {
-//            HorizontalDivider()
-//        }
+//        )
 //    }
 //}
-
 
 
 

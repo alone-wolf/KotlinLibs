@@ -1,20 +1,19 @@
-package top.writerpass.rekuester.tables.v6
+package top.writerpass.rekuester.tables.v8
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,23 +35,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
+import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
+import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
-import java.awt.Cursor
+import top.writerpass.kmplibrary.utils.times
 
 @JvmName("sumOfDp")
 inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
@@ -71,7 +70,7 @@ class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-object TableState {
+class TableState {
     val defaultWidth = 120.dp
     val defaultHeight = 40.dp
     val rowStateMap = mutableStateMapOf<Int, RowState>()
@@ -97,62 +96,65 @@ object TableState {
     val tableWidth: Dp by derivedStateOf {
         columnStateMap.values.sumOf { it.width }
     }
+
+//    val columnMaxWidth:Dp by derivedStateOf {
+//        columnStateMap.values
+//    }
 }
 
-val dataSet = listOf(
-    listOf(
-        "HeadAHeadAHeadAHeadA",
-        "HeadB",
-        "HeadC",
-        "HeadD",
-        "HeadE",
-        "HeadF"
-    ),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-    listOf("AA", "BB", "CC", "DD", "EE", "FF"),
-)
-
+private val headerList = listOf("HeadAHeadAHeadAHeadA", "HeadB", "HeadC", "HeadD", "HeadE", "HeadF")
+val dataSet = listOf(listOf("AA", "BB", "CC", "DD", "EE", "FF")) * 3
 const val default = "--"
 
-@Composable
-fun Table6Wrapper() {
-    Table6(
-        rowCount = dataSet.size,
-        columnCount = dataSet.first().size,
-        onItem = { rowId, columnId ->
-            dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: default
-        },
-        onItemContent = { rowId, columnId, isHeader, item ->
-            Text(
-                text = item,
-                modifier = Modifier.then(if (isHeader) Modifier.align(Alignment.Center) else Modifier),
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
-                textAlign = if (isHeader) TextAlign.Center else null
-            )
-        }
-    )
-}
+//fun main() {
+//    singleWindowApplication {
+//        val dataStateSet = remember { mutableStateMapOf<String, String>() }
+//
+//        FullSizeColumn {
+//            HeaderTableSheet(
+//                rowCount = dataSet.size,
+//                columnCount = headerList.size,
+//                headers = headerList,
+//                onItem = { rowId, columnId ->
+//                    dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: "--"
+//                },
+//                onItemChange = { rowId, columnId, item ->
+//                    val key = "${rowId}-$columnId"
+//                    dataStateSet[key] = item
+//                },
+//            )
+//            dataSet.forEachIndexed { rowId, row ->
+//                row.forEachIndexed { columnId, item ->
+//                    val key = remember { "${rowId}-$columnId" }
+//                    val item = remember { dataStateSet[key] ?: item }
+//                    "mixed: $key == $item".Text()
+//                }
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun Table6Wrapper1() {
-    val focusManager = LocalFocusManager.current
-    Table6(
-        modifier = Modifier.clickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ) {
-            focusManager.clearFocus()
-        },
-        rowCount = dataSet.size,
-        columnCount = dataSet.first().size,
-        onItem = { rowId, columnId ->
-            dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: default
-        },
-        onItemContent = { rowId, columnId, isHeader, item ->
+fun HeaderTableSheet(
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    tableState: TableState = remember { TableState() },
+    rowCount: Int,
+    columnCount: Int,
+    headers: List<String>,
+    onItem: (rowId: Int, columnId: Int) -> String,
+    onItemChange: (rowId: Int, columnId: Int, item: String) -> Unit
+) {
+    HeaderTableFrame(
+        modifier = modifier,
+        state = state,
+        tableState = tableState,
+        rowCount = rowCount,
+        columnCount = columnCount,
+        headers = headers,
+        onItemContent = { rowId, columnId ->
+            val item = remember { onItem(rowId, columnId) }
+
             val isEditing = Mutable.someBoolean()
             val textFieldValue = Mutable.something(
                 TextFieldValue(
@@ -160,16 +162,18 @@ fun Table6Wrapper1() {
                     TextRange(item.length)
                 )
             )
-            val focusRequester = remember { FocusRequester() }
 
             if (isEditing.value) {
-                LaunchedEffectOdd {
-                    focusRequester.requestFocus()
-                }
+                val focusRequester = remember { FocusRequester() }
+
+                LaunchedEffectOdd { focusRequester.requestFocus() }
 
                 BasicTextField(
                     value = textFieldValue.value,
-                    onValueChange = { textFieldValue.value = it },
+                    onValueChange = {
+                        textFieldValue.value = it
+                        onItemChange(rowId, columnId, it.text)
+                    },
                     modifier = Modifier.fillMaxSize().focusRequester(focusRequester),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
                     keyboardActions = KeyboardActions(
@@ -178,70 +182,46 @@ fun Table6Wrapper1() {
                     singleLine = true,
                 )
             } else {
-                Text(
-                    text = textFieldValue.value.text,
-                    modifier = Modifier.fillMaxSize().then(
-                        if (isHeader) {
-                            Modifier.align(Alignment.Center)
-                        } else {
-                            Modifier.clickable {
-                                isEditing.setTrue()
-                            }
-                        }
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Clip,
-                    textAlign = if (isHeader) TextAlign.Center else null,
-                )
+                Text(textFieldValue.value.text, modifier = Modifier.clickable {
+                    isEditing.setTrue()
+                })
             }
         }
     )
 }
 
 @Composable
-fun <T : Any> Table6(
+fun HeaderTableFrame(
     modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    tableState: TableState = remember { TableState() },
     rowCount: Int,
     columnCount: Int,
-    onItem: (rowId: Int, columnId: Int) -> T,
-    onItemContent: @Composable BoxScope.(rowId: Int, columnId: Int, isHeader: Boolean, item: T) -> Unit,
-    state: TableState = TableState,
+    headers: List<String>,
+    onItemContent: @Composable (rowId: Int, columnId: Int) -> Unit,
 ) {
-    Column(
+    val density = LocalDensity.current
+
+    LazyColumn(
         modifier = modifier
-            .size(
-                width = state.tableWidth,
-                height = state.tableHeight
-            )
-            .padding(18.dp)
+            .width(width = tableState.tableWidth)
+            .padding(18.dp),
+        state = state
     ) {
-        val density = LocalDensity.current
-        HorizontalDivider()
-        (0 until rowCount).forEach { rowIndex ->
-            val rowState = state.rememberRowState(rowIndex)
-            val isHeaderRow = rowIndex == 0
+        item { HorizontalDivider() }
+        item {
+            val rowState = tableState.rememberRowState(0)
+            val isHeaderRow = true
             FullWidthRow(modifier = Modifier.height(rowState.height)) {
                 VerticalDivider()
-                (0 until columnCount).forEach { columnIndex ->
-                    val columnState = state.rememberColumnState(columnIndex)
-                    val item = remember { onItem(rowIndex, columnIndex) }
+                headers.forEachIndexed { columnIndex, string ->
+                    val columnState = tableState.rememberColumnState(columnIndex)
                     Box(
                         Modifier.width(columnState.width)
                             .fillMaxHeight()
-                            .then(
-                                if (isHeaderRow) {
-                                    Modifier.background(Color.LightGray)
-                                } else {
-                                    Modifier
-                                }
-                            )
+                            .background(Color.LightGray)
                     ) {
-                        onItemContent(
-                            rowIndex,
-                            columnIndex,
-                            isHeaderRow,
-                            item,
-                        )
+                        Text(string, modifier = Modifier.align(Alignment.Center))
                     }
 
                     VerticalDivider(
@@ -263,8 +243,27 @@ fun <T : Any> Table6(
                         )
                     )
                 }
+
             }
             HorizontalDivider()
         }
+        items(count = rowCount, key = { it }, itemContent = { rowId ->
+            val rowState = tableState.rememberRowState(rowId + 1)
+            FullWidthRow(modifier = Modifier.height(rowState.height)) {
+                VerticalDivider()
+                (0 until columnCount).forEach { columnId ->
+                    val columnState = tableState.rememberColumnState(columnId)
+                    Box(
+                        Modifier.width(columnState.width).fillMaxHeight(),
+                        content = { onItemContent(rowId, columnId) }
+                    )
+                    VerticalDivider()
+                }
+            }
+            HorizontalDivider()
+        })
     }
 }
+
+
+
