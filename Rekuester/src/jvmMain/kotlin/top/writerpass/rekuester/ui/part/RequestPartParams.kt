@@ -3,6 +3,7 @@ package top.writerpass.rekuester.ui.part
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullWidthRow
@@ -13,12 +14,17 @@ import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiState
 import top.writerpass.rekuester.tables.v8.HeaderTableSheet
+import top.writerpass.rekuester.tables.v8.TableState
+import top.writerpass.rekuester.tables.v8.TableWidthStrategy
 
 @Composable
 fun RequestPartParams(apiState: ApiState) {
     "Params".Text()
 
     HeaderTableSheet(
+        tableState = remember {
+            TableState(tableWidthStrategy = TableWidthStrategy.FillContainer)
+        },
         rowCount = apiState.params.list.size,
         columnCount = 3,
         headers = listOf("Key", "Value", "Description"),
@@ -33,10 +39,10 @@ fun RequestPartParams(apiState: ApiState) {
         },
         onItemChange = { rowId, columnId, item ->
             val apiParam = apiState.params.list[rowId]
-            val newApiParam = when(columnId){
-                0-> apiParam.copy(key = item)
-                1-> apiParam.copy(value = item)
-                2-> apiParam.copy(description = item)
+            val newApiParam = when (columnId) {
+                0 -> apiParam.copy(key = item)
+                1 -> apiParam.copy(value = item)
+                2 -> apiParam.copy(description = item)
                 else -> apiParam
             }
             apiState.params.list[rowId] = newApiParam

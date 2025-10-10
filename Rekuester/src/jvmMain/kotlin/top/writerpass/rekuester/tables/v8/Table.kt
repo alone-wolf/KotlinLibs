@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,6 +22,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -41,11 +43,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
-import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
@@ -70,9 +69,22 @@ class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-class TableState {
-    val defaultWidth = 120.dp
-    val defaultHeight = 40.dp
+@Stable
+enum class TableWidthStrategy {
+    WrapContent, FillContainer
+}
+
+@Stable
+enum class TableColumnWidthStrategy {
+    DefaultWidth, FillTable
+}
+
+class TableState(
+    val defaultWidth: Dp = 120.dp,
+    val defaultHeight: Dp = 40.dp,
+    val tableWidthStrategy: TableWidthStrategy = TableWidthStrategy.WrapContent,
+    val columnWidthStrategy: TableColumnWidthStrategy = TableColumnWidthStrategy.DefaultWidth
+) {
     val rowStateMap = mutableStateMapOf<Int, RowState>()
     fun getRowState(index: Int): RowState {
         return rowStateMap.getOrCreate(index) { RowState(defaultHeight) }
@@ -202,10 +214,29 @@ fun HeaderTableFrame(
 ) {
     val density = LocalDensity.current
 
+    LaunchedEffectOdd {
+        when(tableState.columnWidthStrategy){
+            TableColumnWidthStrategy.DefaultWidth -> {}
+            TableColumnWidthStrategy.FillTable -> {
+
+            }
+        }
+    }
+
     LazyColumn(
         modifier = modifier
-            .width(width = tableState.tableWidth)
-            .padding(18.dp),
+            .then(
+                when (tableState.tableWidthStrategy) {
+                    TableWidthStrategy.WrapContent -> {
+                        Modifier.width(width = tableState.tableWidth)
+                    }
+
+                    TableWidthStrategy.FillContainer -> {
+                        Modifier.fillMaxWidth()
+                    }
+                }
+            )
+            .padding(4.dp),
         state = state
     ) {
         item { HorizontalDivider() }
