@@ -5,7 +5,7 @@ import androidx.compose.ui.window.application
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import io.ktor.http.*
+import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
 import top.writerpass.rekuester.data.dao.ItemWithId
 import top.writerpass.rekuester.ui.ApplicationTray
@@ -15,7 +15,7 @@ import top.writerpass.rekuester.ui.window.NewCollectionWizardWindow
 import top.writerpass.rekuester.viewmodel.CollectionsViewModel
 import top.writerpass.rekuester.viewmodel.MainUiViewModel
 import top.writerpass.rekuester.viewmodel.MainViewModel
-import java.util.*
+import java.util.UUID
 
 @Serializable
 enum class BodyType {

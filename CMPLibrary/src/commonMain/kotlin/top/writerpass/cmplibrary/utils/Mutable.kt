@@ -13,6 +13,19 @@ import top.writerpass.cmplibrary.LaunchedEffectOdd
 
 object Mutable {
 
+    @Composable
+    inline fun MutableState<Boolean>.When(
+        isTrue: @Composable () -> Unit,
+        isFalse: @Composable () -> Unit
+    ) {
+        if (this.value) {
+            isTrue()
+        } else {
+            isFalse()
+        }
+    }
+
+
     fun MutableState<Boolean>.setTrue() {
         value = true
     }

@@ -3,6 +3,7 @@
 package top.writerpass.rekuester.ui.part
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
@@ -119,7 +120,16 @@ fun OpenedApiTabsRow() {
                             )
                             .then(
                                 if (isSelected) {
-                                    Modifier
+                                    Modifier.border(
+                                        width = 1.dp,
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(
+                                            topStart = 4.dp,
+                                            topEnd = 4.dp,
+                                            bottomStart = 0.dp,
+                                            bottomEnd = 0.dp
+                                        )
+                                    )
                                 } else {
                                     Modifier.background(Color.Gray)
                                 }
