@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.IconButton
 import top.writerpass.cmplibrary.compose.OutlinedTextFiled1
@@ -13,9 +14,9 @@ import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiState
-import top.writerpass.rekuester.tables.v8.HeaderTableSheet
-import top.writerpass.rekuester.tables.v8.TableState
-import top.writerpass.rekuester.tables.v8.TableWidthStrategy
+import top.writerpass.rekuester.tables.v9.HeaderTableSheet
+import top.writerpass.rekuester.tables.v9.TableState
+import top.writerpass.rekuester.tables.v9.TableWidthStrategy
 
 @Composable
 fun RequestPartParams(apiState: ApiState) {
@@ -23,7 +24,10 @@ fun RequestPartParams(apiState: ApiState) {
 
     HeaderTableSheet(
         tableState = remember {
-            TableState(tableWidthStrategy = TableWidthStrategy.FillContainer)
+            TableState(
+                defaultHeight = 25.dp,
+                tableWidthStrategy = TableWidthStrategy.FillContainer
+            )
         },
         rowCount = apiState.params.list.size,
         columnCount = 3,

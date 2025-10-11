@@ -8,11 +8,13 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -20,6 +22,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -43,16 +47,20 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
+import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.utils.Mutable
@@ -132,17 +140,13 @@ class TableState(
             else -> 0.dp
         }
     }
-
-//    val columnMaxWidth:Dp by derivedStateOf {
-//        columnStateMap.values
-//    }
 }
 
-private val headerList = listOf("HeadAHeadAHeadAHeadA", "HeadB", "HeadC", "HeadD", "HeadE", "HeadF")
-val dataSet = listOf(listOf("AA", "BB", "CC", "DD", "EE", "FF")) * 3
-const val default = "--"
 
 fun main() {
+    val headerList = listOf("HeadAHeadAHeadAHeadA", "HeadB", "HeadC", "HeadD", "HeadE", "HeadF")
+    val dataSet = listOf(listOf("AA", "BB", "CC", "DD", "EE", "FF")) * 3
+    val default = "--"
     singleWindowApplication {
         val dataStateSet = remember { mutableStateMapOf<String, String>() }
 
@@ -158,7 +162,7 @@ fun main() {
                 columnCount = headerList.size,
                 headers = headerList,
                 onItem = { rowId, columnId ->
-                    dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: "--"
+                    dataSet.getOrNull(rowId)?.getOrNull(columnId) ?: default
                 },
                 onItemChange = { rowId, columnId, item ->
                     val key = "${rowId}-$columnId"
@@ -211,29 +215,49 @@ fun HeaderTableSheet(
                     selection = TextRange(item.length)
                 )
             )
+            val density = LocalDensity.current
+            var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
+
 
             isEditing.When(
                 isTrue = {
                     val focusRequester = remember { FocusRequester() }
                     LaunchedEffectOdd { focusRequester.requestFocus() }
-                    BasicTextField(
-                        value = textFieldValue.value,
-                        onValueChange = {
-                            textFieldValue.value = it
-                            onItemChange(rowId, columnId, it.text)
-                        },
-                        modifier = Modifier.fillMaxSize().focusRequester(focusRequester),
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-                        keyboardActions = KeyboardActions(
-                            onGo = { isEditing.setFalse() }
-                        ),
-                        singleLine = true,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        BasicTextField(
+                            value = textFieldValue.value,
+                            onValueChange = {
+                                textFieldValue.value = it
+                                onItemChange(rowId, columnId, it.text)
+                            },
+                            modifier = Modifier.fillMaxHeight().weight(1f)
+                                .focusRequester(focusRequester),
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+                            keyboardActions = KeyboardActions(
+                                onGo = { isEditing.setFalse() }
+                            ),
+                            singleLine = true,
+                            textStyle = TextStyle.Default.copy(
+                                lineHeight = lineHeightSp,
+                                fontSize = 14.sp
+                            )
+                        )
+                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+                            isEditing.setFalse()
+                        })
+                    }
                 },
                 isFalse = {
                     Text(
                         text = textFieldValue.value.text,
-                        modifier = Modifier.clickable { isEditing.setTrue() }
+                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+                        onTextLayout = { textLayoutResult ->
+                            // 获取文本高度（像素）
+                            lineHeightSp =
+                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+                        },
+                        lineHeight = lineHeightSp,
+                        fontSize = 14.sp
                     )
                 }
             )
