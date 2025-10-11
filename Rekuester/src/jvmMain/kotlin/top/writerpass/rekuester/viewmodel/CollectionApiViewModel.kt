@@ -12,12 +12,20 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.Collection
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.Singletons
+
+fun <T> MutableStateFlow<List<T>>.onUpdate(block: MutableList<T>.() -> Unit) {
+    value.toMutableList().let { mutableList ->
+        mutableList.block()
+        value = mutableList.toList()
+    }
+}
 
 class CollectionApiViewModel(
     private val collectionUuid: String
@@ -56,34 +64,36 @@ class CollectionApiViewModel(
             initialValue = emptyList(),
         )
 
-    val apisMapFlow = apisListFlow.map { it.associateBy { it.uuid } }
+    private val _apisMapFlow = apisListFlow.map { it.associateBy { it.uuid } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = emptyMap(),
         )
 
-    private val _openedApiTabs = mutableListOf<Api>()
+    fun reorderApiTabs(fromIndex: Int, toIndex: Int) {
+        _openedApiTabsFlow.onUpdate {
+            add(toIndex, removeAt(fromIndex))
+        }
+    }
+
     private val _openedApiTabsFlow = MutableStateFlow(emptyList<Api>())
     val openedApiTabsFlow = _openedApiTabsFlow.asStateFlow()
 
     init {
-        // 当 apisMapFlow 更新时，同步更新 openedApiTabsFlow 中的 label、method 等显示内容
         viewModelScope.launch {
-            apisMapFlow.collect { apisMap ->
-                // 清除已不存在的 tab（例如某 API 被删除）
-
-                val newList = mutableListOf<Api>()
-                _openedApiTabs.forEach { api ->
-                    val newApi = apisMap[api.uuid]
-                    if (newApi != null) {
-                        newList.add(newApi)
+            _apisMapFlow.collect { apisMap ->
+                _openedApiTabsFlow.update { list->
+                    mutableListOf<Api>().apply {
+                        list.forEach { api->
+                            apisMap[api.uuid]?.let { add(it) }
+                            if (isEmpty()){
+                                currentApiTabUuid = "--"
+                                _currentPage.value = Pages.BlankPage
+                            }
+                        }
                     }
                 }
-
-                _openedApiTabs.clear()
-                _openedApiTabs.addAll(newList)
-                _openedApiTabsFlow.value = newList.toList()
             }
         }
     }
@@ -94,9 +104,10 @@ class CollectionApiViewModel(
     val currentPageFlow = _currentPage.asStateFlow()
 
     fun openApiTab(api: Api) {
-        if (_openedApiTabs.find { it.uuid == api.uuid } == null) {
-            _openedApiTabs.add(api)
-            _openedApiTabsFlow.value = _openedApiTabs.toList()
+        _openedApiTabsFlow.onUpdate {
+            if (find { it.uuid == api.uuid } == null) {
+                add(api)
+            }
         }
         _currentPage.value = Pages.ApiRequestPage(api.uuid)
         currentApiTabUuid = api.uuid
@@ -104,25 +115,25 @@ class CollectionApiViewModel(
 
     fun openApiTabs(apis: List<Api>) {
         if (apis.isEmpty()) return
-        apis.forEach { api ->
-            if (_openedApiTabs.find { it.uuid == api.uuid } == null) {
-                _openedApiTabs.add(api)
+        _openedApiTabsFlow.onUpdate {
+            apis.forEach { api ->
+                if (find { it.uuid == api.uuid } == null) {
+                    add(api)
+                }
             }
         }
-        _openedApiTabsFlow.value = _openedApiTabs.toList()
         val lastApi = apis.last()
         _currentPage.value = Pages.ApiRequestPage(lastApi.uuid)
         currentApiTabUuid = lastApi.uuid
     }
 
     fun closeApiTab(api: Api) {
-        val removed = _openedApiTabs.removeIf { it.uuid == api.uuid }
-        if (removed) {
-            _openedApiTabsFlow.value = _openedApiTabs.toList()
-        }
-        if (_openedApiTabs.isEmpty()) {
-            currentApiTabUuid = "--"
-            _currentPage.value = Pages.BlankPage
+        _openedApiTabsFlow.onUpdate {
+            val removed = removeIf { it.uuid == api.uuid }
+            if (isEmpty()){
+                currentApiTabUuid = "--"
+                _currentPage.value = Pages.BlankPage
+            }
         }
     }
 
