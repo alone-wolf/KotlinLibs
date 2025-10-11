@@ -47,6 +47,7 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -82,6 +83,7 @@ fun OpenedApiTabsRow() {
             lazyListState.firstVisibleItemIndex == openedApiTabs.size - 1
         }
     }
+
 
     LaunchedEffect(collectionApiViewModel.currentApiTabUuid) {
         val index = openedApiTabs.indexOfFirst {
@@ -137,9 +139,9 @@ fun OpenedApiTabsRow() {
                                             val thisWidth = size.width
                                             drawLine(
                                                 color = Color.Gray,
-                                                start = Offset(x = 10f, y = thisHeight),
-                                                end = Offset(x = thisWidth - 10f, y = thisHeight),
-                                                strokeWidth = Stroke.DefaultMiter * 1.5f,
+                                                start = Offset(x = 10f, y = thisHeight-2),
+                                                end = Offset(x = thisWidth - 10f, y = thisHeight-2),
+                                                strokeWidth = Stroke.DefaultMiter,
                                                 cap = StrokeCap.Round
                                             )
                                             if (apiState.isModified.value) {
