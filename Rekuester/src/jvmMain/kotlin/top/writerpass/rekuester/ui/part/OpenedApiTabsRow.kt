@@ -37,7 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
@@ -49,6 +54,10 @@ import kotlinx.coroutines.launch
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.modifier.onPointerRightClick
+import top.writerpass.cmplibrary.utils.Mutable
+import top.writerpass.cmplibrary.utils.Mutable.setFalse
+import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 
@@ -104,78 +113,82 @@ fun OpenedApiTabsRow() {
                     val isSelected by remember {
                         derivedStateOf { collectionApiViewModel.currentApiTabUuid == api.uuid }
                     }
-                    var showMenu by remember { mutableStateOf(false) }
+                    val showMenu = Mutable.someBoolean()
                     var menuOffset by remember { mutableStateOf(DpOffset.Zero) }
                     val apiState = ApiStateHolder.rememberApiState(api)
                     Row(
-                        modifier = Modifier.Companion
+                        modifier = Modifier
                             .width(tabWidth)
                             .height(30.dp)
-                            .clip(
-                                RoundedCornerShape(
-                                    topStart = 4.dp, topEnd = 4.dp,
-                                    bottomStart = if (isSelected) 0.dp else 4.dp,
-                                    bottomEnd = if (isSelected) 0.dp else 4.dp
-                                )
-                            )
                             .then(
                                 if (isSelected) {
-                                    Modifier.border(
-                                        width = 1.dp,
-                                        color = Color.Black,
-                                        shape = RoundedCornerShape(
-                                            topStart = 4.dp,
-                                            topEnd = 4.dp,
-                                            bottomStart = 0.dp,
-                                            bottomEnd = 0.dp
+                                    Modifier
+                                        .clip(
+                                            RoundedCornerShape(
+                                                topStart = 8.dp,
+                                                topEnd = 8.dp,
+                                                bottomStart = 0.dp,
+                                                bottomEnd = 0.dp
+                                            )
                                         )
-                                    )
+                                        .background(Color.LightGray.copy(alpha = 0.5f))
+                                        .drawWithContent {
+                                            val thisHeight = size.height
+                                            val thisWidth = size.width
+                                            drawLine(
+                                                color = Color.Gray,
+                                                start = Offset(x = 10f, y = thisHeight),
+                                                end = Offset(x = thisWidth - 10f, y = thisHeight),
+                                                strokeWidth = Stroke.DefaultMiter * 1.5f,
+                                                cap = StrokeCap.Round
+                                            )
+                                            if (apiState.isModified.value) {
+                                                drawCircle(
+                                                    color = Color.Red,
+                                                    radius = 5f,
+                                                    center = Offset(10f, thisHeight / 2),
+                                                    alpha = 1f,
+                                                )
+                                            }
+                                            drawContent()
+                                        }
                                 } else {
-                                    Modifier.background(Color.Gray)
+                                    Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.LightGray)
                                 }
                             )
                             .clickable { collectionApiViewModel.openApiTab(api) }
-                            .onPointerEvent(PointerEventType.Press) { e ->
-                                if (e.buttons.isSecondaryPressed) {
-                                    val pos = e.changes.first().position
-                                    with(density) {
-                                        menuOffset = DpOffset(pos.x.toDp(), pos.y.toDp())
-                                    }
-                                    showMenu = true
+                            .onPointerRightClick { position ->
+                                menuOffset = with(density) {
+                                    DpOffset(position.x.toDp(), position.y.toDp())
                                 }
+                                showMenu.setTrue()
                             }
-                            .padding(horizontal = 4.dp)
+                            .padding(start = if (apiState.isModified.value) 12.dp else 6.dp, end = 4.dp)
                             .animateItem(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (apiState.isModified.value) {
-                            "~${api.label}".Text(
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                                modifier = Modifier.weight(1f)
-                            )
-                        } else {
-                            api.label.Text(
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
+                        api.label.Text(
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                            modifier = Modifier.weight(1f)
+                        )
                         Icons.Default.Close.Icon(
                             modifier = Modifier.size(20.dp).clickable {
                                 collectionApiViewModel.closeApiTab(api)
                             }
                         )
                         DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false },
+                            expanded = showMenu.value,
+                            onDismissRequest = { showMenu.setFalse() },
                             offset = menuOffset
                         ) {
                             DropdownMenuItem(
                                 text = { Text("关闭") },
                                 onClick = {
                                     collectionApiViewModel.closeApiTab(api)
-                                    showMenu = false
+                                    showMenu.setFalse()
                                 }
                             )
                             DropdownMenuItem(
@@ -184,14 +197,14 @@ fun OpenedApiTabsRow() {
                                     collectionApiViewModel.openApiTab(api)
                                     openedApiTabs.filter { it.uuid != api.uuid }
                                         .forEach { collectionApiViewModel.closeApiTab(it) }
-                                    showMenu = false
+                                    showMenu.setFalse()
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("关闭所有") },
                                 onClick = {
                                     openedApiTabs.forEach { collectionApiViewModel.closeApiTab(it) }
-                                    showMenu = false
+                                    showMenu.setFalse()
                                 }
                             )
                         }

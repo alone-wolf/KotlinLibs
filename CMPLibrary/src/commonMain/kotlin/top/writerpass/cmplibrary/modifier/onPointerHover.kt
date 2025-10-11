@@ -36,27 +36,16 @@ fun Modifier.onPointerHover(onHover: () -> Unit): Modifier = composed {
 }
 
 fun Modifier.onPointerHover(onHover: () -> Unit, onNotHover: () -> Unit): Modifier = composed {
-//    var entered by Mutable.SomeBoolean(false)
-//
-//    LaunchedEffect(entered) {
-//        if (entered) {
-//            onHover()
-//        }else{
-//            onNotHover()
-//        }
-//    }
     pointerInput(Unit) {
         awaitPointerEventScope {
             while (true) {
                 val event = awaitPointerEvent()
                 when (event.type) {
                     PointerEventType.Enter -> {
-//                        entered = true
                         onHover()
                     }
 
                     PointerEventType.Exit -> {
-//                        entered = false
                         onNotHover()
                     }
                 }

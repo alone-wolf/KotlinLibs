@@ -44,6 +44,7 @@ import top.writerpass.cmplibrary.compose.IconButton
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.modifier.onPointerHover
+import top.writerpass.cmplibrary.modifier.onPointerRightClick
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
@@ -81,14 +82,12 @@ fun ApisListView() {
                     items = apisList,
                     itemContent = { api ->
                         val onHover = Mutable.someBoolean()
-                        var showMenu by remember { mutableStateOf(false) }
+                        val showMenu = Mutable.someBoolean()
                         FullWidthBox(
                             modifier = Modifier.height(45.dp)
                                 .clickable { collectionApiViewModel.openApiTab(api) }
-                                .onPointerEvent(PointerEventType.Press) { e ->
-                                    if (e.buttons.isSecondaryPressed) {
-                                        showMenu = true
-                                    }
+                                .onPointerRightClick {
+                                    showMenu.setTrue()
                                 }
                                 .padding(horizontal = 16.dp)
                                 .onPointerHover(
@@ -124,22 +123,22 @@ fun ApisListView() {
                                 }
                             }
                             DropdownMenu(
-                                expanded = showMenu,
-                                onDismissRequest = { showMenu = false },
+                                expanded = showMenu.value,
+                                onDismissRequest = { showMenu.setFalse() },
                             ) {
                                 DropdownMenuItem(
                                     text = { Text("Clone") },
-                                    onClick = { showMenu = false }
+                                    onClick = { showMenu.setFalse() }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Open") },
-                                    onClick = { showMenu = false }
+                                    onClick = { showMenu.setFalse() }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Open All") },
                                     onClick = {
                                         collectionApiViewModel.openApiTabs(apisList)
-                                        showMenu = false
+                                        showMenu.setFalse()
                                     }
                                 )
                             }
