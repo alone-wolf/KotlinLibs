@@ -144,7 +144,8 @@ fun OpenedApiTabsRow() {
                                     showMenu = true
                                 }
                             }
-                            .padding(horizontal = 4.dp),
+                            .padding(horizontal = 4.dp)
+                            .animateItem(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (apiState.isModified.value) {
