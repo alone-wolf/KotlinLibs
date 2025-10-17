@@ -45,7 +45,7 @@ import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiState
-import top.writerpass.rekuester.tables.v9.CommonTableFrame
+import top.writerpass.rekuester.tables.v10.CommonTableFrame
 import top.writerpass.rekuester.tables.v9.TableState
 import top.writerpass.rekuester.tables.v9.TableWidthStrategy
 
@@ -58,7 +58,7 @@ fun RequestPartParams(apiState: ApiState) {
         derivedStateOf {
             // header +1
             // footer +1
-            apiState.params.list.size +2
+            apiState.params.list.size + 2
         }
     }
 
@@ -75,126 +75,127 @@ fun RequestPartParams(apiState: ApiState) {
         }
     }
 
-    CommonTableFrame(
-        modifier = Modifier,
-        state = rememberLazyListState(),
-        tableState = remember {
-            TableState(
-                defaultHeight = 25.dp,
-                tableWidthStrategy = TableWidthStrategy.FillContainer
-            )
-        },
-        hasLeadingColumn = true,
-        hasTailColumn = true,
-        hasHeaderRow = true,
-        hasFooterRow = true,
-        dataRowCount = apiState.params.list.size + 2,
-        dataColumnCount = 4,
-        onItemContent = { rowId, columnId ->
-            val firstRow = remember { rowId == 0 }
-            val firstColumn = remember { columnId == 0 }
-            val lastRow by remember(apiState.params.list.lastIndex) {
-                derivedStateOf {
-                    rowId > apiState.params.list.lastIndex-1
-                }
-            }
-            if (firstRow) {
-                if (firstColumn) {
-                    Checkbox(
-                        checked = false,
-                        onCheckedChange = {},
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                } else {
-                    val header = remember { headers[columnId] }
-                    header.Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        maxLines = 1,
-                        overflow = TextOverflow.Clip
-                    )
-                }
-            } else {
-                if (lastRow) {
-                    "---".Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        maxLines = 1,
-                        overflow = TextOverflow.Clip
-                    )
-                } else {
-                    if (firstColumn) {
-                        Checkbox(
-                            checked = false,
-                            onCheckedChange = {},
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    } else {
-                        val row = remember { apiState.params.list[rowId] }
-                        val item = remember {
-                            when (columnId) {
-                                1 -> row.key
-                                2 -> row.value
-                                3 -> row.description
-                                else -> "--"
-                            }
-                        }
-                        val isEditing = Mutable.someBoolean()
-                        val textFieldValue = Mutable.something(
-                            default = TextFieldValue(
-                                text = item,
-                                selection = TextRange(item.length)
-                            )
-                        )
-                        val density = LocalDensity.current
-                        var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
-
-
-                        isEditing.When(
-                            isTrue = {
-                                val focusRequester = remember { FocusRequester() }
-                                LaunchedEffectOdd { focusRequester.requestFocus() }
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    BasicTextField(
-                                        value = textFieldValue.value,
-                                        onValueChange = {
-                                            textFieldValue.value = it
-                                            onItemChange(rowId, columnId, it.text)
-                                        },
-                                        modifier = Modifier.fillMaxHeight().weight(1f)
-                                            .focusRequester(focusRequester),
-                                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-                                        keyboardActions = KeyboardActions(
-                                            onGo = { isEditing.setFalse() }
-                                        ),
-                                        singleLine = true,
-                                        textStyle = TextStyle.Default.copy(
-                                            lineHeight = lineHeightSp,
-                                            fontSize = 14.sp
-                                        )
-                                    )
-                                    Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
-                                        isEditing.setFalse()
-                                    })
-                                }
-                            },
-                            isFalse = {
-                                Text(
-                                    text = textFieldValue.value.text,
-                                    modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
-                                    onTextLayout = { textLayoutResult ->
-                                        // 获取文本高度（像素）
-                                        lineHeightSp =
-                                            with(density) { textLayoutResult.size.height.toFloat().toSp() }
-                                    },
-                                    lineHeight = lineHeightSp,
-                                    fontSize = 14.sp
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-        },
-    )
+//    CommonTableFrame(
+//        modifier = Modifier,
+//        listState = rememberLazyListState(),
+//        tableState = remember {
+//            TableState(
+//                defaultHeight = 25.dp,
+//                tableWidthStrategy = TableWidthStrategy.FillContainer
+//            )
+//        },
+//        dataRowCount = apiState.params.list.size + 2,
+//        dataColumnCount = 4,
+//        onItemContent = { rowId, columnId, rowType, columnType ->
+////            when(rowType){
+////                RowType.Header -> TODO()
+////                RowType.Footer -> TODO()
+////                RowType.Normal -> TODO()
+////            }
+//            val firstRow = remember { rowId == 0 }
+//            val firstColumn = remember { columnId == 0 }
+//            val lastRow by remember(apiState.params.list.lastIndex) {
+//                derivedStateOf {
+//                    rowId > apiState.params.list.lastIndex - 1
+//                }
+//            }
+//            if (firstRow) {
+//                if (firstColumn) {
+//                    Checkbox(
+//                        checked = false,
+//                        onCheckedChange = {},
+//                        modifier = Modifier.align(Alignment.Center)
+//                    )
+//                } else {
+//                    val header = remember { headers[columnId] }
+//                    header.Text(
+//                        modifier = Modifier.align(Alignment.Center),
+//                        maxLines = 1,
+//                        overflow = TextOverflow.Clip
+//                    )
+//                }
+//            } else {
+//                if (lastRow) {
+//                    "---".Text(
+//                        modifier = Modifier.align(Alignment.Center),
+//                        maxLines = 1,
+//                        overflow = TextOverflow.Clip
+//                    )
+//                } else {
+//                    if (firstColumn) {
+//                        Checkbox(
+//                            checked = false,
+//                            onCheckedChange = {},
+//                            modifier = Modifier.align(Alignment.Center)
+//                        )
+//                    } else {
+//                        val row = remember { apiState.params.list[rowId] }
+//                        val item = remember {
+//                            when (columnId) {
+//                                1 -> row.key
+//                                2 -> row.value
+//                                3 -> row.description
+//                                else -> "--"
+//                            }
+//                        }
+//                        val isEditing = Mutable.someBoolean()
+//                        val textFieldValue = Mutable.something(
+//                            default = TextFieldValue(
+//                                text = item,
+//                                selection = TextRange(item.length)
+//                            )
+//                        )
+//                        val density = LocalDensity.current
+//                        var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
+//
+//
+//                        isEditing.When(
+//                            isTrue = {
+//                                val focusRequester = remember { FocusRequester() }
+//                                LaunchedEffectOdd { focusRequester.requestFocus() }
+//                                Row(verticalAlignment = Alignment.CenterVertically) {
+//                                    BasicTextField(
+//                                        value = textFieldValue.value,
+//                                        onValueChange = {
+//                                            textFieldValue.value = it
+//                                            onItemChange(rowId, columnId, it.text)
+//                                        },
+//                                        modifier = Modifier.fillMaxHeight().weight(1f)
+//                                            .focusRequester(focusRequester),
+//                                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+//                                        keyboardActions = KeyboardActions(
+//                                            onGo = { isEditing.setFalse() }
+//                                        ),
+//                                        singleLine = true,
+//                                        textStyle = TextStyle.Default.copy(
+//                                            lineHeight = lineHeightSp,
+//                                            fontSize = 14.sp
+//                                        )
+//                                    )
+//                                    Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+//                                        isEditing.setFalse()
+//                                    })
+//                                }
+//                            },
+//                            isFalse = {
+//                                Text(
+//                                    text = textFieldValue.value.text,
+//                                    modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+//                                    onTextLayout = { textLayoutResult ->
+//                                        // 获取文本高度（像素）
+//                                        lineHeightSp =
+//                                            with(density) { textLayoutResult.size.height.toFloat().toSp() }
+//                                    },
+//                                    lineHeight = lineHeightSp,
+//                                    fontSize = 14.sp
+//                                )
+//                            }
+//                        )
+//                    }
+//                }
+//            }
+//        },
+//    )
 
     FullWidthRow(
         verticalAlignment = Alignment.CenterVertically

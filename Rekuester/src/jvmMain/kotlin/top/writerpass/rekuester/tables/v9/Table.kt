@@ -5,19 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
@@ -28,15 +17,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -52,11 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.coerceIn
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullSizeColumn
@@ -71,12 +48,6 @@ import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
 import top.writerpass.kmplibrary.utils.times
 import top.writerpass.rekuester.tables.v8.sumOf
-import top.writerpass.rekuester.tables.v9.CommonTableFrames.horizontalDivider
-import top.writerpass.rekuester.tables.v9.CommonTableFrames.horizontalDraggable
-import top.writerpass.rekuester.tables.v9.CommonTableFrames.tableWidth
-import top.writerpass.rekuester.tables.v9.CommonTableFrames.watchTableSize
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 @JvmName("sumOfDp")
 inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
@@ -114,9 +85,12 @@ class TableState(
     val defaultWidth: Dp = 120.dp,
     val defaultHeight: Dp = 40.dp,
     val tableWidthStrategy: TableWidthStrategy = TableWidthStrategy.WrapContent,
-    val columnWidthStrategy: TableColumnWidthStrategy = TableColumnWidthStrategy.DefaultFlexible
+    val columnWidthStrategy: TableColumnWidthStrategy = TableColumnWidthStrategy.DefaultFlexible,
+    val hasLeadingColumn: Boolean = false,
+    val hasTailColumn: Boolean = false,
+    val hasHeaderRow: Boolean = false,
+    val hasFooterRow: Boolean = false
 ) {
-
     val a = Arrangement.SpaceBetween
     val rowStateMap = mutableStateMapOf<Int, RowState>()
     fun getRowState(index: Int): RowState {
@@ -372,204 +346,4 @@ fun HeaderTableFrame(
         })
     }
 }
-
-
-object CommonTableFrames {
-    fun Modifier.tableWidth(tableState: TableState): Modifier {
-        return then(
-            when (tableState.tableWidthStrategy) {
-                is TableWidthStrategy.WrapContent -> {
-                    Modifier.width(width = tableState.tableWidth)
-                }
-
-                is TableWidthStrategy.FillContainer -> {
-                    Modifier.fillMaxWidth()
-                }
-
-                is TableWidthStrategy.WidthFixed -> {
-                    Modifier.width(width = tableState.tableWidthStrategy.width)
-                }
-            }
-        )
-    }
-
-    fun Modifier.watchTableSize(tableState: TableState, dataColumnCount: Int): Modifier {
-        return composed("watchSize") {
-            val density = LocalDensity.current
-            val fullWidth = Mutable.something(0.dp)
-            LaunchedEffect(fullWidth.value) {
-                tableState.columnStateMap.forEach { (_, columnState) ->
-                    columnState.width = ((fullWidth.value / dataColumnCount))
-                }
-            }
-            onSizeChanged { (width, _) ->
-                fullWidth.value = with(density) { width.toDp() }
-            }
-        }
-    }
-
-    fun LazyListScope.horizontalDivider() {
-        item { HorizontalDivider() }
-    }
-
-    fun Modifier.horizontalDraggable(isFirstRow: Boolean, columnState: ColumnState): Modifier {
-        return then(
-            if (isFirstRow) {
-                pointerHoverIcon(PointerIcon.XResize)
-                    .composed("horizontalDraggable") {
-                        val density = LocalDensity.current
-                        draggable(
-                            state = rememberDraggableState(onDelta = { delta ->
-                                val rr = with(density) {
-                                    (columnState.width.toPx() + delta).toDp()
-                                }.coerceIn(20.dp, 500.dp)
-                                columnState.width = rr
-                            }),
-                            orientation = Orientation.Horizontal
-                        )
-                    }
-            } else {
-                Modifier
-            }
-        )
-    }
-}
-
-
-@Composable
-fun CommonTableFrame(
-    modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
-    tableState: TableState = remember { TableState() },
-    hasLeadingColumn: Boolean = false,
-    hasTailColumn: Boolean = false,
-    hasHeaderRow: Boolean = false,
-    hasFooterRow: Boolean = false,
-    dataRowCount: Int,
-    dataColumnCount: Int,
-    headerColumnCount:Int,
-    onItemContent: @Composable BoxScope.(rowId: Int, columnId: Int) -> Unit,
-) {
-    LazyColumn(
-        modifier = modifier
-            .tableWidth(tableState)
-            .padding(4.dp)
-            .watchTableSize(tableState, dataColumnCount),
-        state = state
-    ) {
-        horizontalDivider()
-        if (hasHeaderRow) {
-            item {
-                val rowId = remember { -1 }
-                val rowState = tableState.rememberRowState(rowId)
-                FullWidthRow(modifier = Modifier.height(rowState.height)) {
-                    VerticalDivider()
-                    if (hasLeadingColumn) {
-                        val columnId = remember { -1 }
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
-                    }
-                    (0 until headerColumnCount).forEach { columnId->
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
-                    }
-                    if (hasTailColumn) {
-                        val columnId = remember { -2 }
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
-                    }
-                }
-                HorizontalDivider()
-            }
-        }
-        items(
-            count = dataRowCount,
-            key = { it },
-            itemContent = { rowId ->
-                val rowState = tableState.rememberRowState(rowId)
-                val isFirstRow = remember { if (hasHeaderRow) false else rowId == 0 }
-                FullWidthRow(modifier = Modifier.height(rowState.height)) {
-                    VerticalDivider()
-                    if (hasLeadingColumn) {
-                        val columnId = remember { -1 }
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
-                    }
-                    (0 until dataColumnCount).forEach { columnId ->
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
-                    }
-                    if (hasTailColumn) {
-                        val columnId = remember { -2 }
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
-                    }
-                    Box(modifier = Modifier.height(rowState.height).width(18.dp))
-                }
-                HorizontalDivider()
-            }
-        )
-        if (hasFooterRow){
-            item{
-                val rowId = remember { -2 }
-                val rowState = tableState.rememberRowState(rowId)
-                FullWidthRow(modifier = Modifier.height(rowState.height)) {
-                    VerticalDivider()
-                    if (hasLeadingColumn) {
-                        val columnId = remember { -1 }
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider()
-                    }
-                    (0 until headerColumnCount).forEach { columnId->
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider()
-                    }
-                    if (hasTailColumn) {
-                        val columnId = remember { -2 }
-                        val columnState = tableState.rememberColumnState(columnId)
-                        Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.width),
-                            content = { onItemContent(rowId, columnId) }
-                        )
-                        VerticalDivider()
-                    }
-                }
-            }
-        }
-    }
-}
-
-
 
