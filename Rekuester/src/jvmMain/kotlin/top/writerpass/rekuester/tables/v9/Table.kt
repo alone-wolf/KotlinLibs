@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
@@ -70,6 +71,12 @@ import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
 import top.writerpass.kmplibrary.utils.times
 import top.writerpass.rekuester.tables.v8.sumOf
+import top.writerpass.rekuester.tables.v9.CommonTableFrames.horizontalDivider
+import top.writerpass.rekuester.tables.v9.CommonTableFrames.horizontalDraggable
+import top.writerpass.rekuester.tables.v9.CommonTableFrames.tableWidth
+import top.writerpass.rekuester.tables.v9.CommonTableFrames.watchTableSize
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 @JvmName("sumOfDp")
 inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
@@ -363,6 +370,204 @@ fun HeaderTableFrame(
             }
             HorizontalDivider()
         })
+    }
+}
+
+
+object CommonTableFrames {
+    fun Modifier.tableWidth(tableState: TableState): Modifier {
+        return then(
+            when (tableState.tableWidthStrategy) {
+                is TableWidthStrategy.WrapContent -> {
+                    Modifier.width(width = tableState.tableWidth)
+                }
+
+                is TableWidthStrategy.FillContainer -> {
+                    Modifier.fillMaxWidth()
+                }
+
+                is TableWidthStrategy.WidthFixed -> {
+                    Modifier.width(width = tableState.tableWidthStrategy.width)
+                }
+            }
+        )
+    }
+
+    fun Modifier.watchTableSize(tableState: TableState, dataColumnCount: Int): Modifier {
+        return composed("watchSize") {
+            val density = LocalDensity.current
+            val fullWidth = Mutable.something(0.dp)
+            LaunchedEffect(fullWidth.value) {
+                tableState.columnStateMap.forEach { (_, columnState) ->
+                    columnState.width = ((fullWidth.value / dataColumnCount))
+                }
+            }
+            onSizeChanged { (width, _) ->
+                fullWidth.value = with(density) { width.toDp() }
+            }
+        }
+    }
+
+    fun LazyListScope.horizontalDivider() {
+        item { HorizontalDivider() }
+    }
+
+    fun Modifier.horizontalDraggable(isFirstRow: Boolean, columnState: ColumnState): Modifier {
+        return then(
+            if (isFirstRow) {
+                pointerHoverIcon(PointerIcon.XResize)
+                    .composed("horizontalDraggable") {
+                        val density = LocalDensity.current
+                        draggable(
+                            state = rememberDraggableState(onDelta = { delta ->
+                                val rr = with(density) {
+                                    (columnState.width.toPx() + delta).toDp()
+                                }.coerceIn(20.dp, 500.dp)
+                                columnState.width = rr
+                            }),
+                            orientation = Orientation.Horizontal
+                        )
+                    }
+            } else {
+                Modifier
+            }
+        )
+    }
+}
+
+
+@Composable
+fun CommonTableFrame(
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    tableState: TableState = remember { TableState() },
+    hasLeadingColumn: Boolean = false,
+    hasTailColumn: Boolean = false,
+    hasHeaderRow: Boolean = false,
+    hasFooterRow: Boolean = false,
+    dataRowCount: Int,
+    dataColumnCount: Int,
+    headerColumnCount:Int,
+    onItemContent: @Composable BoxScope.(rowId: Int, columnId: Int) -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier
+            .tableWidth(tableState)
+            .padding(4.dp)
+            .watchTableSize(tableState, dataColumnCount),
+        state = state
+    ) {
+        horizontalDivider()
+        if (hasHeaderRow) {
+            item {
+                val rowId = remember { -1 }
+                val rowState = tableState.rememberRowState(rowId)
+                FullWidthRow(modifier = Modifier.height(rowState.height)) {
+                    VerticalDivider()
+                    if (hasLeadingColumn) {
+                        val columnId = remember { -1 }
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
+                    }
+                    (0 until headerColumnCount).forEach { columnId->
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
+                    }
+                    if (hasTailColumn) {
+                        val columnId = remember { -2 }
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
+                    }
+                }
+                HorizontalDivider()
+            }
+        }
+        items(
+            count = dataRowCount,
+            key = { it },
+            itemContent = { rowId ->
+                val rowState = tableState.rememberRowState(rowId)
+                val isFirstRow = remember { if (hasHeaderRow) false else rowId == 0 }
+                FullWidthRow(modifier = Modifier.height(rowState.height)) {
+                    VerticalDivider()
+                    if (hasLeadingColumn) {
+                        val columnId = remember { -1 }
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
+                    }
+                    (0 until dataColumnCount).forEach { columnId ->
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
+                    }
+                    if (hasTailColumn) {
+                        val columnId = remember { -2 }
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
+                    }
+                    Box(modifier = Modifier.height(rowState.height).width(18.dp))
+                }
+                HorizontalDivider()
+            }
+        )
+        if (hasFooterRow){
+            item{
+                val rowId = remember { -2 }
+                val rowState = tableState.rememberRowState(rowId)
+                FullWidthRow(modifier = Modifier.height(rowState.height)) {
+                    VerticalDivider()
+                    if (hasLeadingColumn) {
+                        val columnId = remember { -1 }
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider()
+                    }
+                    (0 until headerColumnCount).forEach { columnId->
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider()
+                    }
+                    if (hasTailColumn) {
+                        val columnId = remember { -2 }
+                        val columnState = tableState.rememberColumnState(columnId)
+                        Box(
+                            modifier = Modifier.fillMaxHeight().width(columnState.width),
+                            content = { onItemContent(rowId, columnId) }
+                        )
+                        VerticalDivider()
+                    }
+                }
+            }
+        }
     }
 }
 
