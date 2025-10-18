@@ -9,9 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
@@ -22,13 +19,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.ktor.http.*
 import top.writerpass.cmplibrary.compose.*
-import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.rekuester.ApiHeader
-import top.writerpass.rekuester.ApiParam
-import top.writerpass.rekuester.ApiState
-import top.writerpass.rekuester.tables.v8.HeaderTableSheet
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.ui.part.RequestPartHeaders
 import top.writerpass.rekuester.ui.part.RequestPartParams
@@ -92,7 +84,7 @@ fun ApiRequestPage(apiUuid: String) {
             val editLabel = remember { mutableStateOf(false) }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (editLabel.value) {
-                    apiState.label.OutlinedTextFiled1(maxLines = 1)
+                    apiState.label.OutlinedBasicTextField(maxLines = 1)
                 } else {
                     apiState.label.value.Text(modifier = Modifier.clickable { editLabel.setTrue() })
                 }

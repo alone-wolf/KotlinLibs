@@ -1,53 +1,20 @@
 package top.writerpass.rekuester.ui.part
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.Icon
 import top.writerpass.cmplibrary.compose.IconButton
-import top.writerpass.cmplibrary.compose.OutlinedTextFiled1
+import top.writerpass.cmplibrary.compose.OutlinedBasicTextField
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.utils.Mutable
-import top.writerpass.cmplibrary.utils.Mutable.When
-import top.writerpass.cmplibrary.utils.Mutable.setFalse
-import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiState
-import top.writerpass.rekuester.tables.v10.CommonTableFrame
-import top.writerpass.rekuester.tables.v9.TableState
-import top.writerpass.rekuester.tables.v9.TableWidthStrategy
 
 @Composable
 fun RequestPartParams(apiState: ApiState) {
@@ -203,15 +170,15 @@ fun RequestPartParams(apiState: ApiState) {
         val k = Mutable.someString()
         val v = Mutable.someString()
         val d = Mutable.someString()
-        k.OutlinedTextFiled1(
+        k.OutlinedBasicTextField(
             placeholder = "Key",
             modifier = Modifier.weight(1f)
         )
-        v.OutlinedTextFiled1(
+        v.OutlinedBasicTextField(
             placeholder = "Value",
             modifier = Modifier.weight(1f)
         )
-        d.OutlinedTextFiled1(
+        d.OutlinedBasicTextField(
             placeholder = "Description",
             modifier = Modifier.weight(1f)
         )

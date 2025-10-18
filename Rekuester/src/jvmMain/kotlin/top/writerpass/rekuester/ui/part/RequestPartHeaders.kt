@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.IconButton
-import top.writerpass.cmplibrary.compose.OutlinedTextFiled1
+import top.writerpass.cmplibrary.compose.OutlinedBasicTextField
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.rekuester.ApiHeader
@@ -49,15 +49,15 @@ fun RequestPartHeaders(apiState: ApiState) {
         val k = Mutable.someString()
         val v = Mutable.someString()
         val d = Mutable.someString()
-        k.OutlinedTextFiled1(
+        k.OutlinedBasicTextField(
             placeholder = "Key",
             modifier = Modifier.weight(1f)
         )
-        v.OutlinedTextFiled1(
+        v.OutlinedBasicTextField(
             placeholder = "Value",
             modifier = Modifier.weight(1f)
         )
-        d.OutlinedTextFiled1(
+        d.OutlinedBasicTextField(
             placeholder = "Description",
             modifier = Modifier.weight(1f)
         )

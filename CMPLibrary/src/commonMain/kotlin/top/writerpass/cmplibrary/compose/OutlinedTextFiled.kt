@@ -1,5 +1,6 @@
 ﻿package top.writerpass.cmplibrary.compose
 
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -8,7 +9,24 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 
 @Composable
-fun MutableState<String>.OutlinedTextFiled1(
+fun MutableState<String>.BasicTextField(
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    enabled: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None
+) {
+    BasicTextField(
+        value = value,
+        onValueChange = { value = it },
+        modifier = modifier,
+        enabled = enabled,
+        maxLines = maxLines,
+        visualTransformation = visualTransformation,
+    )
+}
+
+@Composable
+fun MutableState<String>.OutlinedBasicTextField(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
@@ -29,7 +47,7 @@ fun MutableState<String>.OutlinedTextFiled1(
 }
 
 @Composable
-fun <T : Any> MutableState<T>.OutlinedTextFiled1(
+fun <T : Any> MutableState<T>.OutlinedBasicTextField(
     label: String? = null,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,

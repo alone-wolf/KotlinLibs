@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.OutlinedButton
-import top.writerpass.cmplibrary.compose.OutlinedTextFiled1
+import top.writerpass.cmplibrary.compose.OutlinedBasicTextField
 import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.utils.Mutable
 
@@ -26,8 +26,8 @@ internal val loginPage = Page(
             val username = Mutable.someString()
             val password = Mutable.someString()
 
-            username.OutlinedTextFiled1(label = "Username")
-            password.OutlinedTextFiled1(
+            username.OutlinedBasicTextField(label = "Username")
+            password.OutlinedBasicTextField(
                 label = "Password",
                 visualTransformation = PasswordVisualTransformation()
             )
