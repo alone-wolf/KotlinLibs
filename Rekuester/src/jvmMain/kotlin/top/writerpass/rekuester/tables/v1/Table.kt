@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.kmplibrary.utils.getOrCreate
 
-@kotlin.jvm.JvmName("sumOfDp")
-public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+@JvmName("sumOfDp")
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -39,15 +39,15 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     return sum
 }
 
-class ColumnState(default: Dp = 120.dp) {
+private class ColumnState(default: Dp = 120.dp) {
     var width by mutableStateOf(default)
 }
 
-class RowState(default: Dp = 60.dp) {
+private class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-object TableState {
+private object TableState {
     val defaultWidth = 120.dp
     val defaultHeight = 40.dp
     val rowStateMap = mutableStateMapOf<Int, RowState>()
@@ -76,7 +76,7 @@ object TableState {
 }
 
 @Composable
-fun Table1(
+private fun Table1(
     dataSet: List<List<Any>> = listOf(
         listOf("AAAAAA", "BBAAAA", "CCAAAA", "DDAAAA", "EEAAAA", "FFAAAA"),
         listOf("AA", "BB", "CC", "DD", "EE", "FF"),

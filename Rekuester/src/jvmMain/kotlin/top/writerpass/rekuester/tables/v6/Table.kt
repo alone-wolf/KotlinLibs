@@ -55,7 +55,7 @@ import top.writerpass.kmplibrary.utils.getOrCreate
 import java.awt.Cursor
 
 @JvmName("sumOfDp")
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -63,15 +63,15 @@ inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     return sum
 }
 
-class ColumnState(default: Dp = 120.dp) {
+private class ColumnState(default: Dp = 120.dp) {
     var width by mutableStateOf(default)
 }
 
-class RowState(default: Dp = 60.dp) {
+private class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-object TableState {
+private object TableState {
     val defaultWidth = 120.dp
     val defaultHeight = 40.dp
     val rowStateMap = mutableStateMapOf<Int, RowState>()
@@ -99,7 +99,7 @@ object TableState {
     }
 }
 
-val dataSet = listOf(
+private val dataSet = listOf(
     listOf(
         "HeadAHeadAHeadAHeadA",
         "HeadB",
@@ -115,10 +115,10 @@ val dataSet = listOf(
     listOf("AA", "BB", "CC", "DD", "EE", "FF"),
 )
 
-const val default = "--"
+private const val default = "--"
 
 @Composable
-fun Table6Wrapper() {
+private fun Table6Wrapper() {
     Table6(
         rowCount = dataSet.size,
         columnCount = dataSet.first().size,
@@ -138,7 +138,7 @@ fun Table6Wrapper() {
 }
 
 @Composable
-fun Table6Wrapper1() {
+private fun Table6Wrapper1() {
     val focusManager = LocalFocusManager.current
     Table6(
         modifier = Modifier.clickable(
@@ -199,7 +199,7 @@ fun Table6Wrapper1() {
 }
 
 @Composable
-fun <T : Any> Table6(
+private fun <T : Any> Table6(
     modifier: Modifier = Modifier,
     rowCount: Int,
     columnCount: Int,

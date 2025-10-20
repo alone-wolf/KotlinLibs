@@ -37,7 +37,7 @@ import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.kmplibrary.utils.getOrCreate
 
 @JvmName("sumOfDp")
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -45,15 +45,15 @@ inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     return sum
 }
 
-class ColumnState(default: Dp = 120.dp) {
+private class ColumnState(default: Dp = 120.dp) {
     var width by mutableStateOf(default)
 }
 
-class RowState(default: Dp = 60.dp) {
+private class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-object TableState {
+private object TableState {
     val defaultWidth = 120.dp
     val defaultHeight = 40.dp
     val rowStateMap = mutableStateMapOf<Int, RowState>()
@@ -81,7 +81,7 @@ object TableState {
     }
 }
 
-val dataSet = listOf(
+private val dataSet = listOf(
     listOf(
         "HeadAHeadAHeadAHeadA",
         "HeadB",
@@ -97,10 +97,10 @@ val dataSet = listOf(
     listOf("AA", "BB", "CC", "DD", "EE", "FF"),
 )
 
-const val default = "--"
+private const val default = "--"
 
 @Composable
-fun Table5Wrapper() {
+private fun Table5Wrapper() {
     Table(
         rowCount = dataSet.size,
         columnCount = dataSet.first().size,
@@ -122,7 +122,7 @@ fun Table5Wrapper() {
 }
 
 @Composable
-fun <T : Any> Table(
+private fun <T : Any> Table(
     rowCount: Int,
     columnCount: Int,
     onItem: (rowId: Int, columnId: Int) -> T,

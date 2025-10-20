@@ -47,10 +47,9 @@ import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
 import top.writerpass.kmplibrary.utils.times
-import top.writerpass.rekuester.tables.v8.sumOf
 
 @JvmName("sumOfDp")
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -58,30 +57,30 @@ inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     return sum
 }
 
-class ColumnState(default: Dp = 120.dp) {
+private class ColumnState(default: Dp = 120.dp) {
     var width by mutableStateOf(default)
 }
 
-class RowState(default: Dp = 60.dp) {
+private class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
 @Stable
-sealed interface TableWidthStrategy {
+private sealed interface TableWidthStrategy {
     object WrapContent : TableWidthStrategy
     object FillContainer : TableWidthStrategy
     class WidthFixed(val width: Dp) : TableWidthStrategy
 }
 
 @Stable
-sealed interface TableColumnWidthStrategy {
+private sealed interface TableColumnWidthStrategy {
     object DefaultFixed : TableColumnWidthStrategy
     object DefaultFlexible : TableColumnWidthStrategy
     object TableWidthEvenlyFixed : TableColumnWidthStrategy
     object TableWidthEvenlyFlexible : TableColumnWidthStrategy
 }
 
-class TableState(
+private class TableState(
     val defaultWidth: Dp = 120.dp,
     val defaultHeight: Dp = 40.dp,
     val tableWidthStrategy: TableWidthStrategy = TableWidthStrategy.WrapContent,
@@ -124,7 +123,7 @@ class TableState(
 }
 
 
-fun main() {
+private fun main() {
     val headerList = listOf("HeadAHeadAHeadAHeadA", "HeadB", "HeadC", "HeadD", "HeadE", "HeadF")
     val dataSet = listOf(listOf("AA", "BB", "CC", "DD", "EE", "FF")) * 3
     val default = "--"
@@ -162,7 +161,7 @@ fun main() {
 }
 
 @Composable
-fun HeaderTableSheet(
+private fun HeaderTableSheet(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     tableState: TableState = remember { TableState() },
@@ -247,7 +246,7 @@ fun HeaderTableSheet(
 }
 
 @Composable
-fun HeaderTableFrame(
+private fun HeaderTableFrame(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     tableState: TableState = remember { TableState() },

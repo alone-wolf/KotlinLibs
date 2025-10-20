@@ -55,7 +55,7 @@ import top.writerpass.kmplibrary.utils.getOrCreate
 import top.writerpass.kmplibrary.utils.times
 
 @JvmName("sumOfDp")
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -63,25 +63,25 @@ inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     return sum
 }
 
-class ColumnState(default: Dp = 120.dp) {
+private class ColumnState(default: Dp = 120.dp) {
     var width by mutableStateOf(default)
 }
 
-class RowState(default: Dp = 60.dp) {
+private class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
 @Stable
-enum class TableWidthStrategy {
+private enum class TableWidthStrategy {
     WrapContent, FillContainer
 }
 
 @Stable
-enum class TableColumnWidthStrategy {
+private enum class TableColumnWidthStrategy {
     DefaultWidth, FillTable
 }
 
-class TableState(
+private class TableState(
     val defaultWidth: Dp = 120.dp,
     val defaultHeight: Dp = 40.dp,
     val tableWidthStrategy: TableWidthStrategy = TableWidthStrategy.WrapContent,
@@ -120,8 +120,8 @@ class TableState(
 }
 
 private val headerList = listOf("HeadAHeadAHeadAHeadA", "HeadB", "HeadC", "HeadD", "HeadE", "HeadF")
-val dataSet = listOf(listOf("AA", "BB", "CC", "DD", "EE", "FF")) * 3
-const val default = "--"
+private val dataSet = listOf(listOf("AA", "BB", "CC", "DD", "EE", "FF")) * 3
+private const val default = "--"
 
 //fun main() {
 //    singleWindowApplication {
@@ -152,7 +152,7 @@ const val default = "--"
 //}
 
 @Composable
-fun HeaderTableSheet(
+private fun HeaderTableSheet(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     tableState: TableState = remember { TableState() },
@@ -208,7 +208,7 @@ fun HeaderTableSheet(
 }
 
 @Composable
-fun HeaderTableFrame(
+private fun HeaderTableFrame(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     tableState: TableState = remember { TableState() },

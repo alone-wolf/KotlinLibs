@@ -57,7 +57,7 @@ import top.writerpass.kmplibrary.utils.times
 import java.awt.Cursor
 
 @JvmName("sumOfDp")
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -65,15 +65,15 @@ inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     return sum
 }
 
-class ColumnState(default: Dp = 120.dp) {
+private class ColumnState(default: Dp = 120.dp) {
     var width by mutableStateOf(default)
 }
 
-class RowState(default: Dp = 60.dp) {
+private class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-class TableState {
+private class TableState {
     val defaultWidth = 120.dp
     val defaultHeight = 40.dp
     val rowStateMap = mutableStateMapOf<Int, RowState>()
@@ -197,7 +197,7 @@ private const val default = "--"
 //}
 
 @Composable
-fun <T : Any> Table7(
+private fun <T : Any> Table7(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     tableState: TableState = remember { TableState() },

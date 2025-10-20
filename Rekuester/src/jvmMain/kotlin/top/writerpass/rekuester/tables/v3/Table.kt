@@ -32,7 +32,7 @@ import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.kmplibrary.utils.getOrCreate
 
 @JvmName("sumOfDp")
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -40,15 +40,15 @@ inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     return sum
 }
 
-class ColumnState(default: Dp = 120.dp) {
+private class ColumnState(default: Dp = 120.dp) {
     var width by mutableStateOf(default)
 }
 
-class RowState(default: Dp = 60.dp) {
+private class RowState(default: Dp = 60.dp) {
     var height by mutableStateOf(default)
 }
 
-object TableState {
+private object TableState {
     val defaultWidth = 120.dp
     val defaultHeight = 40.dp
     val rowStateMap = mutableStateMapOf<Int, RowState>()
@@ -75,7 +75,7 @@ object TableState {
         columnStateMap.values.sumOf { it.width }
     }
 }
-val dataSet = listOf(
+private val dataSet = listOf(
     listOf(
         "HeadAHeadAHeadAHeadA",
         "HeadB",
@@ -92,7 +92,7 @@ val dataSet = listOf(
 )
 
 @Composable
-fun Table3(
+private fun Table3(
     dataRowCount: Int = dataSet.size,
     dataColumnCount: Int = dataSet.first().size,
     onData: (rowIndex: Int, columnIndex: Int) -> String = { rowIndex, columnIndex ->

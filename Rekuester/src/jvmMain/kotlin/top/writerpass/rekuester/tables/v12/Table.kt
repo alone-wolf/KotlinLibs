@@ -1,4 +1,4 @@
-package top.writerpass.rekuester.tables.v11
+package top.writerpass.rekuester.tables.v12
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,22 +23,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CleanHands
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,17 +39,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.coerceIn
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.BasicTextField
@@ -293,7 +279,7 @@ private const val LeadingColumnId = -1
 private const val TailColumnId = -2
 
 private fun Modifier.vBind(rowState: TableAxisStates, columnState: TableAxisStates): Modifier {
-    return composed("v-bind-row"){
+    return composed("v-bind-row") {
         this
     }.composed("v-bind-column") {
         val density = LocalDensity.current
@@ -361,7 +347,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -369,7 +355,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { headerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -377,7 +363,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -406,7 +392,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -419,7 +405,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { dataItemContent(rowId, columnId) }
                         )
                         VerticalDivider(
@@ -432,7 +418,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -458,7 +444,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()
@@ -466,7 +452,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { footerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider()
@@ -474,7 +460,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()

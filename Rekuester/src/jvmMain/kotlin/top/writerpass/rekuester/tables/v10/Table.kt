@@ -53,7 +53,7 @@ import top.writerpass.rekuester.tables.v10.CommonTableFrames.horizontalDraggable
 import top.writerpass.rekuester.tables.v10.CommonTableFrames.tableWidth
 
 @JvmName("sumOfDp")
-inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
+private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
     var sum: Dp = 0.dp
     for (element in this) {
         sum += selector(element)
@@ -62,7 +62,7 @@ inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
 }
 
 
-sealed class TableAxisStates(default: Dp) {
+private sealed class TableAxisStates(default: Dp) {
     private val _value = mutableStateOf(default)
     val value by _value
     open fun updateValue(newValue: Dp) {
@@ -86,21 +86,21 @@ sealed class TableAxisStates(default: Dp) {
 }
 
 @Stable
-sealed interface TableWidthStrategy {
+private sealed interface TableWidthStrategy {
     object WrapContent : TableWidthStrategy
     object FillContainer : TableWidthStrategy
     class WidthFixed(val width: Dp) : TableWidthStrategy
 }
 
 @Stable
-sealed interface TableColumnWidthStrategy {
+private sealed interface TableColumnWidthStrategy {
     object DefaultFixed : TableColumnWidthStrategy
     object DefaultFlexible : TableColumnWidthStrategy
     object TableWidthEvenlyFixed : TableColumnWidthStrategy
     object TableWidthEvenlyFlexible : TableColumnWidthStrategy
 }
 
-class TableState(
+private class TableState(
     val defaultWidth: Dp = 120.dp,
     val defaultHeight: Dp = 40.dp,
     val tableWidthStrategy: TableWidthStrategy = TableWidthStrategy.WrapContent,
@@ -156,7 +156,7 @@ class TableState(
     }
 }
 
-object CommonTableFrames {
+private object CommonTableFrames {
     fun Modifier.tableWidth(tableState: TableState): Modifier {
         return then(
             when (tableState.tableWidthStrategy) {
@@ -218,7 +218,7 @@ object CommonTableFrames {
     }
 }
 
-fun main() = singleWindowApplication {
+private fun main() = singleWindowApplication {
     val e = Mutable.someBoolean()
     val k = Mutable.someString("")
     val v = Mutable.someString("")
@@ -366,7 +366,7 @@ private const val TailColumnId = -2
  * ||/////////////////||
  * */
 @Composable
-fun CommonTableFrame(
+private fun CommonTableFrame(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     tableState: TableState,
