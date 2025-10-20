@@ -249,7 +249,7 @@ private fun Modifier.verticalDraggable(
 //        }
 //    }
 
-private class TableStrategies(
+private  class TableStrategies(
     val horizontal: Size,
     val vertical: Size,
     val defaultRow: Axis,
@@ -279,7 +279,7 @@ private const val LeadingColumnId = -1
 private const val TailColumnId = -2
 
 private fun Modifier.vBind(rowState: TableAxisStates, columnState: TableAxisStates): Modifier {
-    return composed("v-bind-row") {
+    return composed("v-bind-row"){
         this
     }.composed("v-bind-column") {
         val density = LocalDensity.current
@@ -347,7 +347,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -355,7 +355,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { headerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -363,7 +363,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -392,7 +392,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -405,7 +405,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { dataItemContent(rowId, columnId) }
                         )
                         VerticalDivider(
@@ -418,7 +418,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -444,7 +444,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()
@@ -452,7 +452,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { footerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider()
@@ -460,7 +460,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()
