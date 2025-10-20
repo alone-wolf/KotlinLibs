@@ -48,6 +48,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -83,33 +84,34 @@ private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
 }
 
 class TableAxisStates(val strategy: TableStrategies.Axis) {
+    val wrapAxisContentValue = mutableStateOf((-1).dp)
     private val _value = mutableStateOf(
         when (strategy) {
-            is TableStrategies.Axis.Ranged -> strategy.default
             is TableStrategies.Axis.Fixed -> strategy.value
             is TableStrategies.Axis.Flexible -> strategy.default
-            is TableStrategies.Axis.Custom -> 0.dp
-            TableStrategies.Axis.WrapContent -> 0.dp
+            is TableStrategies.Axis.Ranged -> strategy.default
+//            TableStrategies.Axis.WrapContent -> (-1).dp
+//            is TableStrategies.Axis.Custom -> 0.dp
         }
     )
     val value by _value
 
     val updateValue: (newValue: Dp, availableSpace: Dp, id: Int) -> Unit = when (strategy) {
-        is TableStrategies.Axis.Ranged -> { newValue, availableSpace, id ->
-            val newValue = newValue.coerceIn(strategy.min, strategy.max)
-            _value.value = newValue
-        }
-
-        is TableStrategies.Axis.Custom -> { newValue, availableSpace, id ->
-            _value.value = strategy.resolver(availableSpace, id)
-        }
-
         is TableStrategies.Axis.Fixed -> { _, _, _ -> }
         is TableStrategies.Axis.Flexible -> { newValue, _, _ ->
             _value.value = newValue
         }
 
-        TableStrategies.Axis.WrapContent -> { _, _, _ -> }
+        is TableStrategies.Axis.Ranged -> { newValue, availableSpace, id ->
+            val newValue = newValue.coerceIn(strategy.min, strategy.max)
+            _value.value = newValue
+        }
+//        TableStrategies.Axis.WrapContent -> { _, _, _ -> }
+
+//
+//        is TableStrategies.Axis.Custom -> { newValue, availableSpace, id ->
+//            _value.value = strategy.resolver(availableSpace, id)
+//        }
     }
 }
 
@@ -118,10 +120,32 @@ class TableState(
     val defaultWidth: Dp = 120.dp,
     val defaultHeight: Dp = 40.dp,
     val strategies: TableStrategies,
+    val extras: TableState.() -> Unit = {}
 ) {
+
     private val rowStateMap = mutableStateMapOf<Int, TableAxisStates>()
 
-    val columnStateMap = mutableStateMapOf<Int, TableAxisStates>()
+    private val columnStateMap = mutableStateMapOf<Int, TableAxisStates>()
+
+    init {
+        extras()
+    }
+
+    fun preSetColumnState(
+        id: Int, strategy: TableStrategies.Axis = strategies.defaultColumn
+    ) {
+        if (columnStateMap.contains(id).not()) {
+            columnStateMap[id] = TableAxisStates(strategy)
+        }
+    }
+
+    fun preSetRowState(
+        id: Int, strategy: TableStrategies.Axis = strategies.defaultColumn
+    ) {
+        if (rowStateMap.contains(id).not()) {
+            rowStateMap[id] = TableAxisStates(strategy)
+        }
+    }
 
     @Composable
     fun rememberColumnState(
@@ -138,11 +162,11 @@ class TableState(
         columnStateMap.values.forEach { states ->
             val strategy = states.strategy
             sumOfHeight += when (strategy) {
-                is TableStrategies.Axis.Custom -> states.value
                 is TableStrategies.Axis.Fixed -> states.value
                 is TableStrategies.Axis.Flexible -> states.value
                 is TableStrategies.Axis.Ranged -> states.value
-                TableStrategies.Axis.WrapContent -> states.value
+//                TableStrategies.Axis.WrapContent -> states.value
+//                is TableStrategies.Axis.Custom -> states.value
             }
         }
         sumOfHeight
@@ -153,11 +177,11 @@ class TableState(
         columnStateMap.values.forEach { states ->
             val strategy = states.strategy
             sumOfWidth += when (strategy) {
-                is TableStrategies.Axis.Custom -> states.value
                 is TableStrategies.Axis.Fixed -> states.value
                 is TableStrategies.Axis.Flexible -> states.value
                 is TableStrategies.Axis.Ranged -> states.value
-                TableStrategies.Axis.WrapContent -> states.value
+//                TableStrategies.Axis.WrapContent -> states.value
+//                is TableStrategies.Axis.Custom -> states.value
             }
         }
         sumOfWidth
@@ -254,11 +278,11 @@ class TableStrategies(
 
     @Stable
     sealed interface Axis {
-        class Flexible(val default: Dp) : Axis
         class Fixed(val value: Dp) : Axis
+        class Flexible(val default: Dp) : Axis
         class Ranged(val min: Dp, val max: Dp, val default: Dp) : Axis
-        class Custom(val resolver: (availableSpace: Dp, id: Int) -> Dp) : Axis
-        object WrapContent : Axis
+//        object WrapContent : Axis
+//        class Custom(val resolver: (availableSpace: Dp, id: Int) -> Dp) : Axis
 //    object FillContainer : TableAxisStrategy
     }
 }
@@ -267,6 +291,27 @@ private const val HeaderRowId = -1
 private const val FooterRowId = -2
 private const val LeadingColumnId = -1
 private const val TailColumnId = -2
+
+fun Modifier.vBind(rowState: TableAxisStates, columnState: TableAxisStates): Modifier {
+    return composed("v-bind-row"){
+        this
+    }.composed("v-bind-column") {
+        val density = LocalDensity.current
+        when (columnState.strategy) {
+            is TableStrategies.Axis.Fixed -> width(columnState.value)
+            is TableStrategies.Axis.Flexible -> width(columnState.value)
+            is TableStrategies.Axis.Ranged -> width(columnState.value)
+//            is TableStrategies.Axis.WrapContent -> onSizeChanged { intSize->
+//                val newWidth = with(density){
+//                    intSize.width.toDp()
+//                }
+//                if (columnState.wrapAxisContentValue.value < newWidth) {
+//                    columnState.wrapAxisContentValue.value = newWidth
+//                }
+//            }
+        }
+    }
+}
 
 /**
  * ||/////////////////||
@@ -279,8 +324,8 @@ fun CommonTableFrame(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     tableState: TableState,
-    dataRowCount: Int = 15,
-    dataColumnCount: Int = 3,
+    dataRowCount: Int,
+    dataColumnCount: Int,
     headerItemContent: (@Composable BoxScope.(columnId: Int) -> Unit)? = null, // HeaderRowId
     footerItemContent: (@Composable BoxScope.(columnId: Int) -> Unit)? = null, // FooterRowId
     leadingItemContent: (@Composable BoxScope.(rowId: Int) -> Unit)? = null, // LeadingColumnId
@@ -303,9 +348,7 @@ fun CommonTableFrame(
     LazyColumn(
         modifier = modifier
             .tableSize(tableState)
-            .padding(4.dp)
-//            .watchTableSize(tableState,tableColumnCount)
-        ,
+            .padding(4.dp),
         state = listState
     ) {
         horizontalDivider()
@@ -318,7 +361,7 @@ fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -326,7 +369,7 @@ fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { headerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -334,12 +377,12 @@ fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
                     }
-                    Box(modifier = Modifier.height(rowState.value).width(18.dp))
+                    Box(modifier = Modifier.fillMaxHeight().width(18.dp))
                 }
                 HorizontalDivider(
                     modifier = Modifier.then(
@@ -363,7 +406,7 @@ fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -376,7 +419,7 @@ fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { dataItemContent(rowId, columnId) }
                         )
                         VerticalDivider(
@@ -389,7 +432,7 @@ fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -399,7 +442,7 @@ fun CommonTableFrame(
                             )
                         )
                     }
-                    Box(modifier = Modifier.height(rowState.value).width(18.dp))
+                    Box(modifier = Modifier.fillMaxHeight().width(18.dp))
                 }
                 HorizontalDivider(
                     modifier = Modifier.verticalDraggable(rowState)
@@ -415,7 +458,7 @@ fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()
@@ -423,7 +466,7 @@ fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { footerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider()
@@ -431,11 +474,12 @@ fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().width(columnState.value),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()
                     }
+                    Box(modifier = Modifier.fillMaxHeight().width(18.dp))
                 }
                 HorizontalDivider(
                     modifier = Modifier.verticalDraggable(rowState)
@@ -452,8 +496,6 @@ fun main() = singleWindowApplication {
     val v = Mutable.someString("")
     val d = Mutable.someString("")
 
-    "aaa".Text()
-
     CommonTableFrame(
         modifier = Modifier.border(
             width = 2.dp,
@@ -468,9 +510,39 @@ fun main() = singleWindowApplication {
                 strategies = TableStrategies(
                     horizontal = TableStrategies.Size.FillContainer,
                     vertical = TableStrategies.Size.FillContainer,
-                    defaultRow = TableStrategies.Axis.Flexible(120.dp),
-                    defaultColumn = TableStrategies.Axis.Flexible(40.dp)
+                    defaultRow = TableStrategies.Axis.Fixed(40.dp),
+                    defaultColumn = TableStrategies.Axis.Fixed(120.dp)
                 ),
+                extras = {
+                    preSetColumnState(
+                        id = -1,
+                        strategy = TableStrategies.Axis.Fixed(30.dp)
+                    )
+                    preSetColumnState(
+                        id = 0,
+                        strategy = TableStrategies.Axis.Ranged(
+                            min = 100.dp,
+                            max = 300.dp,
+                            default = 120.dp
+                        )
+                    )
+                    preSetColumnState(
+                        id = 1,
+                        strategy = TableStrategies.Axis.Ranged(
+                            min = 100.dp,
+                            max = 300.dp,
+                            default = 120.dp
+                        )
+                    )
+                    preSetColumnState(
+                        id = 2,
+                        strategy = TableStrategies.Axis.Ranged(
+                            min = 100.dp,
+                            max = 300.dp,
+                            default = 120.dp
+                        )
+                    )
+                }
             )
         },
         dataRowCount = 15,
@@ -546,7 +618,10 @@ fun main() = singleWindowApplication {
                 isTrue = {
                     val focusRequester = remember { FocusRequester() }
                     LaunchedEffectOdd { focusRequester.requestFocus() }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         BasicTextField(
                             value = textFieldValue.value,
                             onValueChange = {
@@ -564,7 +639,7 @@ fun main() = singleWindowApplication {
                             textStyle = TextStyle.Default.copy(
                                 lineHeight = lineHeightSp,
                                 fontSize = 14.sp
-                            )
+                            ),
                         )
                         Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
                             isEditing.setFalse()
