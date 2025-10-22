@@ -59,6 +59,7 @@ import top.writerpass.cmplibrary.utils.Mutable.When
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
+import java.math.BigDecimal
 
 @JvmName("sumOfDp")
 private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
@@ -249,7 +250,7 @@ private fun Modifier.verticalDraggable(
 //        }
 //    }
 
-private  class TableStrategies(
+private class TableStrategies(
     val horizontal: Size,
     val vertical: Size,
     val defaultRow: Axis,
@@ -279,7 +280,7 @@ private const val LeadingColumnId = -1
 private const val TailColumnId = -2
 
 private fun Modifier.vBind(rowState: TableAxisStates, columnState: TableAxisStates): Modifier {
-    return composed("v-bind-row"){
+    return composed("v-bind-row") {
         this
     }.composed("v-bind-column") {
         val density = LocalDensity.current
@@ -347,7 +348,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -355,7 +356,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { headerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -363,7 +364,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
@@ -392,7 +393,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -405,7 +406,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { dataItemContent(rowId, columnId) }
                         )
                         VerticalDivider(
@@ -418,7 +419,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider(
@@ -444,7 +445,7 @@ private fun CommonTableFrame(
                     if (hasLeadingColumn) {
                         val columnState = tableState.rememberColumnState(LeadingColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()
@@ -452,7 +453,7 @@ private fun CommonTableFrame(
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { footerItemContent?.invoke(this, columnId) }
                         )
                         VerticalDivider()
@@ -460,7 +461,7 @@ private fun CommonTableFrame(
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
                         Box(
-                            modifier = Modifier.fillMaxHeight().vBind(rowState,columnState),
+                            modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
                         VerticalDivider()
@@ -475,8 +476,219 @@ private fun CommonTableFrame(
     }
 }
 
+data class Share(
+    // 名称
+    val label: String,
+    // 多/空
+    val isGoingLong: Boolean,
+    // 倍率 1/1.5/2
+    val ratio: BigDecimal,
+    // 持仓数量
+    val holdingCount: Int,
+    // 平均成本
+    val avgCost: BigDecimal,
+    // 现价
+    val currentPrice: BigDecimal,
+) {
+    // 持仓规模
+    val holdingAmount: BigDecimal = holdingCount.toBigDecimal() * avgCost
+
+    // 多空力度
+    val press: BigDecimal = holdingAmount * ratio
+}
 
 private fun main() = singleWindowApplication {
+    val e = Mutable.someBoolean()
+    val k = Mutable.someString("")
+    val v = Mutable.someString("")
+    val d = Mutable.someString("")
+
+    val items = remember {
+        mutableStateListOf<Share>()
+    }
+
+    LaunchedEffectOdd {
+        items += Share(
+            label = "TSLA",
+            isGoingLong = true,
+            ratio = 1.toBigDecimal(),
+            holdingCount = 1,
+            avgCost = 418.960.toBigDecimal(),
+            currentPrice = 443.53.toBigDecimal()
+        )
+        items += Share(
+            label = "TSLL",
+            isGoingLong = true,
+            ratio = 2.toBigDecimal(),
+            holdingCount = 14,
+            avgCost = 18.008.toBigDecimal(),
+            currentPrice = 286.72.toBigDecimal()
+        )
+        items += Share(
+            label = "TSDD",
+            isGoingLong = false,
+            ratio = 2.toBigDecimal(),
+            holdingCount = 301,
+            avgCost = 9.865.toBigDecimal(),
+            currentPrice = 20.490.toBigDecimal()
+        )
+    }
+
+    val headers = remember {
+        listOf("id", "名称", "多/空", "倍率", "持仓数量", "平均成本", "现价", "持仓金额", "多空力度")
+    }
+
+    CommonTableFrame(
+        modifier = Modifier.border(
+            width = 2.dp,
+            color = Color.Green,
+            shape = RoundedCornerShape(4.dp)
+        ),
+        listState = rememberLazyListState(),
+        dataRowCount = items.size,
+        dataColumnCount = headers.size,
+        tableState = remember {
+            TableState(
+                defaultWidth = 120.dp,
+                defaultHeight = 40.dp,
+                strategies = TableStrategies(
+                    horizontal = TableStrategies.Size.FillContainer,
+                    vertical = TableStrategies.Size.FillContainer,
+                    defaultRow = TableStrategies.Axis.Fixed(40.dp),
+                    defaultColumn = TableStrategies.Axis.Ranged(
+                        min = 100.dp,
+                        max = 300.dp,
+                        default = 120.dp
+                    )
+                ),
+            )
+        },
+        headerItemContent = { columnId ->
+            val header = remember { headers[columnId] }
+            header.Text(modifier = Modifier.align(Alignment.Center))
+        },
+        footerItemContent = { columnId ->
+            when (columnId) {
+//                0 -> k.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+//                1 -> v.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+//                2 -> d.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+            }
+        },
+//        leadingItemContent = { rowId ->
+//            when (rowId) {
+//                HeaderRowId -> {
+//                    Checkbox(false, {}, modifier = Modifier.align(Alignment.Center))
+//                }
+//
+//                FooterRowId -> {
+//                    Checkbox(e.value, { e.value = it }, modifier = Modifier.align(Alignment.Center))
+//                }
+//
+//                else -> {
+//                    Checkbox(true, {}, modifier = Modifier.align(Alignment.Center))
+//                }
+//            }
+//        },
+        tailItemContent = { rowId ->
+            "--".Text()
+//            when (rowId) {
+//                HeaderRowId -> {
+//                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
+//                }
+//
+//                FooterRowId -> {
+//                    Row {
+//                        Icons.Default.Delete.Icon()
+//                        Icons.Default.Save.Icon()
+//                    }
+//                }
+//
+//                else -> {
+//                    Row {
+//                        Icons.Default.CleanHands.Icon()
+//                        Icons.Default.Add.Icon()
+//                    }
+//                }
+//            }
+        },
+        dataItemContent = { rowId, columnId ->
+            val density = LocalDensity.current
+            val item = remember(rowId, columnId) {
+                val it = items[rowId]
+                when (columnId) {
+                    0 -> (rowId + 1).toString()
+                    1 -> it.label
+                    2 -> it.isGoingLong.toString()
+                    3 -> it.ratio.toString()
+                    4 -> it.holdingCount.toString()
+                    5 -> it.avgCost.toString()
+                    6 -> it.currentPrice.toString()
+                    7 -> it.holdingAmount.toString()
+                    8 -> "${if (it.isGoingLong)"" else "-"}${it.press}"
+                    else -> "${rowId}---${columnId}"
+                }
+            }
+            val isEditing = Mutable.someBoolean()
+            val textFieldValue = Mutable.something(
+                default = TextFieldValue(
+                    text = item,
+                    selection = TextRange(item.length)
+                )
+            )
+            var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
+
+            isEditing.When(
+                isTrue = {
+                    val focusRequester = remember { FocusRequester() }
+                    LaunchedEffectOdd { focusRequester.requestFocus() }
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BasicTextField(
+                            value = textFieldValue.value,
+                            onValueChange = {
+                                textFieldValue.value = it
+//                                onItemChange(rowId, columnId, it.text)
+                            },
+                            modifier = Modifier.fillMaxHeight()
+                                .weight(1f)
+                                .focusRequester(focusRequester),
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+                            keyboardActions = KeyboardActions(
+                                onGo = { isEditing.setFalse() }
+                            ),
+                            singleLine = true,
+                            textStyle = TextStyle.Default.copy(
+                                lineHeight = lineHeightSp,
+                                fontSize = 14.sp
+                            ),
+                        )
+                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+                            isEditing.setFalse()
+                        })
+                    }
+                },
+                isFalse = {
+                    Text(
+                        text = textFieldValue.value.text,
+                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+                        onTextLayout = { textLayoutResult ->
+                            // 获取文本高度（像素）
+                            lineHeightSp =
+                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+                        },
+                        lineHeight = lineHeightSp,
+                        fontSize = 14.sp
+                    )
+                }
+            )
+        }
+    )
+}
+
+
+private fun main1() = singleWindowApplication {
     val e = Mutable.someBoolean()
     val k = Mutable.someString("")
     val v = Mutable.someString("")
