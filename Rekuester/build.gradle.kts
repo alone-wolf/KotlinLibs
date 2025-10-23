@@ -86,3 +86,33 @@ compose.desktop {
         }
     }
 }
+
+
+//tasks.register("generateDependencyList") {
+//    group = "build"
+//    description = "生成依赖列表并写入 resources"
+//
+//    val outputDir = layout.buildDirectory.dir("generated/resources/dependencies")
+//
+//    outputs.dir(outputDir)
+//
+//    doLast {
+//        val runtimeConfig = configurations.getByName("classpath")
+//
+//        val deps = runtimeConfig
+//            .resolvedConfiguration
+//            .resolvedArtifacts
+//            .map { artifact ->
+//                val id = artifact.moduleVersion.id
+//                "${id.group}:${artifact.name}:${id.version}"
+//            }
+//            .sorted()
+//            .joinToString("\n")
+//
+//        val outputFile = outputDir.get().file("dependencies.txt").asFile
+//        outputFile.parentFile.mkdirs()
+//        outputFile.writeText(deps)
+//
+//        println("✅ 依赖列表已写入: ${outputFile.absolutePath}")
+//    }
+//}
