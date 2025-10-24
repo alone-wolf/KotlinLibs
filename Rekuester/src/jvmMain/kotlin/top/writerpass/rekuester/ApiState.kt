@@ -114,7 +114,7 @@ class UrlParamsBinding(
         tryParseUrl(newText)?.let { (newAddress, pairs) ->
             if (newAddress != address.value) address.value = newAddress
             params.list.clear()
-            params.list.addAll(pairs.map { ApiParam(it.first, it.second) })
+            params.list.addAll(pairs.map { ApiParam(it.first, it.second, "", true) })
         }
     }
 

@@ -5,16 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -29,8 +20,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -39,7 +28,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -60,26 +48,13 @@ import top.writerpass.cmplibrary.utils.Mutable.When
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
-import java.math.BigDecimal
 
-@JvmName("sumOfDp")
-private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Dp): Dp {
-    var sum: Dp = 0.dp
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-private class TableAxisStates(val strategy: TableStrategies.Axis) {
-    val wrapAxisContentValue = mutableStateOf((-1).dp)
+class TableAxisStates(val strategy: TableStrategies.Axis) {
     private val _value = mutableStateOf(
         when (strategy) {
             is TableStrategies.Axis.Fixed -> strategy.value
             is TableStrategies.Axis.Flexible -> strategy.default
             is TableStrategies.Axis.Ranged -> strategy.default
-//            TableStrategies.Axis.WrapContent -> (-1).dp
-//            is TableStrategies.Axis.Custom -> 0.dp
         }
     )
     val value by _value
@@ -94,19 +69,11 @@ private class TableAxisStates(val strategy: TableStrategies.Axis) {
             val newValue = newValue.coerceIn(strategy.min, strategy.max)
             _value.value = newValue
         }
-//        TableStrategies.Axis.WrapContent -> { _, _, _ -> }
-
-//
-//        is TableStrategies.Axis.Custom -> { newValue, availableSpace, id ->
-//            _value.value = strategy.resolver(availableSpace, id)
-//        }
     }
 }
 
 
-private class TableState(
-    val defaultWidth: Dp = 120.dp,
-    val defaultHeight: Dp = 40.dp,
+class TableState(
     val strategies: TableStrategies,
     val extras: TableState.() -> Unit = {}
 ) {
@@ -153,8 +120,6 @@ private class TableState(
                 is TableStrategies.Axis.Fixed -> states.value
                 is TableStrategies.Axis.Flexible -> states.value
                 is TableStrategies.Axis.Ranged -> states.value
-//                TableStrategies.Axis.WrapContent -> states.value
-//                is TableStrategies.Axis.Custom -> states.value
             }
         }
         sumOfHeight
@@ -168,8 +133,6 @@ private class TableState(
                 is TableStrategies.Axis.Fixed -> states.value
                 is TableStrategies.Axis.Flexible -> states.value
                 is TableStrategies.Axis.Ranged -> states.value
-//                TableStrategies.Axis.WrapContent -> states.value
-//                is TableStrategies.Axis.Custom -> states.value
             }
         }
         sumOfWidth
@@ -235,23 +198,7 @@ private fun Modifier.verticalDraggable(
         }
 }
 
-//    fun Modifier.watchTableSize(tableState: TableState,tableColumnCount: Int): Modifier {
-//        return composed("watchSize") {
-//            val density = LocalDensity.current
-//            val fullWidth = Mutable.something(0.dp)
-//            LaunchedEffect(fullWidth.value) {
-//                tableState.columnStateMap.forEach { (_, columnState) ->
-//                    val newValue = ((fullWidth.value / tableColumnCount))
-//                    columnState.updateValue(newValue)
-//                }
-//            }
-//            onSizeChanged { (width, _) ->
-//                fullWidth.value = with(density) { width.toDp() }
-//            }
-//        }
-//    }
-
-private class TableStrategies(
+class TableStrategies(
     val horizontal: Size,
     val vertical: Size,
     val defaultRow: Axis,
@@ -272,10 +219,12 @@ private class TableStrategies(
     }
 }
 
-private const val HeaderRowId = -1
-private const val FooterRowId = -2
-private const val LeadingColumnId = -1
-private const val TailColumnId = -2
+object TableAxisIds{
+    const val HeaderRowId = -1
+    const val FooterRowId = -2
+    const val LeadingColumnId = -1
+    const val TailColumnId = -2
+}
 
 private fun Modifier.vBind(rowState: TableAxisStates, columnState: TableAxisStates): Modifier {
     return composed("v-bind-row") {
@@ -300,7 +249,7 @@ private fun Modifier.vBind(rowState: TableAxisStates, columnState: TableAxisStat
  * ||/////////////////||
  * */
 @Composable
-private fun CommonTableFrame(
+fun CommonTableFrame(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     tableState: TableState,
@@ -327,12 +276,12 @@ private fun CommonTableFrame(
         horizontalDivider()
         if (hasHeaderRow) {
             item {
-                val rowId = HeaderRowId
+                val rowId = TableAxisIds.HeaderRowId
                 val rowState = tableState.rememberRowState(rowId)
                 FullWidthRow(modifier = Modifier.height(rowState.value)) {
                     VerticalDivider()
                     if (hasLeadingColumn) {
-                        val columnState = tableState.rememberColumnState(LeadingColumnId)
+                        val columnState = tableState.rememberColumnState(TableAxisIds.LeadingColumnId)
                         Box(
                             modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
@@ -348,7 +297,7 @@ private fun CommonTableFrame(
                         VerticalDivider(modifier = Modifier.horizontalDraggable(true, columnState))
                     }
                     if (hasTailColumn) {
-                        val columnState = tableState.rememberColumnState(TailColumnId)
+                        val columnState = tableState.rememberColumnState(TableAxisIds.TailColumnId)
                         Box(
                             modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
@@ -377,7 +326,7 @@ private fun CommonTableFrame(
                 FullWidthRow(modifier = Modifier.height(rowState.value)) {
                     VerticalDivider()
                     if (hasLeadingColumn) {
-                        val columnState = tableState.rememberColumnState(LeadingColumnId)
+                        val columnState = tableState.rememberColumnState(TableAxisIds.LeadingColumnId)
                         Box(
                             modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
@@ -403,7 +352,7 @@ private fun CommonTableFrame(
                         )
                     }
                     if (hasTailColumn) {
-                        val columnState = tableState.rememberColumnState(TailColumnId)
+                        val columnState = tableState.rememberColumnState(TableAxisIds.TailColumnId)
                         Box(
                             modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
@@ -424,12 +373,12 @@ private fun CommonTableFrame(
         )
         if (hasFooterRow) {
             item {
-                val rowId = FooterRowId
+                val rowId = TableAxisIds.FooterRowId
                 val rowState = tableState.rememberRowState(rowId)
                 FullWidthRow(modifier = Modifier.height(rowState.value)) {
                     VerticalDivider()
                     if (hasLeadingColumn) {
-                        val columnState = tableState.rememberColumnState(LeadingColumnId)
+                        val columnState = tableState.rememberColumnState(TableAxisIds.LeadingColumnId)
                         Box(
                             modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { leadingItemContent?.invoke(this, rowId) }
@@ -445,7 +394,7 @@ private fun CommonTableFrame(
                         VerticalDivider()
                     }
                     if (hasTailColumn) {
-                        val columnState = tableState.rememberColumnState(TailColumnId)
+                        val columnState = tableState.rememberColumnState(TableAxisIds.TailColumnId)
                         Box(
                             modifier = Modifier.fillMaxHeight().vBind(rowState, columnState),
                             content = { tailItemContent?.invoke(this, rowId) }
@@ -462,387 +411,383 @@ private fun CommonTableFrame(
     }
 }
 
-data class Share(
-    // 名称
-    val label: String,
-    // 多/空
-    val isGoingLong: Boolean,
-    // 倍率 1/1.5/2
-    val ratio: BigDecimal,
-    // 持仓数量
-    val holdingCount: Int,
-    // 平均成本
-    val avgCost: BigDecimal,
-    // 现价
-    val currentPrice: BigDecimal,
-) {
-    // 持仓规模
-    val holdingAmount: BigDecimal = holdingCount.toBigDecimal() * avgCost
+//data class Share(
+//    // 名称
+//    val label: String,
+//    // 多/空
+//    val isGoingLong: Boolean,
+//    // 倍率 1/1.5/2
+//    val ratio: BigDecimal,
+//    // 持仓数量
+//    val holdingCount: Int,
+//    // 平均成本
+//    val avgCost: BigDecimal,
+//    // 现价
+//    val currentPrice: BigDecimal,
+//) {
+//    // 持仓规模
+//    val holdingAmount: BigDecimal = holdingCount.toBigDecimal() * avgCost
+//
+//    // 多空力度
+//    val press: BigDecimal = holdingAmount * ratio
+//}
+//
+//private fun main2() = singleWindowApplication {
+//    val e = Mutable.someBoolean()
+//    val k = Mutable.someString("")
+//    val v = Mutable.someString("")
+//    val d = Mutable.someString("")
+//
+//    val items = remember {
+//        mutableStateListOf<Share>()
+//    }
+//
+//    LaunchedEffectOdd {
+//        items += Share(
+//            label = "TSLA",
+//            isGoingLong = true,
+//            ratio = 1.toBigDecimal(),
+//            holdingCount = 1,
+//            avgCost = 418.960.toBigDecimal(),
+//            currentPrice = 443.53.toBigDecimal()
+//        )
+//        items += Share(
+//            label = "TSLL",
+//            isGoingLong = true,
+//            ratio = 2.toBigDecimal(),
+//            holdingCount = 14,
+//            avgCost = 18.008.toBigDecimal(),
+//            currentPrice = 286.72.toBigDecimal()
+//        )
+//        items += Share(
+//            label = "TSDD",
+//            isGoingLong = false,
+//            ratio = 2.toBigDecimal(),
+//            holdingCount = 301,
+//            avgCost = 9.865.toBigDecimal(),
+//            currentPrice = 20.490.toBigDecimal()
+//        )
+//    }
+//
+//    val headers = remember {
+//        listOf("id", "名称", "多/空", "倍率", "持仓数量", "平均成本", "现价", "持仓金额", "多空力度")
+//    }
+//
+//    CommonTableFrame(
+//        modifier = Modifier.border(
+//            width = 2.dp,
+//            color = Color.Green,
+//            shape = RoundedCornerShape(4.dp)
+//        ),
+//        listState = rememberLazyListState(),
+//        dataRowCount = items.size,
+//        dataColumnCount = headers.size,
+//        tableState = remember {
+//            TableState(
+//                strategies = TableStrategies(
+//                    horizontal = TableStrategies.Size.FillContainer,
+//                    vertical = TableStrategies.Size.FillContainer,
+//                    defaultRow = TableStrategies.Axis.Fixed(40.dp),
+//                    defaultColumn = TableStrategies.Axis.Ranged(
+//                        min = 50.dp,
+//                        max = 300.dp,
+//                        default = 70.dp
+//                    )
+//                ),
+//            )
+//        },
+//        headerItemContent = { columnId ->
+//            val header = remember { headers[columnId] }
+//            header.Text(modifier = Modifier.align(Alignment.Center))
+//        },
+//        footerItemContent = { columnId ->
+//            when (columnId) {
+////                0 -> k.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+////                1 -> v.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+////                2 -> d.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+//            }
+//        },
+//        leadingItemContent = { rowId ->
+//            when (rowId) {
+//                HeaderRowId -> {}
+//
+//                FooterRowId -> {}
+//
+//                else -> {
+//                    Checkbox(true, {}, modifier = Modifier.align(Alignment.Center))
+//                }
+//            }
+//        },
+//        tailItemContent = { rowId ->
+//            when (rowId) {
+//                HeaderRowId -> {}
+//
+//                FooterRowId -> {
+//                    Row {
+//                        Icons.Default.Delete.Icon()
+//                        Icons.Default.Save.Icon()
+//                    }
+//                }
+//
+//                else -> {
+//                    Row {
+//                        Icons.Default.Delete.Icon(
+//                            modifier = Modifier.clickable {
+//                                items.removeAt(rowId)
+//                            }
+//                        )
+//                    }
+//                }
+//            }
+//        },
+//        dataItemContent = { rowId, columnId ->
+//            val density = LocalDensity.current
+//            val item = remember(rowId, columnId) {
+//                val it = items[rowId]
+//                when (columnId) {
+//                    0 -> (rowId + 1).toString()
+//                    1 -> it.label
+//                    2 -> it.isGoingLong.toString()
+//                    3 -> it.ratio.toString()
+//                    4 -> it.holdingCount.toString()
+//                    5 -> it.avgCost.toString()
+//                    6 -> it.currentPrice.toString()
+//                    7 -> it.holdingAmount.toString()
+//                    8 -> "${if (it.isGoingLong) "" else "-"}${it.press}"
+//                    else -> "${rowId}---${columnId}"
+//                }
+//            }
+//            val isEditing = Mutable.someBoolean()
+//            val textFieldValue = Mutable.something(
+//                default = TextFieldValue(
+//                    text = item,
+//                    selection = TextRange(item.length)
+//                )
+//            )
+//            var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
+//
+//            isEditing.When(
+//                isTrue = {
+//                    val focusRequester = remember { FocusRequester() }
+//                    LaunchedEffectOdd { focusRequester.requestFocus() }
+//                    Row(
+//                        modifier = Modifier.fillMaxSize(),
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        BasicTextField(
+//                            value = textFieldValue.value,
+//                            onValueChange = {
+//                                textFieldValue.value = it
+////                                onItemChange(rowId, columnId, it.text)
+//                            },
+//                            modifier = Modifier.fillMaxHeight()
+//                                .weight(1f)
+//                                .focusRequester(focusRequester),
+//                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+//                            keyboardActions = KeyboardActions(
+//                                onGo = { isEditing.setFalse() }
+//                            ),
+//                            singleLine = true,
+//                            textStyle = TextStyle.Default.copy(
+//                                lineHeight = lineHeightSp,
+//                                fontSize = 14.sp
+//                            ),
+//                        )
+//                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+//                            isEditing.setFalse()
+//                        })
+//                    }
+//                },
+//                isFalse = {
+//                    Text(
+//                        text = textFieldValue.value.text,
+//                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+//                        onTextLayout = { textLayoutResult ->
+//                            // 获取文本高度（像素）
+//                            lineHeightSp =
+//                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+//                        },
+//                        lineHeight = lineHeightSp,
+//                        fontSize = 14.sp
+//                    )
+//                }
+//            )
+//        }
+//    )
+//}
 
-    // 多空力度
-    val press: BigDecimal = holdingAmount * ratio
-}
 
-private fun main() = singleWindowApplication {
-    val e = Mutable.someBoolean()
-    val k = Mutable.someString("")
-    val v = Mutable.someString("")
-    val d = Mutable.someString("")
-
-    val items = remember {
-        mutableStateListOf<Share>()
-    }
-
-    LaunchedEffectOdd {
-        items += Share(
-            label = "TSLA",
-            isGoingLong = true,
-            ratio = 1.toBigDecimal(),
-            holdingCount = 1,
-            avgCost = 418.960.toBigDecimal(),
-            currentPrice = 443.53.toBigDecimal()
-        )
-        items += Share(
-            label = "TSLL",
-            isGoingLong = true,
-            ratio = 2.toBigDecimal(),
-            holdingCount = 14,
-            avgCost = 18.008.toBigDecimal(),
-            currentPrice = 286.72.toBigDecimal()
-        )
-        items += Share(
-            label = "TSDD",
-            isGoingLong = false,
-            ratio = 2.toBigDecimal(),
-            holdingCount = 301,
-            avgCost = 9.865.toBigDecimal(),
-            currentPrice = 20.490.toBigDecimal()
-        )
-    }
-
-    val headers = remember {
-        listOf("id", "名称", "多/空", "倍率", "持仓数量", "平均成本", "现价", "持仓金额", "多空力度")
-    }
-
-    CommonTableFrame(
-        modifier = Modifier.border(
-            width = 2.dp,
-            color = Color.Green,
-            shape = RoundedCornerShape(4.dp)
-        ),
-        listState = rememberLazyListState(),
-        dataRowCount = items.size,
-        dataColumnCount = headers.size,
-        tableState = remember {
-            TableState(
-                defaultWidth = 120.dp,
-                defaultHeight = 40.dp,
-                strategies = TableStrategies(
-                    horizontal = TableStrategies.Size.FillContainer,
-                    vertical = TableStrategies.Size.FillContainer,
-                    defaultRow = TableStrategies.Axis.Fixed(40.dp),
-                    defaultColumn = TableStrategies.Axis.Ranged(
-                        min = 50.dp,
-                        max = 300.dp,
-                        default = 70.dp
-                    )
-                ),
-            )
-        },
-        headerItemContent = { columnId ->
-            val header = remember { headers[columnId] }
-            header.Text(modifier = Modifier.align(Alignment.Center))
-        },
-        footerItemContent = { columnId ->
-            when (columnId) {
+//private fun main1() = singleWindowApplication {
+//    val e = Mutable.someBoolean()
+//    val k = Mutable.someString("")
+//    val v = Mutable.someString("")
+//    val d = Mutable.someString("")
+//
+//    CommonTableFrame(
+//        modifier = Modifier.border(
+//            width = 2.dp,
+//            color = Color.Green,
+//            shape = RoundedCornerShape(4.dp)
+//        ),
+//        listState = rememberLazyListState(),
+//        tableState = remember {
+//            TableState(
+//                strategies = TableStrategies(
+//                    horizontal = TableStrategies.Size.FillContainer,
+//                    vertical = TableStrategies.Size.FillContainer,
+//                    defaultRow = TableStrategies.Axis.Fixed(40.dp),
+//                    defaultColumn = TableStrategies.Axis.Fixed(120.dp)
+//                ),
+//                extras = {
+//                    preSetColumnState(
+//                        id = -1,
+//                        strategy = TableStrategies.Axis.Fixed(30.dp)
+//                    )
+//                    preSetColumnState(
+//                        id = 0,
+//                        strategy = TableStrategies.Axis.Ranged(
+//                            min = 100.dp,
+//                            max = 300.dp,
+//                            default = 120.dp
+//                        )
+//                    )
+//                    preSetColumnState(
+//                        id = 1,
+//                        strategy = TableStrategies.Axis.Ranged(
+//                            min = 100.dp,
+//                            max = 300.dp,
+//                            default = 120.dp
+//                        )
+//                    )
+//                    preSetColumnState(
+//                        id = 2,
+//                        strategy = TableStrategies.Axis.Ranged(
+//                            min = 100.dp,
+//                            max = 300.dp,
+//                            default = 120.dp
+//                        )
+//                    )
+//                }
+//            )
+//        },
+//        dataRowCount = 15,
+//        dataColumnCount = 3,
+//        headerItemContent = { columnId ->
+//            val headers = remember { listOf("Key", "Value", "Description") }
+//            val header = remember { headers[columnId] }
+//            header.Text(modifier = Modifier.align(Alignment.Center))
+//        },
+//        footerItemContent = { columnId ->
+//            when (columnId) {
 //                0 -> k.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
 //                1 -> v.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
 //                2 -> d.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-            }
-        },
-        leadingItemContent = { rowId ->
-            when (rowId) {
-                HeaderRowId -> {}
-
-                FooterRowId -> {}
-
-                else -> {
-                    Checkbox(true, {}, modifier = Modifier.align(Alignment.Center))
-                }
-            }
-        },
-        tailItemContent = { rowId ->
-            when (rowId) {
-                HeaderRowId -> {}
-
-                FooterRowId -> {
-                    Row {
-                        Icons.Default.Delete.Icon()
-                        Icons.Default.Save.Icon()
-                    }
-                }
-
-                else -> {
-                    Row {
-                        Icons.Default.Delete.Icon(
-                            modifier = Modifier.clickable {
-                                items.removeAt(rowId)
-                            }
-                        )
-                    }
-                }
-            }
-        },
-        dataItemContent = { rowId, columnId ->
-            val density = LocalDensity.current
-            val item = remember(rowId, columnId) {
-                val it = items[rowId]
-                when (columnId) {
-                    0 -> (rowId + 1).toString()
-                    1 -> it.label
-                    2 -> it.isGoingLong.toString()
-                    3 -> it.ratio.toString()
-                    4 -> it.holdingCount.toString()
-                    5 -> it.avgCost.toString()
-                    6 -> it.currentPrice.toString()
-                    7 -> it.holdingAmount.toString()
-                    8 -> "${if (it.isGoingLong) "" else "-"}${it.press}"
-                    else -> "${rowId}---${columnId}"
-                }
-            }
-            val isEditing = Mutable.someBoolean()
-            val textFieldValue = Mutable.something(
-                default = TextFieldValue(
-                    text = item,
-                    selection = TextRange(item.length)
-                )
-            )
-            var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
-
-            isEditing.When(
-                isTrue = {
-                    val focusRequester = remember { FocusRequester() }
-                    LaunchedEffectOdd { focusRequester.requestFocus() }
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BasicTextField(
-                            value = textFieldValue.value,
-                            onValueChange = {
-                                textFieldValue.value = it
-//                                onItemChange(rowId, columnId, it.text)
-                            },
-                            modifier = Modifier.fillMaxHeight()
-                                .weight(1f)
-                                .focusRequester(focusRequester),
-                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-                            keyboardActions = KeyboardActions(
-                                onGo = { isEditing.setFalse() }
-                            ),
-                            singleLine = true,
-                            textStyle = TextStyle.Default.copy(
-                                lineHeight = lineHeightSp,
-                                fontSize = 14.sp
-                            ),
-                        )
-                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
-                            isEditing.setFalse()
-                        })
-                    }
-                },
-                isFalse = {
-                    Text(
-                        text = textFieldValue.value.text,
-                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
-                        onTextLayout = { textLayoutResult ->
-                            // 获取文本高度（像素）
-                            lineHeightSp =
-                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
-                        },
-                        lineHeight = lineHeightSp,
-                        fontSize = 14.sp
-                    )
-                }
-            )
-        }
-    )
-}
-
-
-private fun main1() = singleWindowApplication {
-    val e = Mutable.someBoolean()
-    val k = Mutable.someString("")
-    val v = Mutable.someString("")
-    val d = Mutable.someString("")
-
-    CommonTableFrame(
-        modifier = Modifier.border(
-            width = 2.dp,
-            color = Color.Green,
-            shape = RoundedCornerShape(4.dp)
-        ),
-        listState = rememberLazyListState(),
-        tableState = remember {
-            TableState(
-                defaultWidth = 120.dp,
-                defaultHeight = 40.dp,
-                strategies = TableStrategies(
-                    horizontal = TableStrategies.Size.FillContainer,
-                    vertical = TableStrategies.Size.FillContainer,
-                    defaultRow = TableStrategies.Axis.Fixed(40.dp),
-                    defaultColumn = TableStrategies.Axis.Fixed(120.dp)
-                ),
-                extras = {
-                    preSetColumnState(
-                        id = -1,
-                        strategy = TableStrategies.Axis.Fixed(30.dp)
-                    )
-                    preSetColumnState(
-                        id = 0,
-                        strategy = TableStrategies.Axis.Ranged(
-                            min = 100.dp,
-                            max = 300.dp,
-                            default = 120.dp
-                        )
-                    )
-                    preSetColumnState(
-                        id = 1,
-                        strategy = TableStrategies.Axis.Ranged(
-                            min = 100.dp,
-                            max = 300.dp,
-                            default = 120.dp
-                        )
-                    )
-                    preSetColumnState(
-                        id = 2,
-                        strategy = TableStrategies.Axis.Ranged(
-                            min = 100.dp,
-                            max = 300.dp,
-                            default = 120.dp
-                        )
-                    )
-                }
-            )
-        },
-        dataRowCount = 15,
-        dataColumnCount = 3,
-        headerItemContent = { columnId ->
-            val headers = remember { listOf("Key", "Value", "Description") }
-            val header = remember { headers[columnId] }
-            header.Text(modifier = Modifier.align(Alignment.Center))
-        },
-        footerItemContent = { columnId ->
-            when (columnId) {
-                0 -> k.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-                1 -> v.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-                2 -> d.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-            }
-        },
-        leadingItemContent = { rowId ->
-            when (rowId) {
-                HeaderRowId -> {
-                    Checkbox(false, {}, modifier = Modifier.align(Alignment.Center))
-                }
-
-                FooterRowId -> {
-                    Checkbox(e.value, { e.value = it }, modifier = Modifier.align(Alignment.Center))
-                }
-
-                else -> {
-                    Checkbox(true, {}, modifier = Modifier.align(Alignment.Center))
-                }
-            }
-        },
-        tailItemContent = { rowId ->
-            when (rowId) {
-                HeaderRowId -> {
-                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
-                }
-
-                FooterRowId -> {
-                    Row {
-                        Icons.Default.Delete.Icon()
-                        Icons.Default.Save.Icon()
-                    }
-                }
-
-                else -> {
-                    Row {
-                        Icons.Default.CleanHands.Icon()
-                        Icons.Default.Add.Icon()
-                    }
-                }
-            }
-        },
-        dataItemContent = { rowId, columnId ->
-            val density = LocalDensity.current
-            val item = remember(rowId, columnId) {
-                when (columnId) {
-                    0 -> "$rowId - 000"
-                    1 -> "$rowId - 111"
-                    2 -> "$rowId - 222"
-                    else -> "$rowId - ---"
-                }
-            }
-            val isEditing = Mutable.someBoolean()
-            val textFieldValue = Mutable.something(
-                default = TextFieldValue(
-                    text = item,
-                    selection = TextRange(item.length)
-                )
-            )
-            var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
-
-            isEditing.When(
-                isTrue = {
-                    val focusRequester = remember { FocusRequester() }
-                    LaunchedEffectOdd { focusRequester.requestFocus() }
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BasicTextField(
-                            value = textFieldValue.value,
-                            onValueChange = {
-                                textFieldValue.value = it
-//                                onItemChange(rowId, columnId, it.text)
-                            },
-                            modifier = Modifier.fillMaxHeight()
-                                .weight(1f)
-                                .focusRequester(focusRequester),
-                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-                            keyboardActions = KeyboardActions(
-                                onGo = { isEditing.setFalse() }
-                            ),
-                            singleLine = true,
-                            textStyle = TextStyle.Default.copy(
-                                lineHeight = lineHeightSp,
-                                fontSize = 14.sp
-                            ),
-                        )
-                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
-                            isEditing.setFalse()
-                        })
-                    }
-                },
-                isFalse = {
-                    Text(
-                        text = textFieldValue.value.text,
-                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
-                        onTextLayout = { textLayoutResult ->
-                            // 获取文本高度（像素）
-                            lineHeightSp =
-                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
-                        },
-                        lineHeight = lineHeightSp,
-                        fontSize = 14.sp
-                    )
-                }
-            )
-        }
-    )
-}
+//            }
+//        },
+//        leadingItemContent = { rowId ->
+//            when (rowId) {
+//                HeaderRowId -> {
+//                    Checkbox(false, {}, modifier = Modifier.align(Alignment.Center))
+//                }
+//
+//                FooterRowId -> {
+//                    Checkbox(e.value, { e.value = it }, modifier = Modifier.align(Alignment.Center))
+//                }
+//
+//                else -> {
+//                    Checkbox(true, {}, modifier = Modifier.align(Alignment.Center))
+//                }
+//            }
+//        },
+//        tailItemContent = { rowId ->
+//            when (rowId) {
+//                HeaderRowId -> {
+//                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
+//                }
+//
+//                FooterRowId -> {
+//                    Row {
+//                        Icons.Default.Delete.Icon()
+//                        Icons.Default.Save.Icon()
+//                    }
+//                }
+//
+//                else -> {
+//                    Row {
+//                        Icons.Default.CleanHands.Icon()
+//                        Icons.Default.Add.Icon()
+//                    }
+//                }
+//            }
+//        },
+//        dataItemContent = { rowId, columnId ->
+//            val density = LocalDensity.current
+//            val item = remember(rowId, columnId) {
+//                when (columnId) {
+//                    0 -> "$rowId - 000"
+//                    1 -> "$rowId - 111"
+//                    2 -> "$rowId - 222"
+//                    else -> "$rowId - ---"
+//                }
+//            }
+//            val isEditing = Mutable.someBoolean()
+//            val textFieldValue = Mutable.something(
+//                default = TextFieldValue(
+//                    text = item,
+//                    selection = TextRange(item.length)
+//                )
+//            )
+//            var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
+//
+//            isEditing.When(
+//                isTrue = {
+//                    val focusRequester = remember { FocusRequester() }
+//                    LaunchedEffectOdd { focusRequester.requestFocus() }
+//                    Row(
+//                        modifier = Modifier.fillMaxSize(),
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        BasicTextField(
+//                            value = textFieldValue.value,
+//                            onValueChange = {
+//                                textFieldValue.value = it
+////                                onItemChange(rowId, columnId, it.text)
+//                            },
+//                            modifier = Modifier.fillMaxHeight()
+//                                .weight(1f)
+//                                .focusRequester(focusRequester),
+//                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+//                            keyboardActions = KeyboardActions(
+//                                onGo = { isEditing.setFalse() }
+//                            ),
+//                            singleLine = true,
+//                            textStyle = TextStyle.Default.copy(
+//                                lineHeight = lineHeightSp,
+//                                fontSize = 14.sp
+//                            ),
+//                        )
+//                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+//                            isEditing.setFalse()
+//                        })
+//                    }
+//                },
+//                isFalse = {
+//                    Text(
+//                        text = textFieldValue.value.text,
+//                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+//                        onTextLayout = { textLayoutResult ->
+//                            // 获取文本高度（像素）
+//                            lineHeightSp =
+//                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+//                        },
+//                        lineHeight = lineHeightSp,
+//                        fontSize = 14.sp
+//                    )
+//                }
+//            )
+//        }
+//    )
+//}
 
 
 
