@@ -39,6 +39,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -268,9 +269,6 @@ private class TableStrategies(
         class Fixed(val value: Dp) : Axis
         class Flexible(val default: Dp) : Axis
         class Ranged(val min: Dp, val max: Dp, val default: Dp) : Axis
-//        object WrapContent : Axis
-//        class Custom(val resolver: (availableSpace: Dp, id: Int) -> Dp) : Axis
-//    object FillContainer : TableAxisStrategy
     }
 }
 
@@ -281,21 +279,16 @@ private const val TailColumnId = -2
 
 private fun Modifier.vBind(rowState: TableAxisStates, columnState: TableAxisStates): Modifier {
     return composed("v-bind-row") {
-        this
+        when (rowState.strategy) {
+            is TableStrategies.Axis.Fixed -> height(rowState.value)
+            is TableStrategies.Axis.Flexible -> height(rowState.value)
+            is TableStrategies.Axis.Ranged -> height(rowState.value)
+        }
     }.composed("v-bind-column") {
-        val density = LocalDensity.current
         when (columnState.strategy) {
             is TableStrategies.Axis.Fixed -> width(columnState.value)
             is TableStrategies.Axis.Flexible -> width(columnState.value)
             is TableStrategies.Axis.Ranged -> width(columnState.value)
-//            is TableStrategies.Axis.WrapContent -> onSizeChanged { intSize->
-//                val newWidth = with(density){
-//                    intSize.width.toDp()
-//                }
-//                if (columnState.wrapAxisContentValue.value < newWidth) {
-//                    columnState.wrapAxisContentValue.value = newWidth
-//                }
-//            }
         }
     }
 }
@@ -324,13 +317,6 @@ private fun CommonTableFrame(
     val hasFooterRow = remember { footerItemContent != null }
     val hasLeadingColumn = remember { leadingItemContent != null }
     val hasTailColumn = remember { tailItemContent != null }
-
-//    val tableColumnCount = remember {
-//        var count = dataColumnCount
-//        if (hasLeadingColumn) count += 1
-//        if (hasTailColumn) count += 1
-//        count
-//    }
 
     LazyColumn(
         modifier = modifier
@@ -556,9 +542,9 @@ private fun main() = singleWindowApplication {
                     vertical = TableStrategies.Size.FillContainer,
                     defaultRow = TableStrategies.Axis.Fixed(40.dp),
                     defaultColumn = TableStrategies.Axis.Ranged(
-                        min = 100.dp,
+                        min = 50.dp,
                         max = 300.dp,
-                        default = 120.dp
+                        default = 70.dp
                     )
                 ),
             )
@@ -574,42 +560,38 @@ private fun main() = singleWindowApplication {
 //                2 -> d.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
             }
         },
-//        leadingItemContent = { rowId ->
-//            when (rowId) {
-//                HeaderRowId -> {
-//                    Checkbox(false, {}, modifier = Modifier.align(Alignment.Center))
-//                }
-//
-//                FooterRowId -> {
-//                    Checkbox(e.value, { e.value = it }, modifier = Modifier.align(Alignment.Center))
-//                }
-//
-//                else -> {
-//                    Checkbox(true, {}, modifier = Modifier.align(Alignment.Center))
-//                }
-//            }
-//        },
+        leadingItemContent = { rowId ->
+            when (rowId) {
+                HeaderRowId -> {}
+
+                FooterRowId -> {}
+
+                else -> {
+                    Checkbox(true, {}, modifier = Modifier.align(Alignment.Center))
+                }
+            }
+        },
         tailItemContent = { rowId ->
-            "--".Text()
-//            when (rowId) {
-//                HeaderRowId -> {
-//                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
-//                }
-//
-//                FooterRowId -> {
-//                    Row {
-//                        Icons.Default.Delete.Icon()
-//                        Icons.Default.Save.Icon()
-//                    }
-//                }
-//
-//                else -> {
-//                    Row {
-//                        Icons.Default.CleanHands.Icon()
-//                        Icons.Default.Add.Icon()
-//                    }
-//                }
-//            }
+            when (rowId) {
+                HeaderRowId -> {}
+
+                FooterRowId -> {
+                    Row {
+                        Icons.Default.Delete.Icon()
+                        Icons.Default.Save.Icon()
+                    }
+                }
+
+                else -> {
+                    Row {
+                        Icons.Default.Delete.Icon(
+                            modifier = Modifier.clickable {
+                                items.removeAt(rowId)
+                            }
+                        )
+                    }
+                }
+            }
         },
         dataItemContent = { rowId, columnId ->
             val density = LocalDensity.current
@@ -624,7 +606,7 @@ private fun main() = singleWindowApplication {
                     5 -> it.avgCost.toString()
                     6 -> it.currentPrice.toString()
                     7 -> it.holdingAmount.toString()
-                    8 -> "${if (it.isGoingLong)"" else "-"}${it.press}"
+                    8 -> "${if (it.isGoingLong) "" else "-"}${it.press}"
                     else -> "${rowId}---${columnId}"
                 }
             }
