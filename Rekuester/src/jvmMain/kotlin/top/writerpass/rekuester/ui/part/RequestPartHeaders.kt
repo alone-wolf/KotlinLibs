@@ -62,8 +62,7 @@ fun RequestPartHeaders(apiState: ApiState) {
         )
         Icons.Default.Save.IconButton {
             if (k.value.isNotBlank()) {
-
-                apiState.headers.list.add(
+                apiState.headers.add(
                     ApiHeader(
                         k.value,
                         v.value,

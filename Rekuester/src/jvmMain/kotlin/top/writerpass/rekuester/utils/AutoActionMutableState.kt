@@ -30,42 +30,35 @@ inline fun <reified T> autoActionStateOf(
 
 class AutoActionMutableStateList<T>(
     initial: List<T> = emptyList(),
-    private val action: () -> Unit
+    private val onChange: ((List<T>) -> Unit)? = null
 ) {
     private val stateList = mutableStateListOf<T>().apply { addAll(initial) }
 
-    val list: SnapshotStateList<T> get() = stateList
-
-    fun add(item: T) {
-        stateList.add(item)
-        action()
-    }
-
-    fun remove(item: T) {
-        stateList.remove(item)
-        action()
-    }
-
-    fun removeAt(index: Int) {
-        stateList.removeAt(index)
-        action()
-    }
-
-    fun set(index: Int, item: T) {
-        stateList[index] = item
-        action()
-    }
-
-    fun clear() {
-        stateList.clear()
-        action()
-    }
-
     operator fun get(index: Int): T = stateList[index]
-    val size: Int get() = stateList.size
+    val size: Int
+        get() {return stateList.size}
+    fun asReadOnly(): List<T> = stateList
+
+    fun add(item: T) = modify { stateList.add(item) }
+    fun addAll(items:List<T>) = modify { stateList.addAll(items)}
+    fun remove(item: T) = modify { stateList.remove(item) }
+    fun removeAt(index: Int) = modify { stateList.removeAt(index) }
+    operator fun set(index: Int, item: T) = modify { stateList[index] = item }
+    fun clear() = modify {
+//        stateList.clear()
+    }
+
+    fun toList(): List<T> {
+        return stateList.toList()
+    }
+
+    private inline fun modify(block: () -> Unit) {
+        block()
+        onChange?.invoke(stateList)
+    }
 }
 
 inline fun <reified T> autoActionStateListOf(
     initial: List<T> = emptyList(),
-    noinline action: () -> Unit
-) = AutoActionMutableStateList(initial, action)
+    noinline onChange: (List<T>) -> Unit
+) = AutoActionMutableStateList(initial, onChange)

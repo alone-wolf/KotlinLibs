@@ -3,6 +3,7 @@ package top.writerpass.rekuester.data
 import io.ktor.http.HttpMethod
 import top.writerpass.kmplibrary.utils.fill2Number
 import top.writerpass.rekuester.Api
+import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.data.dao.EmmListDao
 import java.util.UUID
 
@@ -10,15 +11,28 @@ import java.util.UUID
 private val builtInApis = arrayOf(
     Api(
         label = "GET All Users",
-        method = HttpMethod.Companion.Get,
+        method = HttpMethod.Get,
         address = "http://localhost:8080/api/users",
-        params = emptyList(),
+        params = listOf(
+            ApiParam(
+                key = "name",
+                value = "value",
+                description = "asdasadas",
+                enabled = true
+            ),
+            ApiParam(
+                key = "name1",
+                value = "value1",
+                description = "asdasadas1",
+                enabled = false
+            ),
+        ),
         headers = emptyList(),
         requestBody = null
     ),
     Api(
         label = "GET User by Id",
-        method = HttpMethod.Companion.Get,
+        method = HttpMethod.Get,
         address = "http://localhost:8080/api/users/100",
         params = emptyList(),
         headers = emptyList(),
@@ -26,7 +40,7 @@ private val builtInApis = arrayOf(
     ),
     Api(
         label = "Delete User by Id",
-        method = HttpMethod.Companion.Delete,
+        method = HttpMethod.Delete,
         address = "http://localhost:8080/api/users/1",
         params = emptyList(),
         headers = emptyList(),
@@ -34,7 +48,7 @@ private val builtInApis = arrayOf(
     ),
     Api(
         label = "Delete All Users",
-        method = HttpMethod.Companion.Delete,
+        method = HttpMethod.Delete,
         address = "http://localhost:8080/api/users",
         params = emptyList(),
         headers = emptyList(),

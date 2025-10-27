@@ -56,8 +56,8 @@ class ApiState(
         requestResult = client.request(
             method = method.value,
             address = address.value,
-            params = params.list.toList(),
-            headers = headers.list.toList(),
+            params = params.toList(),
+            headers = headers.toList(),
             body = requestBody.value
         )
     }
@@ -70,8 +70,8 @@ class ApiState(
             label = label.value,
             method = method.value,
             address = address.value,
-            params = params.list.toList(),
-            headers = headers.list.toList(),
+            params = params.toList(),
+            headers = headers.toList(),
             requestBody = requestBody.value,
         )
     }
@@ -95,11 +95,11 @@ class UrlParamsBinding(
     private val address: AutoActionMutableState<String>,
     private val params: AutoActionMutableStateList<ApiParam>
 ) {
-    val text = mutableStateOf(buildUrl(address.value, params.list))
+    val text = mutableStateOf(buildUrl(address.value, params.toList()))
 
     init {
         // 监听 address 或 params 变化时更新 text
-        snapshotFlow { address.value to params.list.toList() }
+        snapshotFlow { address.value to params.toList() }
             .onEach { (addr, ps) ->
                 val newUrl = buildUrl(addr, ps)
                 if (text.value != newUrl) {
@@ -113,8 +113,15 @@ class UrlParamsBinding(
         text.value = newText
         tryParseUrl(newText)?.let { (newAddress, pairs) ->
             if (newAddress != address.value) address.value = newAddress
-            params.list.clear()
-            params.list.addAll(pairs.map { ApiParam(it.first, it.second, "", true) })
+            params.clear()
+            params.addAll(pairs.map {
+                ApiParam(
+                key = it.first,
+                value = it.second,
+                description = "",
+                enabled = true
+            )
+            })
         }
     }
 

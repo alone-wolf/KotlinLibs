@@ -21,10 +21,12 @@ import io.ktor.http.*
 import top.writerpass.cmplibrary.compose.*
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
+import top.writerpass.kmplibrary.utils.addressString
+import top.writerpass.kmplibrary.utils.println
+import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.ui.part.RequestPartHeaders
 import top.writerpass.rekuester.ui.part.RequestPartParams
-import top.writerpass.rekuester.viewmodel.ApiViewModel
 
 private val requestPartEntities = listOf(
     "Params",
@@ -74,10 +76,14 @@ private val responsePartEntities = listOf(
 )
 
 @Composable
-fun ApiRequestPage(apiUuid: String) {
-    val apiViewModel = ApiViewModel.instance(apiUuid)
-    val api by apiViewModel.apiFlow.collectAsState()
+fun ApiRequestPage() {
+    val apiViewModel = LocalApiViewModel.current
     val apiState by apiViewModel.apiStateFlow.collectAsState()
+
+    LaunchedEffect(apiState) {
+        "apiState: ${apiState.uuid} ${apiState.addressString()}".println()
+    }
+
 
     FullSizeColumn(modifier = Modifier) {
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
@@ -92,7 +98,7 @@ fun ApiRequestPage(apiUuid: String) {
             Spacer(modifier = Modifier.weight(1f))
             if (apiState.isModified.value) "Save".TextButton {
                 apiState.composeNewApi().let {
-                    apiViewModel.updateOrInsert(it)
+                    apiViewModel.updateOrInsertApi(it)
                     apiState.isModified.setFalse()
                     editLabel.setFalse()
                 }
@@ -140,7 +146,7 @@ fun ApiRequestPage(apiUuid: String) {
                 entities = requestPartEntities,
                 onPage = { pageId ->
                     when (pageId) {
-                        0 -> RequestPartParams(apiState)
+                        0 -> RequestPartParams()
                         1 -> {
                             // authorization
                         }

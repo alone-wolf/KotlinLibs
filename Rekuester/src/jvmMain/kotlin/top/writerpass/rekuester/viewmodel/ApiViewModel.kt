@@ -1,22 +1,59 @@
 package top.writerpass.rekuester.viewmodel
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import top.writerpass.kmplibrary.coroutine.launchIO
+import top.writerpass.kmplibrary.utils.addressString
+import top.writerpass.kmplibrary.utils.println
 import top.writerpass.rekuester.Api
+import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.Singletons
 import top.writerpass.rekuester.data.ApiRepository
 
 class ApiViewModel(
-    apiUuid: String,
+    private val apiUuid: String,
 ) : BaseViewModel() {
     private val repository: ApiRepository = Singletons.apisRepository
+
+    var e by mutableStateOf(false)
+    var k by mutableStateOf("")
+    var v by mutableStateOf("")
+    var d by mutableStateOf("")
+
+    fun clearEKVD() {
+        e = false
+        k = ""
+        v = ""
+        d = ""
+    }
+
+    fun createApiParam() {
+        val new = ApiParam(
+            key = k,
+            value = v,
+            description = d,
+            enabled = e
+        )
+        apiStateFlow.value.params.add(new)
+    }
+
+    fun deleteApiParam(index: Int) {
+        apiStateFlow.value.params.removeAt(index)
+    }
+
+    fun updateApiParam(index: Int, new: ApiParam) {
+        val apiState = apiStateFlow.value
+        apiState.params[index] = new
+    }
 
 
     companion object Companion {
@@ -48,58 +85,7 @@ class ApiViewModel(
             initialValue = ApiStateHolder.BLANK
         )
 
-//    val apiNullableFlow = repository.allFlow
-//        .map { it.find { it.uuid == uuid } }
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(),
-//            initialValue = null
-//        )
-
-//    val apiStateNullableFlow = apiNullableFlow
-//        .map { it?.let { ApiStateHolder.getApiState(it) } }
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(),
-//            initialValue = null
-//        )
-
-//    val api = repository.findByIdFlow(uuid)
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(),
-//            initialValue = null
-//        )
-
-//    var apiNullable by mutableStateOf<Api?>(null)
-//    var apiStateNullable by mutableStateOf<ApiState?>(null)
-//        private set
-//
-//    init {
-//        runInScope {
-//            repository.findByIdFlow(uuid).collect { item ->
-//                apiNullable = item
-//                apiStateNullable = item?.let { ApiStateHolder.getApiState(it) }
-//            }
-//        }
-//    }
-
-//    fun runUpdateApi(action: Api.() -> Api) {
-//        runInScope {
-//            api.value?.let { it ->
-//                val newApi = it.action()
-//                repository.update(newApi)
-//            }
-//        }
-//    }
-
-//    fun update(api: Api) {
-//        runInScope {
-//            repository.update(api)
-//        }
-//    }
-
-    fun updateOrInsert(api: Api) {
+    fun updateOrInsertApi(api: Api) {
         runInScope {
             repository.updateOrInsert(api)
         }
