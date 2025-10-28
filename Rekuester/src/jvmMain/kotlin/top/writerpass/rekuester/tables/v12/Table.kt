@@ -1,7 +1,5 @@
 package top.writerpass.rekuester.tables.v12
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -9,44 +7,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.*
-import androidx.compose.ui.window.singleWindowApplication
-import top.writerpass.cmplibrary.LaunchedEffectOdd
-import top.writerpass.cmplibrary.compose.BasicTextField
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.Icon
-import top.writerpass.cmplibrary.compose.Text
 import top.writerpass.cmplibrary.horizontalDivider
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.pointerIcons.YResize
-import top.writerpass.cmplibrary.utils.Mutable
-import top.writerpass.cmplibrary.utils.Mutable.When
-import top.writerpass.cmplibrary.utils.Mutable.setFalse
-import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.utils.getOrCreate
 
 class TableAxisStates(val strategy: TableStrategies.Axis) {
@@ -112,9 +85,9 @@ class TableState(
         id: Int, strategy: TableStrategies.Axis = strategies.defaultRow
     ) = remember { rowStateMap.getOrCreate(id) { TableAxisStates(strategy) } }
 
-    val tableHeight: Dp by derivedStateOf {
+    val rowHeightSum: Dp by derivedStateOf {
         var sumOfHeight = 0.dp
-        columnStateMap.values.forEach { states ->
+        rowStateMap.values.forEach { states ->
             val strategy = states.strategy
             sumOfHeight += when (strategy) {
                 is TableStrategies.Axis.Fixed -> states.value
@@ -125,7 +98,7 @@ class TableState(
         sumOfHeight
     }
 
-    val tableWidth: Dp by derivedStateOf {
+    val columnWidthSum: Dp by derivedStateOf {
         var sumOfWidth = 0.dp
         columnStateMap.values.forEach { states ->
             val strategy = states.strategy
@@ -144,13 +117,15 @@ private fun Modifier.tableSize(tableState: TableState): Modifier {
         when (tableState.strategies.horizontal) {
             TableStrategies.Size.FillContainer -> Modifier.fillMaxWidth()
             is TableStrategies.Size.Fixed -> width(tableState.strategies.horizontal.value)
-            TableStrategies.Size.WrapContent -> Modifier.width(tableState.tableWidth)
+            TableStrategies.Size.WrapContent -> Modifier
+//            TableStrategies.Size.WrapContent -> Modifier.width(tableState.columnWidthSum)
         }
     ).then(
         when (tableState.strategies.vertical) {
             TableStrategies.Size.FillContainer -> Modifier.fillMaxHeight()
             is TableStrategies.Size.Fixed -> height(tableState.strategies.vertical.value)
-            TableStrategies.Size.WrapContent -> Modifier.height(tableState.tableHeight)
+            TableStrategies.Size.WrapContent -> Modifier
+//            TableStrategies.Size.WrapContent -> Modifier.height(tableState.rowHeightSum)
         }
     )
 }

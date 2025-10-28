@@ -43,12 +43,10 @@ import top.writerpass.rekuester.tables.v12.TableState
 import top.writerpass.rekuester.tables.v12.TableStrategies
 
 
-
 private val headers = listOf("Key", "Value", "Description")
 
 @Composable
 fun RequestPartParams() {
-    "Params".Text()
     val apiViewModel = LocalApiViewModel.current
     val apiState by apiViewModel.apiStateFlow.collectAsState()
 
@@ -63,7 +61,7 @@ fun RequestPartParams() {
             TableState(
                 strategies = TableStrategies(
                     horizontal = TableStrategies.Size.FillContainer,
-                    vertical = TableStrategies.Size.FillContainer,
+                    vertical = TableStrategies.Size.WrapContent,
                     defaultRow = TableStrategies.Axis.Fixed(40.dp),
                     defaultColumn = TableStrategies.Axis.Fixed(120.dp)
                 ),
@@ -108,22 +106,22 @@ fun RequestPartParams() {
         footerItemContent = { columnId ->
             when (columnId) {
                 0 -> BasicTextField(
-                    value = apiViewModel.k,
-                    onValueChange = { apiViewModel.k = it },
+                    value = apiViewModel.newParamKey,
+                    onValueChange = { apiViewModel.newParamKey = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 1 -> BasicTextField(
-                    value = apiViewModel.v,
-                    onValueChange = { apiViewModel.v = it },
+                    value = apiViewModel.newParamValue,
+                    onValueChange = { apiViewModel.newParamValue = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 2 -> BasicTextField(
-                    value = apiViewModel.d,
-                    onValueChange = { apiViewModel.d = it },
+                    value = apiViewModel.newParamDescription,
+                    onValueChange = { apiViewModel.newParamDescription = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
@@ -132,25 +130,42 @@ fun RequestPartParams() {
         leadingItemContent = { rowId ->
             when (rowId) {
                 TableAxisIds.HeaderRowId -> {
-                    Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.align(Alignment.Center))
+                    val allEnabled by remember(apiState.params.asReadOnly()) {
+                        derivedStateOf {
+                            apiState.params.asReadOnly().all { it.enabled }
+                        }
+                    }
+                    Checkbox(
+                        checked = allEnabled,
+                        onCheckedChange = { enabled ->
+                            apiState.params.asReadOnly()
+                                .map { apiParam -> apiParam.copy(enabled = enabled) }
+                                .forEachIndexed { index, param ->
+                                    apiState.params[index] = param
+                                }
+                        },
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
 
                 TableAxisIds.FooterRowId -> {
                     Checkbox(
-                        checked = apiViewModel.e,
-                        onCheckedChange = { apiViewModel.e = it },
+                        checked = apiViewModel.newParamEnabled,
+                        onCheckedChange = { apiViewModel.newParamEnabled = it },
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
 
                 else -> {
-                    val item = remember(rowId) { apiState.params[rowId] }
-                    var enabled by Mutable.someBoolean(item.enabled)
+                    val item by remember(rowId) {
+                        derivedStateOf {
+                            apiState.params[rowId]
+                        }
+                    }
                     Checkbox(
-                        checked = enabled,
+                        checked = item.enabled,
                         onCheckedChange = {
-                            enabled = it
-                            val newApiParam = item.copy(enabled = enabled)
+                            val newApiParam = item.copy(enabled = item.enabled.not())
                             apiViewModel.updateApiParam(rowId, newApiParam)
                         },
                         modifier = Modifier.align(Alignment.Center)
@@ -168,12 +183,14 @@ fun RequestPartParams() {
                     Row {
                         Icons.Default.Clear.Icon(
                             modifier = Modifier.clickable {
-                                apiViewModel.clearEKVD()
+                                apiViewModel.clearNewParam()
                             }
                         )
                         Icons.Default.Add.Icon(
                             modifier = Modifier.clickable {
-                                apiViewModel.createApiParam()
+                                if (apiViewModel.saveNewApiParam()) {
+                                    apiViewModel.clearNewParam()
+                                }
                             }
                         )
                     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,8 +22,6 @@ import io.ktor.http.*
 import top.writerpass.cmplibrary.compose.*
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.kmplibrary.utils.addressString
-import top.writerpass.kmplibrary.utils.println
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.ui.part.RequestPartHeaders
@@ -80,19 +79,23 @@ fun ApiRequestPage() {
     val apiViewModel = LocalApiViewModel.current
     val apiState by apiViewModel.apiStateFlow.collectAsState()
 
-    LaunchedEffect(apiState) {
-        "apiState: ${apiState.uuid} ${apiState.addressString()}".println()
-    }
-
+//    LaunchedEffect(apiState) {
+//        "apiState: ${apiState.uuid} ${apiState.addressString()}".println()
+//    }
 
     FullSizeColumn(modifier = Modifier) {
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
             val editLabel = remember { mutableStateOf(false) }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (editLabel.value) {
-                    apiState.label.OutlinedBasicTextField(maxLines = 1)
+                    apiState.label.BasicTextField(
+                        maxLines = 1,
+                        modifier = Modifier.height(48.dp),
+                    )
                 } else {
-                    apiState.label.value.Text(modifier = Modifier.clickable { editLabel.setTrue() })
+                    apiState.label.value.TextButton {
+                        editLabel.setTrue()
+                    }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -120,7 +123,6 @@ fun ApiRequestPage() {
                     .weight(1f)
                     .onFocusChanged { focusState ->
                         if (focusState.isFocused) {
-                            //
                             apiState.urlBinding.onUrlEditStart()
                         }
                     },
@@ -151,7 +153,7 @@ fun ApiRequestPage() {
                             // authorization
                         }
 
-                        2 -> RequestPartHeaders(apiState)
+                        2 -> RequestPartHeaders()
 
                         else -> {
                             requestPartEntities[pageId].Text()

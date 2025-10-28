@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import top.writerpass.kmplibrary.coroutine.launchIO
-import top.writerpass.kmplibrary.utils.addressString
-import top.writerpass.kmplibrary.utils.println
 import top.writerpass.rekuester.Api
+import top.writerpass.rekuester.ApiHeader
 import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
@@ -24,26 +23,30 @@ class ApiViewModel(
 ) : BaseViewModel() {
     private val repository: ApiRepository = Singletons.apisRepository
 
-    var e by mutableStateOf(false)
-    var k by mutableStateOf("")
-    var v by mutableStateOf("")
-    var d by mutableStateOf("")
+    var newParamEnabled by mutableStateOf(false)
+    var newParamKey by mutableStateOf("")
+    var newParamValue by mutableStateOf("")
+    var newParamDescription by mutableStateOf("")
 
-    fun clearEKVD() {
-        e = false
-        k = ""
-        v = ""
-        d = ""
+    fun clearNewParam() {
+        newParamEnabled = false
+        newParamKey = ""
+        newParamValue = ""
+        newParamDescription = ""
     }
 
-    fun createApiParam() {
+    fun saveNewApiParam(): Boolean {
+        if (newParamKey == "" && newParamValue == "" && newParamDescription == ""){
+            return false
+        }
         val new = ApiParam(
-            key = k,
-            value = v,
-            description = d,
-            enabled = e
+            key = newParamKey,
+            value = newParamValue,
+            description = newParamDescription,
+            enabled = newParamEnabled
         )
         apiStateFlow.value.params.add(new)
+        return true
     }
 
     fun deleteApiParam(index: Int) {
@@ -53,6 +56,39 @@ class ApiViewModel(
     fun updateApiParam(index: Int, new: ApiParam) {
         val apiState = apiStateFlow.value
         apiState.params[index] = new
+    }
+
+
+    var newHeaderEnabled by mutableStateOf(false)
+    var newHeaderKey by mutableStateOf("")
+    var newHeaderValue by mutableStateOf("")
+    var newHeaderDescription by mutableStateOf("")
+    fun clearNewHeader() {
+        newHeaderEnabled = false
+        newHeaderKey = ""
+        newHeaderValue = ""
+        newHeaderDescription = ""
+    }
+    fun saveNewApiHeader(): Boolean {
+        if (newHeaderKey == "" && newHeaderValue == "" && newHeaderDescription == ""){
+            return false
+        }
+        val new = ApiHeader(
+            key = newHeaderKey,
+            value = newHeaderValue,
+            description = newHeaderDescription,
+            enabled = newHeaderEnabled
+        )
+        apiStateFlow.value.headers.add(new)
+        return true
+    }
+    fun deleteApiHeader(index: Int) {
+        apiStateFlow.value.headers.removeAt(index)
+    }
+
+    fun updateApiHeader(index: Int, new: ApiHeader) {
+        val apiState = apiStateFlow.value
+        apiState.headers[index] = new
     }
 
 

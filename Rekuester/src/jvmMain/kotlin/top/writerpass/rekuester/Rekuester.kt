@@ -40,7 +40,8 @@ data class ApiParam(
 data class ApiHeader(
     val key: String,
     val value: String,
-    val description: String
+    val description: String = "",
+    val enabled: Boolean
 )
 
 @Serializable

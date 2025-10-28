@@ -5,6 +5,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 
 
@@ -13,7 +14,8 @@ fun MutableState<String>.BasicTextField(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+//    textStyle: TextStyle =
 ) {
     BasicTextField(
         value = value,
@@ -22,6 +24,7 @@ fun MutableState<String>.BasicTextField(
         enabled = enabled,
         maxLines = maxLines,
         visualTransformation = visualTransformation,
+//        textStyle = textStyle
     )
 }
 
