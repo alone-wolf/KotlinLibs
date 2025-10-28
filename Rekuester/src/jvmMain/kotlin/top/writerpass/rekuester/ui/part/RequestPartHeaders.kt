@@ -51,11 +51,12 @@ import top.writerpass.rekuester.tables.v12.TableAxisIds
 import top.writerpass.rekuester.tables.v12.TableState
 import top.writerpass.rekuester.tables.v12.TableStrategies
 
-private val headers = listOf("Key","Value","Description")
+private val headers = listOf("Key", "Value", "Description")
+
 @Composable
 fun RequestPartHeaders() {
     val apiViewModel = LocalApiViewModel.current
-    val apiState by apiViewModel.apiStateFlow.collectAsState()
+    val ui by apiViewModel.ui.collectAsState()
 
     CommonTableFrame(
         modifier = Modifier.border(
@@ -104,7 +105,7 @@ fun RequestPartHeaders() {
                 }
             )
         },
-        dataRowCount = apiState.headers.size,
+        dataRowCount = ui.headers.size,
         dataColumnCount = 3,
         headerItemContent = { columnId ->
             val header = remember { headers[columnId] }
@@ -137,18 +138,18 @@ fun RequestPartHeaders() {
         leadingItemContent = { rowId ->
             when (rowId) {
                 TableAxisIds.HeaderRowId -> {
-                    val allEnabled by remember(apiState.headers.asReadOnly()) {
+                    val allEnabled by remember(ui.headers.asReadOnly()) {
                         derivedStateOf {
-                            apiState.headers.asReadOnly().all { it.enabled }
+                            ui.headers.asReadOnly().all { it.enabled }
                         }
                     }
                     Checkbox(
                         checked = allEnabled,
                         onCheckedChange = { enabled ->
-                            apiState.headers.asReadOnly()
+                            ui.headers.asReadOnly()
                                 .map { apiHeader -> apiHeader.copy(enabled = enabled) }
                                 .forEachIndexed { index, header ->
-                                    apiState.headers[index] = header
+                                    ui.headers[index] = header
                                 }
                         },
                         modifier = Modifier.align(Alignment.Center)
@@ -166,7 +167,7 @@ fun RequestPartHeaders() {
                 else -> {
                     val item by remember(rowId) {
                         derivedStateOf {
-                            apiState.headers[rowId]
+                            ui.headers[rowId]
                         }
                     }
                     Checkbox(
@@ -216,7 +217,7 @@ fun RequestPartHeaders() {
         },
         dataItemContent = { rowId, columnId ->
             val density = LocalDensity.current
-            val item1 = remember { apiState.headers[rowId] }
+            val item1 = remember { ui.headers[rowId] }
             val item = remember {
                 when (columnId) {
                     0 -> item1.key
@@ -246,7 +247,7 @@ fun RequestPartHeaders() {
                             value = textFieldValue.value,
                             onValueChange = {
                                 textFieldValue.value = it
-                                val apiHeader = apiState.headers[rowId]
+                                val apiHeader = ui.headers[rowId]
                                 val newApiHeader = when (columnId) {
                                     0 -> apiHeader.copy(key = item)
                                     1 -> apiHeader.copy(value = item)

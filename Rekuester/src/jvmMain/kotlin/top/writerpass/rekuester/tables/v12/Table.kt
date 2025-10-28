@@ -118,14 +118,12 @@ private fun Modifier.tableSize(tableState: TableState): Modifier {
             TableStrategies.Size.FillContainer -> Modifier.fillMaxWidth()
             is TableStrategies.Size.Fixed -> width(tableState.strategies.horizontal.value)
             TableStrategies.Size.WrapContent -> Modifier
-//            TableStrategies.Size.WrapContent -> Modifier.width(tableState.columnWidthSum)
         }
     ).then(
         when (tableState.strategies.vertical) {
             TableStrategies.Size.FillContainer -> Modifier.fillMaxHeight()
             is TableStrategies.Size.Fixed -> height(tableState.strategies.vertical.value)
             TableStrategies.Size.WrapContent -> Modifier
-//            TableStrategies.Size.WrapContent -> Modifier.height(tableState.rowHeightSum)
         }
     )
 }

@@ -1,29 +1,29 @@
 package top.writerpass.rekuester.models
 
-sealed interface RawBodyType {
+sealed interface RawBodyTypes {
     val label: String
 
-    object Text : RawBodyType {
+    object Text : RawBodyTypes {
         override val label: String = "Text"
     }
 
-    object JavaScript : RawBodyType {
+    object JavaScript : RawBodyTypes {
         override val label: String = "JavaScript"
     }
 
-    object Json : RawBodyType {
+    object Json : RawBodyTypes {
         override val label: String = "JSON"
     }
 
-    object Html : RawBodyType {
+    object Html : RawBodyTypes {
         override val label: String = "HTML"
     }
 
-    object XML : RawBodyType {
+    object XML : RawBodyTypes {
         override val label: String = "XML"
     }
 
-    companion object {
+    companion object Companion {
         val list = listOf(
             Text, JavaScript, Json, Html, XML
         )

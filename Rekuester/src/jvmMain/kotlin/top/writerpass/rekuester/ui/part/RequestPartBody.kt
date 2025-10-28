@@ -17,7 +17,16 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Checkbox
-import androidx.compose.runtime.*
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -33,7 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import top.writerpass.cmplibrary.LaunchedEffectOdd
-import top.writerpass.cmplibrary.compose.*
+import top.writerpass.cmplibrary.compose.DropDownMenu
+import top.writerpass.cmplibrary.compose.FullWidthColumn
+import top.writerpass.cmplibrary.compose.FullWidthRow
+import top.writerpass.cmplibrary.compose.Icon
+import top.writerpass.cmplibrary.compose.IconButton
+import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
@@ -41,8 +56,8 @@ import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.kmplibrary.file.friendlySize
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.models.ApiFormData
-import top.writerpass.rekuester.models.BodyType
-import top.writerpass.rekuester.models.RawBodyType
+import top.writerpass.rekuester.models.BodyTypes
+import top.writerpass.rekuester.models.RawBodyTypes
 import top.writerpass.rekuester.tables.v12.CommonTableFrame
 import top.writerpass.rekuester.tables.v12.TableAxisIds
 import top.writerpass.rekuester.tables.v12.TableState
@@ -55,19 +70,37 @@ private val headers = listOf("Key", "Value", "Description")
 @Composable
 fun RequestPartBody() {
     val apiViewModel = LocalApiViewModel.current
-    val apiState by apiViewModel.apiStateFlow.collectAsState()
+    val ui by apiViewModel.ui.collectAsState()
+    val bodyType by remember {
+        derivedStateOf { ui.body.type }
+    }
     FullWidthRow {
-        apiState.requestBodyType.DropDownMenu(
-            entities = BodyType.map,
-            any2String = { label }
+        var expanded by remember { mutableStateOf(false) }
+        bodyType.label.TextButton {
+            expanded = true
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            content = {
+                BodyTypes.map.forEach { (t, u) ->
+                    DropdownMenuItem(
+                        text = { t.Text() },
+                        onClick = {
+                            ui.body = ui.body.copy(type = u)
+                            expanded = false
+                        }
+                    )
+                }
+            }
         )
         FullWidthColumn {
-            when (apiState.requestBodyType.value) {
-                BodyType.None -> {
+            when (bodyType) {
+                BodyTypes.None -> {
                     "None of Body".Text()
                 }
 
-                BodyType.FormData -> {
+                BodyTypes.FormData -> {
                     // form data table
                     val formDataList = remember { mutableStateListOf<ApiFormData>() }
                     val newE = Mutable.someBoolean()
@@ -291,19 +324,23 @@ fun RequestPartBody() {
                                                 fontSize = 14.sp
                                             ),
                                         )
-                                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
-                                            isEditing.setFalse()
-                                        })
+                                        Icons.Default.Check.Icon(
+                                            modifier = Modifier.size(16.dp).clickable {
+                                                isEditing.setFalse()
+                                            })
                                     }
                                 },
                                 isFalse = {
                                     androidx.compose.material3.Text(
                                         text = textFieldValue.value.text,
-                                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+                                        modifier = Modifier.fillMaxSize()
+                                            .clickable { isEditing.setTrue() },
                                         onTextLayout = { textLayoutResult ->
                                             // 获取文本高度（像素）
                                             lineHeightSp =
-                                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+                                                with(density) {
+                                                    textLayoutResult.size.height.toFloat().toSp()
+                                                }
                                         },
                                         lineHeight = lineHeightSp,
                                         fontSize = 14.sp
@@ -314,7 +351,7 @@ fun RequestPartBody() {
                     )
                 }
 
-                BodyType.FormUrlencoded -> {
+                BodyTypes.FormUrlencoded -> {
                     // urlencoded data table
                     val formDataList = remember { mutableStateListOf<ApiFormData>() }
                     val newE = Mutable.someBoolean()
@@ -538,19 +575,23 @@ fun RequestPartBody() {
                                                 fontSize = 14.sp
                                             ),
                                         )
-                                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
-                                            isEditing.setFalse()
-                                        })
+                                        Icons.Default.Check.Icon(
+                                            modifier = Modifier.size(16.dp).clickable {
+                                                isEditing.setFalse()
+                                            })
                                     }
                                 },
                                 isFalse = {
                                     androidx.compose.material3.Text(
                                         text = textFieldValue.value.text,
-                                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+                                        modifier = Modifier.fillMaxSize()
+                                            .clickable { isEditing.setTrue() },
                                         onTextLayout = { textLayoutResult ->
                                             // 获取文本高度（像素）
                                             lineHeightSp =
-                                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+                                                with(density) {
+                                                    textLayoutResult.size.height.toFloat().toSp()
+                                                }
                                         },
                                         lineHeight = lineHeightSp,
                                         fontSize = 14.sp
@@ -561,11 +602,14 @@ fun RequestPartBody() {
                     )
                 }
 
-                BodyType.Binary -> {
+                BodyTypes.Binary -> {
                     // file selector
                     var showFilePicker by remember { mutableStateOf(false) }
                     var selectedFile: File? by remember { mutableStateOf(null) }
-                    FilePicker(show = showFilePicker, fileExtensions = emptyList()) { platformFile ->
+                    FilePicker(
+                        show = showFilePicker,
+                        fileExtensions = emptyList()
+                    ) { platformFile ->
                         showFilePicker = false
                         selectedFile = platformFile?.platformFile as? File
                     }
@@ -595,16 +639,16 @@ fun RequestPartBody() {
                     }
                 }
 
-                BodyType.Raw -> {
+                BodyTypes.Raw -> {
                     // sub-selector
-                    val rawType = Mutable.something<RawBodyType>(RawBodyType.Text)
+                    val rawType = Mutable.something<RawBodyTypes>(RawBodyTypes.Text)
                     rawType.DropDownMenu(
-                        entities = RawBodyType.map,
+                        entities = RawBodyTypes.map,
                         any2String = { label },
                     )
                 }
 
-                BodyType.GraphQL -> {
+                BodyTypes.GraphQL -> {
                     // not implementation
                 }
             }

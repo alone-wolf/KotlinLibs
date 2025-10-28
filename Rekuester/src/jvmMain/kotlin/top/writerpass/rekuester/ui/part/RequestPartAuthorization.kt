@@ -3,20 +3,30 @@ package top.writerpass.rekuester.ui.part
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import top.writerpass.cmplibrary.compose.*
+import top.writerpass.cmplibrary.compose.FullWidthColumn
+import top.writerpass.cmplibrary.compose.FullWidthRow
+import top.writerpass.cmplibrary.compose.OutlinedBasicTextField
+import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.rekuester.LocalApiViewModel
-import top.writerpass.rekuester.ui.page.AuthTypes
+import top.writerpass.rekuester.models.AuthTypes
 
 @Composable
 fun RequestPartAuthorization() {
     val apiViewModel = LocalApiViewModel.current
-    val apiState by apiViewModel.apiStateFlow.collectAsState()
+    val ui by apiViewModel.ui.collectAsState()
 
-    val authType by remember(apiState.auth.value) {
-        derivedStateOf { apiState.auth.value.type }
+    val authType by remember(ui.auth) {
+        derivedStateOf { ui.auth.type }
     }
 
     FullWidthRow {

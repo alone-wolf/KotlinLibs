@@ -2,10 +2,8 @@ package top.writerpass.rekuester.models
 
 import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
-import top.writerpass.rekuester.ApiStateAuthContainer
 import top.writerpass.rekuester.HttpMethodSerializer
 import top.writerpass.rekuester.data.dao.ItemWithId
-import top.writerpass.rekuester.ui.page.AuthTypes
 import java.util.UUID
 
 @Serializable
@@ -18,9 +16,9 @@ data class Api(
     val address: String,
     val params: List<ApiParam> = emptyList(),
     val headers: List<ApiHeader> = emptyList(),
-    val requestBody: String? = null,
+    val body: ApiStateBodyContainer = ApiStateBodyContainer.None,
     val auth: ApiStateAuthContainer = ApiStateAuthContainer.Inherit,
-    val bodyType: BodyType = BodyType.None
+    val bodyType: BodyTypes = BodyTypes.None
 ) : ItemWithId<String> {
     override val id: String = uuid
 
@@ -31,9 +29,6 @@ data class Api(
             label = "untitled",
             method = HttpMethod.Get,
             address = "http://",
-            params = emptyList(),
-            headers = emptyList(),
-            requestBody = null,
         )
     }
 }

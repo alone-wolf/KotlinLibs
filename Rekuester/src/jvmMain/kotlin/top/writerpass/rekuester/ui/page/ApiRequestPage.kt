@@ -1,19 +1,33 @@
 package top.writerpass.rekuester.ui.page
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.ktor.http.*
-import top.writerpass.cmplibrary.compose.*
+import io.ktor.http.HttpMethod
+import top.writerpass.cmplibrary.compose.FullSizeColumn
+import top.writerpass.cmplibrary.compose.FullWidthRow
+import top.writerpass.cmplibrary.compose.OutlinedButton
+import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.TextButton
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalApiViewModel
@@ -31,51 +45,6 @@ private val requestPartEntities = listOf(
     "Scripts",
     "Settings"
 )
-
-sealed interface AuthTypes {
-    val label: String
-
-    object InheritAuthFromParent : AuthTypes {
-        override val label: String = "Inherit auth from parent"
-    }
-
-    object NoAuth : AuthTypes {
-        override val label: String = "No authentication"
-    }
-
-    object Basic : AuthTypes {
-        override val label: String = "Basic Auth"
-    }
-
-    object Bearer : AuthTypes {
-        override val label: String = "Bearer Token"
-    }
-
-    object JWT : AuthTypes {
-        override val label: String = "JWT Token"
-    }
-
-    object ApiKey : AuthTypes {
-        override val label: String = "API Key"
-    }
-
-    // 如果你希望支持自定义类型，可以用 data class
-    data class Custom(val customLabel: String) : AuthTypes {
-        override val label: String = customLabel
-    }
-
-    companion object {
-        val all = listOf(
-            InheritAuthFromParent,
-            NoAuth,
-            Basic,
-            Bearer,
-            JWT,
-            ApiKey
-        )
-        val typeMap = all.associateBy { it.label }
-    }
-}
 
 
 private val responsePartEntities = listOf(
@@ -108,7 +77,7 @@ fun ApiRequestPage() {
             if (ui.isModified) "Save".TextButton {
                 ui.toApi().let {
                     apiViewModel.updateOrInsertApi(it)
-                    ui.updateModifyState()
+                    ui.updateModifyState(false)
                     editLabel.setFalse()
                 }
             }
@@ -119,7 +88,7 @@ fun ApiRequestPage() {
             }
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = {expanded = false},
+                onDismissRequest = { expanded = false },
                 content = {
                     remember {
                         HttpMethod.DefaultMethods.associateBy { it.value }
@@ -184,7 +153,7 @@ fun ApiRequestPage() {
                     modifier = Modifier.fillMaxWidth(),
                     responsePartEntities
                 ) { pageId ->
-                    apiState.requestResult?.let { reqResult ->
+                    ui.requestResult?.let { reqResult ->
                         reqResult.response?.let { result ->
 
                             when (pageId) {

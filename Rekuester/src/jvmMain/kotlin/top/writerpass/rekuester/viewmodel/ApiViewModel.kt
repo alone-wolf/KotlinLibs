@@ -10,17 +10,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import top.writerpass.kmplibrary.coroutine.launchIO
-import top.writerpass.kmplibrary.utils.addressString
-import top.writerpass.rekuester.ApiStateAuthContainer
 import top.writerpass.rekuester.ApiStateHolder
-import top.writerpass.rekuester.HttpRequestResult
-import top.writerpass.rekuester.models.Api
-import top.writerpass.rekuester.models.ApiHeader
-import top.writerpass.rekuester.models.ApiParam
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.RekuesterClient
 import top.writerpass.rekuester.Singletons
 import top.writerpass.rekuester.data.ApiRepository
+import top.writerpass.rekuester.models.Api
+import top.writerpass.rekuester.models.ApiHeader
+import top.writerpass.rekuester.models.ApiParam
+import top.writerpass.rekuester.models.ApiStateAuthContainer
 
 class ApiViewModel(
     private val apiUuid: String,
@@ -147,15 +145,12 @@ class ApiViewModel(
 
     fun request() {
         viewModelScope.launchIO {
-//            ui.value.request(client)
+            request(client)
         }
     }
 
-    var requestResult by mutableStateOf<HttpRequestResult?>(null)
-        private set
-
     suspend fun request(client: RekuesterClient) {
-        requestResult = client.request(
+        ui.value.requestResult = client.request(
             method = ui.value.method,
             address = ui.value.address,
             params = ui.value.params.asReadOnly(),

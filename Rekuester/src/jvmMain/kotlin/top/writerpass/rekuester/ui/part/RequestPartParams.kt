@@ -12,10 +12,19 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -48,7 +57,7 @@ private val headers = listOf("Key", "Value", "Description")
 @Composable
 fun RequestPartParams() {
     val apiViewModel = LocalApiViewModel.current
-    val apiState by apiViewModel.apiStateFlow.collectAsState()
+    val ui by apiViewModel.ui.collectAsState()
 
     CommonTableFrame(
         modifier = Modifier.border(
@@ -97,7 +106,7 @@ fun RequestPartParams() {
                 }
             )
         },
-        dataRowCount = apiState.params.size,
+        dataRowCount = ui.params.size,
         dataColumnCount = 3,
         headerItemContent = { columnId ->
             val header = remember { headers[columnId] }
@@ -130,18 +139,18 @@ fun RequestPartParams() {
         leadingItemContent = { rowId ->
             when (rowId) {
                 TableAxisIds.HeaderRowId -> {
-                    val allEnabled by remember(apiState.params.asReadOnly()) {
+                    val allEnabled by remember(ui.params.asReadOnly()) {
                         derivedStateOf {
-                            apiState.params.asReadOnly().all { it.enabled }
+                            ui.params.asReadOnly().all { it.enabled }
                         }
                     }
                     Checkbox(
                         checked = allEnabled,
                         onCheckedChange = { enabled ->
-                            apiState.params.asReadOnly()
+                            ui.params.asReadOnly()
                                 .map { apiParam -> apiParam.copy(enabled = enabled) }
                                 .forEachIndexed { index, param ->
-                                    apiState.params[index] = param
+                                    ui.params[index] = param
                                 }
                         },
                         modifier = Modifier.align(Alignment.Center)
@@ -159,7 +168,7 @@ fun RequestPartParams() {
                 else -> {
                     val item by remember(rowId) {
                         derivedStateOf {
-                            apiState.params[rowId]
+                            ui.params[rowId]
                         }
                     }
                     Checkbox(
@@ -209,7 +218,7 @@ fun RequestPartParams() {
         },
         dataItemContent = { rowId, columnId ->
             val density = LocalDensity.current
-            val item1 = remember { apiState.params[rowId] }
+            val item1 = remember { ui.params[rowId] }
             val item = remember {
                 when (columnId) {
                     0 -> item1.key
@@ -239,7 +248,7 @@ fun RequestPartParams() {
                             value = textFieldValue.value,
                             onValueChange = {
                                 textFieldValue.value = it
-                                val apiParam = apiState.params[rowId]
+                                val apiParam = ui.params[rowId]
                                 val newApiParam = when (columnId) {
                                     0 -> apiParam.copy(key = item)
                                     1 -> apiParam.copy(value = item)

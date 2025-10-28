@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import top.writerpass.kmplibrary.utils.onUpdate
-import top.writerpass.rekuester.models.Api
-import top.writerpass.rekuester.models.Collection
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.Singletons
+import top.writerpass.rekuester.models.Api
+import top.writerpass.rekuester.models.Collection
 
 class CollectionApiViewModel(private val collectionUuid: String) : BaseViewModel() {
 
@@ -75,11 +75,11 @@ class CollectionApiViewModel(private val collectionUuid: String) : BaseViewModel
     init {
         viewModelScope.launch {
             _apisMapFlow.collect { apisMap ->
-                _openedApiTabsFlow.update { list->
+                _openedApiTabsFlow.update { list ->
                     mutableListOf<Api>().apply {
-                        list.forEach { api->
+                        list.forEach { api ->
                             apisMap[api.uuid]?.let { add(it) }
-                            if (isEmpty()){
+                            if (isEmpty()) {
                                 currentApiTabUuid = "--"
                                 _currentPage.value = Pages.BlankPage
                             }
@@ -122,7 +122,7 @@ class CollectionApiViewModel(private val collectionUuid: String) : BaseViewModel
     fun closeApiTab(api: Api) {
         _openedApiTabsFlow.onUpdate {
             val removed = removeIf { it.uuid == api.uuid }
-            if (isEmpty()){
+            if (isEmpty()) {
                 currentApiTabUuid = "--"
                 _currentPage.value = Pages.BlankPage
             }
@@ -146,7 +146,6 @@ class CollectionApiViewModel(private val collectionUuid: String) : BaseViewModel
             address = "http://",
             params = emptyList(),
             headers = emptyList(),
-            requestBody = null
         )
         insertApi(newApi)
     }
