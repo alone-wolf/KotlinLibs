@@ -14,22 +14,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import top.writerpass.kmplibrary.utils.onUpdate
 import top.writerpass.rekuester.Api
 import top.writerpass.rekuester.Collection
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.Singletons
 
-fun <T> MutableStateFlow<List<T>>.onUpdate(block: MutableList<T>.() -> Unit) {
-    value.toMutableList().let { mutableList ->
-        mutableList.block()
-        value = mutableList.toList()
-    }
-}
-
-class CollectionApiViewModel(
-    private val collectionUuid: String
-) : BaseViewModel() {
+class CollectionApiViewModel(private val collectionUuid: String) : BaseViewModel() {
 
     companion object {
         @Composable
