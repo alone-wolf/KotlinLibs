@@ -2,9 +2,9 @@ package top.writerpass.rekuester.data
 
 import io.ktor.http.HttpMethod
 import top.writerpass.kmplibrary.utils.fill2Number
-import top.writerpass.rekuester.Api
-import top.writerpass.rekuester.ApiHeader
-import top.writerpass.rekuester.ApiParam
+import top.writerpass.rekuester.models.Api
+import top.writerpass.rekuester.models.ApiHeader
+import top.writerpass.rekuester.models.ApiParam
 import top.writerpass.rekuester.data.dao.EmmListDao
 import java.util.UUID
 

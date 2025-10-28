@@ -1,7 +1,7 @@
 package top.writerpass.rekuester.data
 
 import top.writerpass.kmplibrary.utils.fill2Number
-import top.writerpass.rekuester.Collection
+import top.writerpass.rekuester.models.Collection
 import top.writerpass.rekuester.data.dao.EmmListDao
 
 class CollectionsRepository() {

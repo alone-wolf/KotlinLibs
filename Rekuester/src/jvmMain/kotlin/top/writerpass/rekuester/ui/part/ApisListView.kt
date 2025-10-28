@@ -26,15 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.isSecondaryPressed
-import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullHeightColumn
@@ -48,7 +42,7 @@ import top.writerpass.cmplibrary.modifier.onPointerRightClick
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.rekuester.Collection
+import top.writerpass.rekuester.models.Collection
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 import top.writerpass.rekuester.LocalMainUiViewModel
 import top.writerpass.rekuester.LocalMainViewModel

@@ -18,7 +18,8 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.date.GMTDate
 import io.ktor.util.toMap
 import kotlinx.serialization.json.Json
-
+import top.writerpass.rekuester.models.ApiHeader
+import top.writerpass.rekuester.models.ApiParam
 
 data class HttpRequestResult(
     val response: HttpResponseResult?,

@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import top.writerpass.kmplibrary.utils.onUpdate
-import top.writerpass.rekuester.Api
-import top.writerpass.rekuester.Collection
+import top.writerpass.rekuester.models.Api
+import top.writerpass.rekuester.models.Collection
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.Pages
 import top.writerpass.rekuester.Singletons

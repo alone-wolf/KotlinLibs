@@ -3,16 +3,14 @@ package top.writerpass.rekuester.ui.page
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.ktor.http.*
 import top.writerpass.cmplibrary.compose.*
@@ -87,59 +85,75 @@ private val responsePartEntities = listOf(
 @Composable
 fun ApiRequestPage() {
     val apiViewModel = LocalApiViewModel.current
-    val apiState by apiViewModel.apiStateFlow.collectAsState()
+    val ui by apiViewModel.ui.collectAsState()
 
     FullSizeColumn(modifier = Modifier) {
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
             val editLabel = remember { mutableStateOf(false) }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (editLabel.value) {
-                    apiState.label.BasicTextField(
+                    BasicTextField(
+                        value = ui.label,
+                        onValueChange = { ui.label = it },
                         maxLines = 1,
                         modifier = Modifier.height(48.dp),
                     )
                 } else {
-                    apiState.label.value.TextButton {
+                    ui.label.TextButton {
                         editLabel.setTrue()
                     }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            if (apiState.isModified.value) "Save".TextButton {
-                apiState.composeNewApi().let {
+            if (ui.isModified) "Save".TextButton {
+                ui.toApi().let {
                     apiViewModel.updateOrInsertApi(it)
-                    apiState.isModified.setFalse()
+                    ui.updateModifyState()
                     editLabel.setFalse()
                 }
             }
         }
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
-            apiState.method.DropDownMenu(
-                entities = remember {
-                    HttpMethod.DefaultMethods.associateBy { it.value }
-                },
-                any2String = { this.value }
+            var expanded by remember {
+                mutableStateOf(false)
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {expanded = false},
+                content = {
+                    remember {
+                        HttpMethod.DefaultMethods.associateBy { it.value }
+                    }.forEach { (key, value) ->
+                        DropdownMenuItem(
+                            text = { Text(key) },
+                            onClick = {
+                                ui.method = value
+                                expanded = false
+                            }
+                        )
+                    }
+                }
             )
             Spacer(modifier = Modifier.width(8.dp))
-            OutlinedTextField(
-                value = apiState.urlBinding.text.value,
-                placeholder = { "Address".Text() },
-                onValueChange = { apiState.urlBinding.onTextChange(it) },
-                modifier = Modifier
-                    .weight(1f)
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            apiState.urlBinding.onUrlEditStart()
-                        }
-                    },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        apiViewModel.request()
-                    }
-                ),
-                maxLines = 1
-            )
+//            OutlinedTextField(
+//                value = ui.urlBinding.text.value,
+//                placeholder = { "Address".Text() },
+//                onValueChange = { ui.urlBinding.onTextChange(it) },
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .onFocusChanged { focusState ->
+//                        if (focusState.isFocused) {
+//                            ui.urlBinding.onUrlEditStart()
+//                        }
+//                    },
+//                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+//                keyboardActions = KeyboardActions(
+//                    onGo = {
+//                        apiViewModel.request()
+//                    }
+//                ),
+//                maxLines = 1
+//            )
             Spacer(modifier = Modifier.width(8.dp))
             "Send".OutlinedButton {
                 apiViewModel.request()
