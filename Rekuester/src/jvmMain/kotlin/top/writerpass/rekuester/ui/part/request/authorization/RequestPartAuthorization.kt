@@ -3,6 +3,7 @@ package top.writerpass.rekuester.ui.part.request.authorization
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -62,28 +63,54 @@ fun RequestPartAuthorization() {
                 }
 
                 AuthTypes.Basic -> {
-                    val userName = Mutable.someString("")
-                    val password = Mutable.someString("")
-                    userName.OutlinedBasicTextField(label = "Username")
-                    password.OutlinedBasicTextField(label = "Password")
+                    ui.auth.basic?.let { basic ->
+                        OutlinedTextField(
+                            value = basic.username,
+                            onValueChange = {
+                                val new = basic.copy(username = it)
+                                ui.auth = ui.auth.copy(basic = new)
+                            },
+                        )
+                        OutlinedTextField(
+                            value = basic.password,
+                            onValueChange = {
+                                val new = basic.copy(password = it)
+                                ui.auth = ui.auth.copy(basic = new)
+                            },
+                        )
+                    }
                 }
 
                 AuthTypes.Bearer -> {
-                    val token = Mutable.someString("")
-                    token.OutlinedBasicTextField(label = "Token")
+                    ui.auth.bearer?.let { bearer ->
+                        OutlinedTextField(
+                            value = bearer.token,
+                            onValueChange = {
+                                val new = bearer.copy(token = it)
+                                ui.auth = ui.auth.copy(bearer = new)
+                            },
+                        )
+                    }
                 }
 
                 AuthTypes.JWT -> {
-                    val secret = Mutable.someString("")
-                    secret.OutlinedBasicTextField(label = "Token")
+                    ui.auth.jwt?.let { jwt ->
+                        OutlinedTextField(
+                            value = jwt.secret,
+                            onValueChange = {
+                                val new = jwt.copy(secret = it)
+                                ui.auth = ui.auth.copy(jwt = new)
+                            },
+                        )
+                    }
                 }
 
                 AuthTypes.ApiKey -> {
                     val key = Mutable.someString("")
                     val value = Mutable.someString("")
                     val addTo = Mutable.someString("")
-                    key.OutlinedBasicTextField(label = "Username")
-                    value.OutlinedBasicTextField(label = "Password")
+                    key.OutlinedBasicTextField(label = "Key")
+                    value.OutlinedBasicTextField(label = "Value")
                     addTo.OutlinedBasicTextField(label = "Add to")
                 }
 

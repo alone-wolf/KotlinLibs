@@ -6,6 +6,11 @@ import top.writerpass.rekuester.data.dao.EmmListDao
 import top.writerpass.rekuester.models.Api
 import top.writerpass.rekuester.models.ApiHeader
 import top.writerpass.rekuester.models.ApiParam
+import top.writerpass.rekuester.models.ApiStateAuthContainer
+import top.writerpass.rekuester.models.ApiStateBodyContainer
+import top.writerpass.rekuester.models.AuthTypes
+import top.writerpass.rekuester.models.BodyTypes
+import top.writerpass.rekuester.models.RawBodyTypes
 import java.util.UUID
 
 
@@ -41,8 +46,28 @@ private val builtInApis = arrayOf(
                 description = "description is blank",
                 enabled = false
             )
-
         ),
+        auth = ApiStateAuthContainer(
+            type = AuthTypes.Basic,
+            basic = ApiStateAuthContainer.Basic(
+                username = "aaa",
+                password = "bbbb"
+            ),
+            bearer = null,
+            jwt = null,
+            apiKey = null
+        ),
+        body = ApiStateBodyContainer(
+            type = BodyTypes.Raw,
+            formData = null,
+            formUrlEncoded = null,
+            raw = ApiStateBodyContainer.Raw(
+                type = RawBodyTypes.Text,
+                content = "aaaaasasfaefasd"
+            ),
+            binary = null,
+            graphQL = null
+        )
     ),
 //    Api(
 //        label = "GET User by Id",
