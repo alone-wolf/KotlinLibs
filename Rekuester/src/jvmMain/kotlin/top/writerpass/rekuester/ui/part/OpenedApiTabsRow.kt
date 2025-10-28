@@ -127,7 +127,7 @@ fun OpenedApiTabsRow() {
                         }
                         val showMenu = Mutable.someBoolean()
                         var menuOffset by remember { mutableStateOf(DpOffset.Zero) }
-                        val apiState = ApiStateHolder.rememberApiState(api)
+                        val apiState = remember { ApiStateHolder.getApiState(api) }
                         Row(
                             modifier = Modifier
                                 .width(tabWidth)

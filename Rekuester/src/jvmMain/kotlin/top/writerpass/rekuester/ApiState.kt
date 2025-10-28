@@ -99,36 +99,37 @@ class UrlParamsBinding(
 
     init {
         // 监听 address 或 params 变化时更新 text
-        snapshotFlow { address.value to params.toList() }
-            .onEach { (addr, ps) ->
-                val newUrl = buildUrl(addr, ps)
-                if (text.value != newUrl) {
-                    text.value = newUrl
-                }
-            }
-            .launchIn(CoroutineScope(Dispatchers.Default))
+//        snapshotFlow { address.value to params.toList() }
+//            .onEach { (address, params) ->
+//                val newUrl = buildUrl(address, params)
+//                if (text.value != newUrl) {
+//                    text.value = newUrl
+//                }
+//            }
+//            .launchIn(CoroutineScope(Dispatchers.Default))
     }
 
     fun onTextChange(newText: String) {
         text.value = newText
-        tryParseUrl(newText)?.let { (newAddress, pairs) ->
-            if (newAddress != address.value) address.value = newAddress
-            params.clear()
-            params.addAll(pairs.map {
-                ApiParam(
-                key = it.first,
-                value = it.second,
-                description = "",
-                enabled = true
-            )
-            })
-        }
+        address.value = newText
+//        tryParseUrl(newText)?.let { (newAddress, pairs) ->
+//            if (newAddress != address.value) address.value = newAddress
+//            params.clear()
+//            params.addAll(pairs.map {
+//                ApiParam(
+//                    key = it.first,
+//                    value = it.second,
+//                    description = "",
+//                    enabled = true
+//                )
+//            })
+//        }
     }
 
     private fun buildUrl(address: String, params: List<ApiParam>): String {
         return try {
             URLBuilder(address).apply {
-                params.forEach { parameters.append(it.key, it.value) }
+                params.filter { it.enabled }.forEach { parameters.append(it.key, it.value) }
             }.buildString()
         } catch (e: Exception) {
             address // fallback，鲁棒

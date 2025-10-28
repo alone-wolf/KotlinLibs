@@ -3,6 +3,7 @@ package top.writerpass.rekuester.data
 import io.ktor.http.HttpMethod
 import top.writerpass.kmplibrary.utils.fill2Number
 import top.writerpass.rekuester.Api
+import top.writerpass.rekuester.ApiHeader
 import top.writerpass.rekuester.ApiParam
 import top.writerpass.rekuester.data.dao.EmmListDao
 import java.util.UUID
@@ -27,49 +28,63 @@ private val builtInApis = arrayOf(
                 enabled = false
             ),
         ),
-        headers = emptyList(),
+        headers = listOf(
+            ApiHeader(
+                key = "access-token",
+                value = "asdfghjkl",
+                description = "Access-Token",
+                enabled = true
+            ),
+            ApiHeader(
+                key = "handwrite-header",
+                value = "1q2w3e4r5t6y7u8i9o0p",
+                description = "description is blank",
+                enabled = false
+            )
+
+        ),
         requestBody = null
     ),
-    Api(
-        label = "GET User by Id",
-        method = HttpMethod.Get,
-        address = "http://localhost:8080/api/users/100",
-        params = emptyList(),
-        headers = emptyList(),
-        requestBody = null
-    ),
-    Api(
-        label = "Delete User by Id",
-        method = HttpMethod.Delete,
-        address = "http://localhost:8080/api/users/1",
-        params = emptyList(),
-        headers = emptyList(),
-        requestBody = null
-    ),
-    Api(
-        label = "Delete All Users",
-        method = HttpMethod.Delete,
-        address = "http://localhost:8080/api/users",
-        params = emptyList(),
-        headers = emptyList(),
-        requestBody = null
-    ),
-    Api(
-        label = "Inject 100 Users",
-        method = HttpMethod.Companion.Post,
-        address = "http://localhost:8080/api/users/inject",
-        params = emptyList(),
-        headers = emptyList(),
-        requestBody = null
-    ),
-    Api(
-        label = "Baidu",
-        method = HttpMethod.Companion.Get,
-        address = "https://baidu.com",
-        params = emptyList(),
-        headers = emptyList(),
-        requestBody = null
-    ),
+//    Api(
+//        label = "GET User by Id",
+//        method = HttpMethod.Get,
+//        address = "http://localhost:8080/api/users/100",
+//        params = emptyList(),
+//        headers = emptyList(),
+//        requestBody = null
+//    ),
+//    Api(
+//        label = "Delete User by Id",
+//        method = HttpMethod.Delete,
+//        address = "http://localhost:8080/api/users/1",
+//        params = emptyList(),
+//        headers = emptyList(),
+//        requestBody = null
+//    ),
+//    Api(
+//        label = "Delete All Users",
+//        method = HttpMethod.Delete,
+//        address = "http://localhost:8080/api/users",
+//        params = emptyList(),
+//        headers = emptyList(),
+//        requestBody = null
+//    ),
+//    Api(
+//        label = "Inject 100 Users",
+//        method = HttpMethod.Companion.Post,
+//        address = "http://localhost:8080/api/users/inject",
+//        params = emptyList(),
+//        headers = emptyList(),
+//        requestBody = null
+//    ),
+//    Api(
+//        label = "Baidu",
+//        method = HttpMethod.Companion.Get,
+//        address = "https://baidu.com",
+//        params = emptyList(),
+//        headers = emptyList(),
+//        requestBody = null
+//    ),
 )
 
 class ApiRepository() {
