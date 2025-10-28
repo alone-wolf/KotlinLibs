@@ -32,10 +32,10 @@ import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
-import top.writerpass.rekuester.ui.part.RequestPartAuthorization
-import top.writerpass.rekuester.ui.part.RequestPartBody
-import top.writerpass.rekuester.ui.part.RequestPartHeaders
-import top.writerpass.rekuester.ui.part.RequestPartParams
+import top.writerpass.rekuester.ui.part.request.authorization.RequestPartAuthorization
+import top.writerpass.rekuester.ui.part.request.body.RequestPartBody
+import top.writerpass.rekuester.ui.part.request.headers.RequestPartHeaders
+import top.writerpass.rekuester.ui.part.request.params.RequestPartParams
 
 private val requestPartEntities = listOf(
     "Params",

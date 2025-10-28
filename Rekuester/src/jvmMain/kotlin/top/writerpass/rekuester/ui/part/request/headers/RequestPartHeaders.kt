@@ -1,4 +1,4 @@
-package top.writerpass.rekuester.ui.part
+package top.writerpass.rekuester.ui.part.request.headers
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

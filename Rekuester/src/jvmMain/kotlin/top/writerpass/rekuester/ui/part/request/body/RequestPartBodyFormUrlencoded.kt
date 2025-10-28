@@ -1,4 +1,4 @@
-package top.writerpass.rekuester.ui.part
+package top.writerpass.rekuester.ui.part.request.body
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,11 +17,10 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,20 +44,23 @@ import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.rekuester.LocalApiViewModel
+import top.writerpass.rekuester.models.ApiFormData
 import top.writerpass.rekuester.tables.v12.CommonTableFrame
 import top.writerpass.rekuester.tables.v12.TableAxisIds
 import top.writerpass.rekuester.tables.v12.TableState
 import top.writerpass.rekuester.tables.v12.TableStrategies
 
-
 private val headers = listOf("Key", "Value", "Description")
 
-@Composable
-fun RequestPartParams() {
-    val apiViewModel = LocalApiViewModel.current
-    val ui by apiViewModel.ui.collectAsState()
 
+@Composable
+fun RequestPartBodyFormUrlencoded() {
+    // urlencoded data table
+    val formDataList = remember { mutableStateListOf<ApiFormData>() }
+    val newE = Mutable.someBoolean()
+    val newK = Mutable.something("")
+    val newV = Mutable.something("")
+    val newD = Mutable.something("")
     CommonTableFrame(
         modifier = Modifier.border(
             width = 2.dp,
@@ -106,31 +108,32 @@ fun RequestPartParams() {
                 }
             )
         },
-        dataRowCount = ui.params.size,
+        dataRowCount = formDataList.size,
         dataColumnCount = 3,
         headerItemContent = { columnId ->
             val header = remember { headers[columnId] }
             header.Text(modifier = Modifier.align(Alignment.Center))
         },
         footerItemContent = { columnId ->
+            // TODO change apiViewModel.newHeaderXXX to apiViewModel.newBodyXXX
             when (columnId) {
                 0 -> BasicTextField(
-                    value = apiViewModel.newParamKey,
-                    onValueChange = { apiViewModel.newParamKey = it },
+                    value = newK.value,
+                    onValueChange = { newK.value = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 1 -> BasicTextField(
-                    value = apiViewModel.newParamValue,
-                    onValueChange = { apiViewModel.newParamValue = it },
+                    value = newV.value,
+                    onValueChange = { newV.value = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 2 -> BasicTextField(
-                    value = apiViewModel.newParamDescription,
-                    onValueChange = { apiViewModel.newParamDescription = it },
+                    value = newD.value,
+                    onValueChange = { newD.value = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
@@ -139,19 +142,20 @@ fun RequestPartParams() {
         leadingItemContent = { rowId ->
             when (rowId) {
                 TableAxisIds.HeaderRowId -> {
-                    val allEnabled by remember(ui.params.asReadOnly()) {
-                        derivedStateOf {
-                            ui.params.asReadOnly().all { it.enabled }
-                        }
-                    }
+//                                    val allEnabled by remember(apiState.headers.asReadOnly()) {
+//                                        derivedStateOf {
+//                                            apiState.headers.asReadOnly().all { it.enabled }
+//                                        }
+//                                    }
+                    val allEnabled = true
                     Checkbox(
                         checked = allEnabled,
                         onCheckedChange = { enabled ->
-                            ui.params.asReadOnly()
-                                .map { apiParam -> apiParam.copy(enabled = enabled) }
-                                .forEachIndexed { index, param ->
-                                    ui.params[index] = param
-                                }
+//                                            apiState.headers.asReadOnly()
+//                                                .map { apiHeader -> apiHeader.copy(enabled = enabled) }
+//                                                .forEachIndexed { index, header ->
+//                                                    apiState.headers[index] = header
+//                                                }
                         },
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -159,8 +163,8 @@ fun RequestPartParams() {
 
                 TableAxisIds.FooterRowId -> {
                     Checkbox(
-                        checked = apiViewModel.newParamEnabled,
-                        onCheckedChange = { apiViewModel.newParamEnabled = it },
+                        checked = newE.value,
+                        onCheckedChange = { newE.value = it },
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -168,14 +172,15 @@ fun RequestPartParams() {
                 else -> {
                     val item by remember(rowId) {
                         derivedStateOf {
-                            ui.params[rowId]
+                            formDataList[rowId]
                         }
                     }
                     Checkbox(
                         checked = item.enabled,
                         onCheckedChange = {
-                            val newApiParam = item.copy(enabled = item.enabled.not())
-                            apiViewModel.updateApiParam(rowId, newApiParam)
+                            val newItem = item.copy(enabled = item.enabled.not())
+                            formDataList[rowId] = newItem
+//                                            apiViewModel.updateApiHeader(rowId, newApiHeader)
                         },
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -192,14 +197,14 @@ fun RequestPartParams() {
                     Row {
                         Icons.Default.Clear.Icon(
                             modifier = Modifier.clickable {
-                                apiViewModel.clearNewParam()
+//                                                apiViewModel.clearNewHeader()
                             }
                         )
                         Icons.Default.Add.Icon(
                             modifier = Modifier.clickable {
-                                if (apiViewModel.saveNewApiParam()) {
-                                    apiViewModel.clearNewParam()
-                                }
+//                                                if (apiViewModel.saveNewApiHeader()) {
+//                                                    apiViewModel.clearNewHeader()
+//                                                }
                             }
                         )
                     }
@@ -209,7 +214,7 @@ fun RequestPartParams() {
                     Row {
                         Icons.Default.Delete.Icon(
                             modifier = Modifier.clickable {
-                                apiViewModel.deleteApiParam(rowId)
+//                                                apiViewModel.deleteApiHeader(rowId)
                             }
                         )
                     }
@@ -218,8 +223,9 @@ fun RequestPartParams() {
         },
         dataItemContent = { rowId, columnId ->
             val density = LocalDensity.current
-            val item1 = remember { ui.params[rowId] }
+//                            val item1 = remember { apiState.headers[rowId] }
             val item = remember {
+                val item1 = formDataList[rowId]
                 when (columnId) {
                     0 -> item1.key
                     1 -> item1.value
@@ -248,14 +254,15 @@ fun RequestPartParams() {
                             value = textFieldValue.value,
                             onValueChange = {
                                 textFieldValue.value = it
-                                val apiParam = ui.params[rowId]
-                                val newApiParam = when (columnId) {
-                                    0 -> apiParam.copy(key = item)
-                                    1 -> apiParam.copy(value = item)
-                                    2 -> apiParam.copy(description = item)
-                                    else -> apiParam
+                                val apiHeader = formDataList[rowId]
+                                val newApiHeader = when (columnId) {
+                                    0 -> apiHeader.copy(key = item)
+                                    1 -> apiHeader.copy(value = item)
+                                    2 -> apiHeader.copy(description = item)
+                                    else -> apiHeader
                                 }
-                                apiViewModel.updateApiParam(rowId, newApiParam)
+                                formDataList[rowId] = newApiHeader
+//                                                apiViewModel.updateApiHeader(rowId, newApiHeader)
                             },
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -271,25 +278,29 @@ fun RequestPartParams() {
                                 fontSize = 14.sp
                             ),
                         )
-                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
-                            isEditing.setFalse()
-                        })
+                        Icons.Default.Check.Icon(
+                            modifier = Modifier.size(16.dp).clickable {
+                                isEditing.setFalse()
+                            })
                     }
                 },
                 isFalse = {
-                    Text(
+                    androidx.compose.material3.Text(
                         text = textFieldValue.value.text,
-                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+                        modifier = Modifier.fillMaxSize()
+                            .clickable { isEditing.setTrue() },
                         onTextLayout = { textLayoutResult ->
                             // 获取文本高度（像素）
                             lineHeightSp =
-                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+                                with(density) {
+                                    textLayoutResult.size.height.toFloat().toSp()
+                                }
                         },
                         lineHeight = lineHeightSp,
                         fontSize = 14.sp
                     )
                 }
             )
-        }
+        },
     )
 }
