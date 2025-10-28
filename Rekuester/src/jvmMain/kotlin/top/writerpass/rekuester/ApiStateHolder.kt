@@ -17,14 +17,14 @@ object ApiStateHolder {
         if (api.uuid == "--"){
             return BLANK
         }
-        var exists = true
+//        var exists = true
         var apiState = apiStateMap[api.uuid]
         if (apiState == null){
             apiState = ApiState(api)
             apiStateMap[api.uuid] = apiState
-            exists = false
+//            exists = false
         }
-        "in getApiState ${api.uuid} exists already:${exists}".println()
+//        "in getApiState ${api.uuid} exists already:${exists}".println()
         return apiState
     }
 

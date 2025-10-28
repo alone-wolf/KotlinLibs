@@ -9,6 +9,8 @@ import io.ktor.http.HttpMethod
 import kotlinx.serialization.Serializable
 import top.writerpass.rekuester.data.dao.ItemWithId
 import top.writerpass.rekuester.ui.ApplicationTray
+import top.writerpass.rekuester.ui.page.AuthTypes
+import top.writerpass.rekuester.ui.part.BodyType
 import top.writerpass.rekuester.ui.window.CollectionManagerWindow
 import top.writerpass.rekuester.ui.window.MainWindow
 import top.writerpass.rekuester.ui.window.NewCollectionWizardWindow
@@ -17,15 +19,15 @@ import top.writerpass.rekuester.viewmodel.MainUiViewModel
 import top.writerpass.rekuester.viewmodel.MainViewModel
 import java.util.UUID
 
-@Serializable
-enum class BodyType {
-    None, Form, UrlEncodedForm, Raw, Binary, GraphQL,
-}
+//@Serializable
+//enum class BodyType {
+//    None, Form, UrlEncodedForm, Raw, Binary, GraphQL,
+//}
 
-@Serializable
-abstract class ApiRequestBodyContainer(
-    val type: BodyType
-)
+//@Serializable
+//abstract class ApiRequestBodyContainer(
+//    val type: BodyType
+//)
 
 
 @Serializable
@@ -54,7 +56,9 @@ data class Api(
     val address: String,
     val params: List<ApiParam> = emptyList(),
     val headers: List<ApiHeader> = emptyList(),
-    val requestBody: ApiRequestBodyContainer? = null,
+    val requestBody: String? = null,
+    val authType: AuthTypes = AuthTypes.InheritAuthFromParent,
+    val bodyType: BodyType = BodyType.None
 //    val tabOpened: Boolean = false,
 ) : ItemWithId<String> {
     override val id: String = uuid

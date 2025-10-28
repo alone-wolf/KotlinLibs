@@ -47,6 +47,9 @@ class ApiState(
     var requestResult by mutableStateOf<HttpRequestResult?>(null)
         private set
 
+    val authType = autoTagModifiedStateOf(api.authType)
+    val requestBodyType = autoTagModifiedStateOf(api.bodyType)
+
     val urlBinding = UrlParamsBinding(
         address = address,
         params = params

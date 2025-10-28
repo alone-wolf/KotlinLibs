@@ -1,11 +1,7 @@
 package top.writerpass.rekuester.ui.page
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,6 +20,8 @@ import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
+import top.writerpass.rekuester.ui.part.RequestPartAuthorization
+import top.writerpass.rekuester.ui.part.RequestPartBody
 import top.writerpass.rekuester.ui.part.RequestPartHeaders
 import top.writerpass.rekuester.ui.part.RequestPartParams
 
@@ -67,6 +65,18 @@ sealed interface AuthTypes {
     data class Custom(val customLabel: String) : AuthTypes {
         override val label: String = customLabel
     }
+
+    companion object {
+        val all = listOf(
+            InheritAuthFromParent,
+            NoAuth,
+            Basic,
+            Bearer,
+            JWT,
+            ApiKey
+        )
+        val typeMap = all.associateBy { it.label }
+    }
 }
 
 
@@ -78,10 +88,6 @@ private val responsePartEntities = listOf(
 fun ApiRequestPage() {
     val apiViewModel = LocalApiViewModel.current
     val apiState by apiViewModel.apiStateFlow.collectAsState()
-
-//    LaunchedEffect(apiState) {
-//        "apiState: ${apiState.uuid} ${apiState.addressString()}".println()
-//    }
 
     FullSizeColumn(modifier = Modifier) {
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
@@ -140,8 +146,6 @@ fun ApiRequestPage() {
             }
         }
         FullSizeColumn {
-            apiState.toString().Text()
-            apiViewModel.toString().Text()
             "Request".Text()
             TabBarWithContent(
                 modifier = Modifier.fillMaxWidth(),
@@ -149,12 +153,9 @@ fun ApiRequestPage() {
                 onPage = { pageId ->
                     when (pageId) {
                         0 -> RequestPartParams()
-                        1 -> {
-                            // authorization
-                        }
-
+                        1 -> RequestPartAuthorization()
                         2 -> RequestPartHeaders()
-
+                        3 -> RequestPartBody()
                         else -> {
                             requestPartEntities[pageId].Text()
                             "Not Implemented".Text()
