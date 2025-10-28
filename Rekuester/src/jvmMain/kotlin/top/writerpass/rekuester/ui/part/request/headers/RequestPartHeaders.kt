@@ -53,6 +53,45 @@ import top.writerpass.rekuester.tables.v12.TableStrategies
 
 private val headers = listOf("Key", "Value", "Description")
 
+private val tableState = TableState(
+    strategies = TableStrategies(
+        horizontal = TableStrategies.Size.FillContainer,
+        vertical = TableStrategies.Size.WrapContent,
+        defaultRow = TableStrategies.Axis.Fixed(40.dp),
+        defaultColumn = TableStrategies.Axis.Fixed(120.dp)
+    ),
+    extras = {
+        preSetColumnState(
+            id = -1,
+            strategy = TableStrategies.Axis.Fixed(30.dp)
+        )
+        preSetColumnState(
+            id = 0,
+            strategy = TableStrategies.Axis.Ranged(
+                min = 100.dp,
+                max = 300.dp,
+                default = 120.dp
+            )
+        )
+        preSetColumnState(
+            id = 1,
+            strategy = TableStrategies.Axis.Ranged(
+                min = 100.dp,
+                max = 300.dp,
+                default = 120.dp
+            )
+        )
+        preSetColumnState(
+            id = 2,
+            strategy = TableStrategies.Axis.Ranged(
+                min = 100.dp,
+                max = 300.dp,
+                default = 120.dp
+            )
+        )
+    }
+)
+
 @Composable
 fun RequestPartHeaders() {
     val apiViewModel = LocalApiViewModel.current
@@ -65,46 +104,7 @@ fun RequestPartHeaders() {
             shape = RoundedCornerShape(4.dp)
         ),
         listState = rememberLazyListState(),
-        tableState = remember {
-            TableState(
-                strategies = TableStrategies(
-                    horizontal = TableStrategies.Size.FillContainer,
-                    vertical = TableStrategies.Size.WrapContent,
-                    defaultRow = TableStrategies.Axis.Fixed(40.dp),
-                    defaultColumn = TableStrategies.Axis.Fixed(120.dp)
-                ),
-                extras = {
-                    preSetColumnState(
-                        id = -1,
-                        strategy = TableStrategies.Axis.Fixed(30.dp)
-                    )
-                    preSetColumnState(
-                        id = 0,
-                        strategy = TableStrategies.Axis.Ranged(
-                            min = 100.dp,
-                            max = 300.dp,
-                            default = 120.dp
-                        )
-                    )
-                    preSetColumnState(
-                        id = 1,
-                        strategy = TableStrategies.Axis.Ranged(
-                            min = 100.dp,
-                            max = 300.dp,
-                            default = 120.dp
-                        )
-                    )
-                    preSetColumnState(
-                        id = 2,
-                        strategy = TableStrategies.Axis.Ranged(
-                            min = 100.dp,
-                            max = 300.dp,
-                            default = 120.dp
-                        )
-                    )
-                }
-            )
-        },
+        tableState = tableState,
         dataRowCount = ui.headers.size,
         dataColumnCount = 3,
         headerItemContent = { columnId ->
