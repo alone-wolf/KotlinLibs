@@ -21,7 +21,7 @@ import top.writerpass.rekuester.models.ApiParam
 import top.writerpass.rekuester.models.ApiStateAuthContainer
 
 class ApiViewModel(
-    private val apiUuid: String,
+    val apiUuid: String,
 ) : BaseViewModel() {
     private val repository: ApiRepository = Singletons.apisRepository
 

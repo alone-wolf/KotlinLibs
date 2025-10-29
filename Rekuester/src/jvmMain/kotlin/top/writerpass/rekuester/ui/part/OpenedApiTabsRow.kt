@@ -58,6 +58,7 @@ import top.writerpass.cmplibrary.reorderable.reorderable
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
+import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 
 private val tabWidth = 120.dp
@@ -74,16 +75,19 @@ fun OpenedApiTabsRow() {
     val tabWidthPx = with(density) { tabWidth.toPx() }
     val scope = rememberCoroutineScope()
 
-    val isListAtHead by remember {
-        derivedStateOf {
-            lazyListState.firstVisibleItemIndex == 0
-        }
-    }
-    val isListAtTail by remember {
-        derivedStateOf {
-            lazyListState.firstVisibleItemIndex == openedApiTabs.size - 1
-        }
-    }
+    val apiViewModel = LocalApiViewModel.current
+    val ui by apiViewModel.ui.collectAsState()
+
+//    val isListAtHead by remember {
+//        derivedStateOf {
+//            lazyListState.firstVisibleItemIndex == 0
+//        }
+//    }
+//    val isListAtTail by remember {
+//        derivedStateOf {
+//            lazyListState.firstVisibleItemIndex == openedApiTabs.size - 1
+//        }
+//    }
 
 
     LaunchedEffect(collectionApiViewModel.currentApiTabUuid) {
@@ -95,8 +99,6 @@ fun OpenedApiTabsRow() {
         }
     }
     FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
-
-
         LazyRow(
             modifier = Modifier.reorderable(state).height(30.dp).weight(1f)
                 .onPointerEvent(PointerEventType.Scroll) { event ->
@@ -116,12 +118,14 @@ fun OpenedApiTabsRow() {
                 key = { it },
                 itemContent = { api ->
                     ReorderableItem(state, orientationLocked = false, key = api) { isDragging ->
-                        val isSelected by remember {
+                        val isSelected by remember(apiViewModel) {
                             derivedStateOf { collectionApiViewModel.currentApiTabUuid == api.uuid }
+                        }
+                        val isModified by remember(apiViewModel) {
+                            derivedStateOf { isSelected && ui.isModified }
                         }
                         val showMenu = Mutable.someBoolean()
                         var menuOffset by remember { mutableStateOf(DpOffset.Zero) }
-//                        val apiState = remember {  }
                         Row(
                             modifier = Modifier
                                 .width(tabWidth)
@@ -151,14 +155,14 @@ fun OpenedApiTabsRow() {
                                                     strokeWidth = Stroke.DefaultMiter,
                                                     cap = StrokeCap.Round
                                                 )
-//                                                if (apiState.isModified.value) {
-//                                                    drawCircle(
-//                                                        color = Color.Red,
-//                                                        radius = 5f,
-//                                                        center = Offset(10f, thisHeight / 2),
-//                                                        alpha = 1f,
-//                                                    )
-//                                                }
+                                                if (isModified) {
+                                                    drawCircle(
+                                                        color = Color.Red,
+                                                        radius = 5f,
+                                                        center = Offset(10f, thisHeight / 2),
+                                                        alpha = 1f,
+                                                    )
+                                                }
                                                 drawContent()
                                             }
                                     } else {
@@ -175,7 +179,7 @@ fun OpenedApiTabsRow() {
                                     showMenu.setTrue()
                                 }
                                 .padding(start = 6.dp, end = 4.dp)
-//                                .padding(start = if (apiState.isModified.value) 12.dp else 6.dp, end = 4.dp)
+                                .padding(start = if (isModified) 12.dp else 6.dp, end = 4.dp)
                                 .animateItem()
                                 .detectReorder(state),
                             verticalAlignment = Alignment.CenterVertically

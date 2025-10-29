@@ -19,31 +19,27 @@ import top.writerpass.rekuester.viewmodel.ApiViewModel
 @Composable
 fun ApiRequestPanel() {
     FullSizeColumn {
-        OpenedApiTabsRow()
-        FullSizeBox {
-            val collectionApiViewModel = LocalCollectionApiViewModel.current
-            val currentPage by collectionApiViewModel.currentPageFlow.collectAsState()
-            when (currentPage) {
-                is Pages.BlankPage -> {
-                    FullSizeBox {
-                        "This is a Blank Page, select an API to start".Text(
-                            modifier = Modifier.align(
-                                Alignment.Center
-                            )
-                        )
-                    }
+        val collectionApiViewModel = LocalCollectionApiViewModel.current
+        val currentPage by collectionApiViewModel.currentPageFlow.collectAsState()
+        when (currentPage) {
+            is Pages.BlankPage -> {
+                FullSizeBox {
+                    "This is a Blank Page, select one API to start".Text(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
+            }
 
-                is Pages.ApiRequestPage -> {
-                    val apiUuid = remember(currentPage) {
-                        (currentPage as Pages.ApiRequestPage).apiUuid
-                    }
-                    val apiViewModel = ApiViewModel.instance(apiUuid)
-                    CompositionLocalProvider(
-                        LocalApiViewModel provides apiViewModel
-                    ){
-                        ApiRequestPage()
-                    }
+            is Pages.ApiRequestPage -> {
+                val apiUuid = remember(currentPage) {
+                    (currentPage as Pages.ApiRequestPage).apiUuid
+                }
+                val apiViewModel = ApiViewModel.instance(apiUuid)
+                CompositionLocalProvider(
+                    LocalApiViewModel provides apiViewModel
+                ) {
+                    OpenedApiTabsRow()
+                    ApiRequestPage()
                 }
             }
         }
