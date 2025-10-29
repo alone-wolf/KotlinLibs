@@ -31,9 +31,7 @@ fun ApiRequestPanel() {
             }
 
             is Pages.ApiRequestPage -> {
-                val apiUuid = remember(currentPage) {
-                    (currentPage as Pages.ApiRequestPage).apiUuid
-                }
+                val apiUuid = remember(currentPage) { (currentPage as Pages.ApiRequestPage).apiUuid }
                 val apiViewModel = ApiViewModel.instance(apiUuid)
                 CompositionLocalProvider(
                     LocalApiViewModel provides apiViewModel
