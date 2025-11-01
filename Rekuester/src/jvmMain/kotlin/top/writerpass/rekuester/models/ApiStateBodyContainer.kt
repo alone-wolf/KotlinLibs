@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ApiStateBodyContainer(
     val type: BodyTypes = BodyTypes.None,
-    val formData: FormData? = null,
-    val formUrlEncoded: FormData? = null,
+    val formData: List<FormData>? = null,
+    val formUrlEncoded: List<FormData>? = null,
     val raw: Raw? = null,
     val binary: Binary? = null,
     val graphQL: GraphQL? = null

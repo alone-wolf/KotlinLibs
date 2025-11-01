@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.ktor.http.HttpMethod
 import top.writerpass.cmplibrary.compose.FullSizeColumn
@@ -86,6 +91,9 @@ fun ApiRequestPage() {
             var expanded by remember {
                 mutableStateOf(false)
             }
+            ui.method.value.TextButton {
+                expanded = true
+            }
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -104,25 +112,27 @@ fun ApiRequestPage() {
                 }
             )
             Spacer(modifier = Modifier.width(8.dp))
-//            OutlinedTextField(
+            OutlinedTextField(
+                value = ui.address,
 //                value = ui.urlBinding.text.value,
-//                placeholder = { "Address".Text() },
+                placeholder = { "Address".Text() },
+                onValueChange = { },
 //                onValueChange = { ui.urlBinding.onTextChange(it) },
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .onFocusChanged { focusState ->
-//                        if (focusState.isFocused) {
+                modifier = Modifier
+                    .weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
 //                            ui.urlBinding.onUrlEditStart()
-//                        }
-//                    },
-//                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-//                keyboardActions = KeyboardActions(
-//                    onGo = {
-//                        apiViewModel.request()
-//                    }
-//                ),
-//                maxLines = 1
-//            )
+                        }
+                    },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+                keyboardActions = KeyboardActions(
+                    onGo = {
+                        apiViewModel.request()
+                    }
+                ),
+                maxLines = 1
+            )
             Spacer(modifier = Modifier.width(8.dp))
             "Send".OutlinedButton {
                 apiViewModel.request()

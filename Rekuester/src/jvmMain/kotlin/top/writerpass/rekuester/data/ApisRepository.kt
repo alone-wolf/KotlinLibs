@@ -59,8 +59,34 @@ private val builtInApis = arrayOf(
         ),
         body = ApiStateBodyContainer(
             type = BodyTypes.Raw,
-            formData = null,
-            formUrlEncoded = null,
+            formData = listOf(
+                ApiStateBodyContainer.FormData(
+                    key = "form-data-0",
+                    value = "form-data-value-0",
+                    description = "no-description-0",
+                    enabled = true
+                ),
+                ApiStateBodyContainer.FormData(
+                    key = "form-data-1",
+                    value = "form-data-value-1",
+                    description = "no-description-1",
+                    enabled = false
+                )
+            ),
+            formUrlEncoded = listOf(
+                ApiStateBodyContainer.FormData(
+                    key = "x-form-data-0",
+                    value = "x-form-data-value-0",
+                    description = "no-description-0",
+                    enabled = true
+                ),
+                ApiStateBodyContainer.FormData(
+                    key = "x-form-data-1",
+                    value = "x-form-data-value-1",
+                    description = "no-description-1",
+                    enabled = false
+                )
+            ),
             raw = ApiStateBodyContainer.Raw(
                 type = RawBodyTypes.Text,
                 content = "aaaaasasfaefasd"
