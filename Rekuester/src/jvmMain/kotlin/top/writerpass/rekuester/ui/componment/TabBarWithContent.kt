@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullWidthColumn
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.Composables
 
 @Composable
 fun TabBarWithContent(
@@ -35,9 +35,10 @@ fun TabBarWithContent(
                         onClick = { currentPage = index },
                         modifier = Modifier.height(45.dp),
                         enabled = true,
-                        content = { entity.Text() })
+                        content = { entity.Composables { it.Text() } })
                 }
-            })
+            }
+        )
         FullWidthColumn {
             onPage(currentPage)
         }

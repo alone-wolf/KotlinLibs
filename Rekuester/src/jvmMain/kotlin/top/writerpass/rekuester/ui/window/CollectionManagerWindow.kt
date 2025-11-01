@@ -27,8 +27,7 @@ import androidx.compose.ui.window.Window
 import top.writerpass.cmplibrary.compose.FullHeightColumn
 import top.writerpass.cmplibrary.compose.FullWidthBox
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.IconButton
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.Composables
 import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
@@ -55,7 +54,8 @@ fun CollectionManagerWindow() {
 //                        "Save".TextButton {
 //                            mainViewModel.saveData()
 //                        }
-                    Icons.Default.Add.IconButton {
+                    Icons.Default.Add.Composables {
+                        it.IconButton {}
                     }
                 }
                 val collections by collectionsViewModel.collectionsFlow.collectAsState()
@@ -89,11 +89,13 @@ fun CollectionManagerWindow() {
                                         onHover = { onHover.value = true }
                                     ),
                             ) {
-                                collection.label.Text(
-                                    modifier = Modifier.align(Alignment.CenterStart),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                collection.label.Composables {
+                                    it.Text(
+                                        modifier = Modifier.align(Alignment.CenterStart),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
                                 Row(modifier = Modifier.align(Alignment.CenterEnd)) {
                                     AnimatedVisibility(
                                         visible = onHover.value,

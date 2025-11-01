@@ -30,9 +30,7 @@ import androidx.compose.ui.unit.dp
 import io.ktor.http.HttpMethod
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.OutlinedButton
-import top.writerpass.cmplibrary.compose.Text
-import top.writerpass.cmplibrary.compose.TextButton
+import top.writerpass.cmplibrary.compose.ables.Composables
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalApiViewModel
@@ -73,17 +71,21 @@ fun ApiRequestPage() {
                         modifier = Modifier.height(48.dp),
                     )
                 } else {
-                    ui.label.TextButton {
-                        editLabel.setTrue()
+                    ui.label.Composables {
+                        it.TextButton {
+                            editLabel.setTrue()
+                        }
                     }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            if (ui.isModified) "Save".TextButton {
-                ui.toApi().let {
-                    apiViewModel.updateOrInsertApi(it)
-                    ui.updateModifyState(false)
-                    editLabel.setFalse()
+            if (ui.isModified) "Save".Composables {
+                it.TextButton {
+                    ui.toApi().let {
+                        apiViewModel.updateOrInsertApi(it)
+                        ui.updateModifyState(false)
+                        editLabel.setFalse()
+                    }
                 }
             }
         }
@@ -91,8 +93,10 @@ fun ApiRequestPage() {
             var expanded by remember {
                 mutableStateOf(false)
             }
-            ui.method.value.TextButton {
-                expanded = true
+            ui.method.value.Composables {
+                it.TextButton {
+                    expanded = true
+                }
             }
             DropdownMenu(
                 expanded = expanded,
@@ -115,7 +119,7 @@ fun ApiRequestPage() {
             OutlinedTextField(
                 value = ui.address,
 //                value = ui.urlBinding.text.value,
-                placeholder = { "Address".Text() },
+                placeholder = { "Address".Composables { it.Text() } },
                 onValueChange = { },
 //                onValueChange = { ui.urlBinding.onTextChange(it) },
                 modifier = Modifier
@@ -134,12 +138,14 @@ fun ApiRequestPage() {
                 maxLines = 1
             )
             Spacer(modifier = Modifier.width(8.dp))
-            "Send".OutlinedButton {
-                apiViewModel.request()
+            "Send".Composables {
+                it.OutlinedButton {
+                    apiViewModel.request()
+                }
             }
         }
         FullSizeColumn {
-            "Request".Text()
+            "Request".Composables { it.Text() }
             TabBarWithContent(
                 modifier = Modifier.fillMaxWidth(),
                 entities = requestPartEntities,
@@ -150,51 +156,58 @@ fun ApiRequestPage() {
                         2 -> RequestPartHeaders()
                         3 -> RequestPartBody()
                         else -> {
-                            requestPartEntities[pageId].Text()
-                            "Not Implemented".Text()
+                            requestPartEntities[pageId].Composables {
+                                it.Text()
+                            }
+                            "Not Implemented".Composables {
+                                it.Text()
+                            }
                         }
                     }
                 }
             )
-            "Response".Text()
+            "Response".Composables {
+                it.Text()
+            }
             FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
                 TabBarWithContent(
                     modifier = Modifier.fillMaxWidth(),
                     responsePartEntities
                 ) { pageId ->
-                    ui.requestResult?.let { reqResult ->
-                        reqResult.response?.let { result ->
+                    Composables.Scope {
+                        ui.requestResult?.let { reqResult ->
+                            reqResult.response?.let { result ->
+                                when (pageId) {
+                                    0 -> {
+                                        "Overview".Text()
+                                        "Status: ${result.code}".Text()
+                                        "Requested at: ${result.reqTime}".Text()
+                                        "Responded at: ${result.respTime}".Text()
+                                    }
 
-                            when (pageId) {
-                                0 -> {
-                                    "Overview".Text()
-                                    "Status: ${result.code}".Text()
-                                    "Requested at: ${result.reqTime}".Text()
-                                    "Responded at: ${result.respTime}".Text()
-                                }
+                                    1 -> {
+                                        "Requested at: ${result.reqTime}".Text()
+                                        "Responded at: ${result.respTime}".Text()
+                                        result.body.Text()
+                                    }
 
-                                1 -> {
-                                    "Requested at: ${result.reqTime}".Text()
-                                    "Responded at: ${result.respTime}".Text()
-                                    result.body.Text()
-                                }
-
-                                2 -> {}
-                                3 -> {
-                                    result.headers.forEach { (key, values) ->
-                                        values.forEach { value ->
-                                            FullWidthRow(modifier = Modifier.clickable {}) {
-                                                key.Text(modifier = Modifier.weight(0.4f))
-                                                value.Text(modifier = Modifier.weight(1f))
+                                    2 -> {}
+                                    3 -> {
+                                        result.headers.forEach { (key, values) ->
+                                            values.forEach { value ->
+                                                FullWidthRow(modifier = Modifier.clickable {}) {
+                                                    key.Text(modifier = Modifier.weight(0.4f))
+                                                    value.Text(modifier = Modifier.weight(1f))
+                                                }
+                                                HorizontalDivider()
                                             }
-                                            HorizontalDivider()
                                         }
                                     }
                                 }
+                            } ?: FullSizeColumn {
+                                "Error: ${reqResult.error}".Text()
                             }
-                        } ?: FullSizeColumn {
-                            "Error: ${reqResult.error}".Text()
                         }
                     }
                 }

@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import top.writerpass.cmplibrary.LaunchedEffectOdd
-import top.writerpass.cmplibrary.compose.Icon
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.Composables
+import top.writerpass.cmplibrary.compose.ables.StateComposables
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
@@ -98,198 +98,202 @@ fun RequestPartParams() {
     val apiViewModel = LocalApiViewModel.current
     val ui by apiViewModel.ui.collectAsState()
 
-    CommonTableFrame(
-        modifier = Modifier.border(
-            width = 2.dp,
-            color = Color.Green,
-            shape = RoundedCornerShape(4.dp)
-        ),
-        listState = rememberLazyListState(),
-        tableState = tableState,
-        dataRowCount = ui.params.size,
-        dataColumnCount = 3,
-        headerItemContent = { columnId ->
-            val header = remember { headers[columnId] }
-            header.Text(modifier = Modifier.align(Alignment.Center))
-        },
-        footerItemContent = { columnId ->
-            when (columnId) {
-                0 -> BasicTextField(
-                    value = apiViewModel.newParamKey,
-                    onValueChange = { apiViewModel.newParamKey = it },
-                    modifier = Modifier.fillMaxSize(),
-                    maxLines = 1
-                )
-
-                1 -> BasicTextField(
-                    value = apiViewModel.newParamValue,
-                    onValueChange = { apiViewModel.newParamValue = it },
-                    modifier = Modifier.fillMaxSize(),
-                    maxLines = 1
-                )
-
-                2 -> BasicTextField(
-                    value = apiViewModel.newParamDescription,
-                    onValueChange = { apiViewModel.newParamDescription = it },
-                    modifier = Modifier.fillMaxSize(),
-                    maxLines = 1
-                )
-            }
-        },
-        leadingItemContent = { rowId ->
-            when (rowId) {
-                TableAxisIds.HeaderRowId -> {
-                    val allEnabled by remember(ui.params.asReadOnly()) {
-                        derivedStateOf {
-                            ui.params.asReadOnly().all { it.enabled }
-                        }
-                    }
-                    Checkbox(
-                        checked = allEnabled,
-                        onCheckedChange = { enabled ->
-                            ui.params.asReadOnly()
-                                .map { apiParam -> apiParam.copy(enabled = enabled) }
-                                .forEachIndexed { index, param ->
-                                    ui.params[index] = param
-                                }
-                        },
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-
-                TableAxisIds.FooterRowId -> {
-                    Checkbox(
-                        checked = apiViewModel.newParamEnabled,
-                        onCheckedChange = { apiViewModel.newParamEnabled = it },
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-
-                else -> {
-                    val item by remember(rowId) {
-                        derivedStateOf {
-                            ui.params[rowId]
-                        }
-                    }
-                    Checkbox(
-                        checked = item.enabled,
-                        onCheckedChange = {
-                            val newApiParam = item.copy(enabled = item.enabled.not())
-                            apiViewModel.updateApiParam(rowId, newApiParam)
-                        },
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-        },
-        tailItemContent = { rowId ->
-            when (rowId) {
-                TableAxisIds.HeaderRowId -> {
-                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
-                }
-
-                TableAxisIds.FooterRowId -> {
-                    Row {
-                        Icons.Default.Clear.Icon(
-                            modifier = Modifier.clickable {
-                                apiViewModel.clearNewParam()
-                            }
+    Composables.Scope {
+        StateComposables.Scope {
+            CommonTableFrame(
+                modifier = Modifier.border(
+                    width = 2.dp,
+                    color = Color.Green,
+                    shape = RoundedCornerShape(4.dp)
+                ),
+                listState = rememberLazyListState(),
+                tableState = tableState,
+                dataRowCount = ui.params.size,
+                dataColumnCount = 3,
+                headerItemContent = { columnId ->
+                    val header = remember { headers[columnId] }
+                    header.Text(modifier = Modifier.align(Alignment.Center))
+                },
+                footerItemContent = { columnId ->
+                    when (columnId) {
+                        0 -> BasicTextField(
+                            value = apiViewModel.newParamKey,
+                            onValueChange = { apiViewModel.newParamKey = it },
+                            modifier = Modifier.fillMaxSize(),
+                            maxLines = 1
                         )
-                        Icons.Default.Add.Icon(
-                            modifier = Modifier.clickable {
-                                if (apiViewModel.saveNewApiParam()) {
-                                    apiViewModel.clearNewParam()
-                                }
-                            }
-                        )
-                    }
-                }
 
-                else -> {
-                    Row {
-                        Icons.Default.Delete.Icon(
-                            modifier = Modifier.clickable {
-                                apiViewModel.deleteApiParam(rowId)
-                            }
+                        1 -> BasicTextField(
+                            value = apiViewModel.newParamValue,
+                            onValueChange = { apiViewModel.newParamValue = it },
+                            modifier = Modifier.fillMaxSize(),
+                            maxLines = 1
                         )
-                    }
-                }
-            }
-        },
-        dataItemContent = { rowId, columnId ->
-            val density = LocalDensity.current
-            val item1 = remember { ui.params[rowId] }
-            val item = remember {
-                when (columnId) {
-                    0 -> item1.key
-                    1 -> item1.value
-                    2 -> item1.description
-                    else -> "------"
-                }
-            }
-            val isEditing = Mutable.someBoolean()
-            val textFieldValue = Mutable.something(
-                default = TextFieldValue(
-                    text = item,
-                    selection = TextRange(item.length)
-                )
-            )
-            var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
 
-            isEditing.When(
-                isTrue = {
-                    val focusRequester = remember { FocusRequester() }
-                    LaunchedEffectOdd { focusRequester.requestFocus() }
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BasicTextField(
-                            value = textFieldValue.value,
-                            onValueChange = {
-                                textFieldValue.value = it
-                                val apiParam = ui.params[rowId]
-                                val newApiParam = when (columnId) {
-                                    0 -> apiParam.copy(key = item)
-                                    1 -> apiParam.copy(value = item)
-                                    2 -> apiParam.copy(description = item)
-                                    else -> apiParam
-                                }
-                                apiViewModel.updateApiParam(rowId, newApiParam)
-                            },
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .weight(1f)
-                                .focusRequester(focusRequester),
-                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
-                            keyboardActions = KeyboardActions(
-                                onGo = { isEditing.setFalse() }
-                            ),
-                            singleLine = true,
-                            textStyle = TextStyle.Default.copy(
-                                lineHeight = lineHeightSp,
-                                fontSize = 14.sp
-                            ),
+                        2 -> BasicTextField(
+                            value = apiViewModel.newParamDescription,
+                            onValueChange = { apiViewModel.newParamDescription = it },
+                            modifier = Modifier.fillMaxSize(),
+                            maxLines = 1
                         )
-                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
-                            isEditing.setFalse()
-                        })
                     }
                 },
-                isFalse = {
-                    Text(
-                        text = textFieldValue.value.text,
-                        modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
-                        onTextLayout = { textLayoutResult ->
-                            // 获取文本高度（像素）
-                            lineHeightSp =
-                                with(density) { textLayoutResult.size.height.toFloat().toSp() }
+                leadingItemContent = { rowId ->
+                    when (rowId) {
+                        TableAxisIds.HeaderRowId -> {
+                            val allEnabled by remember(ui.params.asReadOnly()) {
+                                derivedStateOf {
+                                    ui.params.asReadOnly().all { it.enabled }
+                                }
+                            }
+                            Checkbox(
+                                checked = allEnabled,
+                                onCheckedChange = { enabled ->
+                                    ui.params.asReadOnly()
+                                        .map { apiParam -> apiParam.copy(enabled = enabled) }
+                                        .forEachIndexed { index, param ->
+                                            ui.params[index] = param
+                                        }
+                                },
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        TableAxisIds.FooterRowId -> {
+                            Checkbox(
+                                checked = apiViewModel.newParamEnabled,
+                                onCheckedChange = { apiViewModel.newParamEnabled = it },
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        else -> {
+                            val item by remember(rowId) {
+                                derivedStateOf {
+                                    ui.params[rowId]
+                                }
+                            }
+                            Checkbox(
+                                checked = item.enabled,
+                                onCheckedChange = {
+                                    val newApiParam = item.copy(enabled = item.enabled.not())
+                                    apiViewModel.updateApiParam(rowId, newApiParam)
+                                },
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                    }
+                },
+                tailItemContent = { rowId ->
+                    when (rowId) {
+                        TableAxisIds.HeaderRowId -> {
+                            "Actions".Text(modifier = Modifier.align(Alignment.Center))
+                        }
+
+                        TableAxisIds.FooterRowId -> {
+                            Row {
+                                Icons.Default.Clear.Icon(
+                                    modifier = Modifier.clickable {
+                                        apiViewModel.clearNewParam()
+                                    }
+                                )
+                                Icons.Default.Add.Icon(
+                                    modifier = Modifier.clickable {
+                                        if (apiViewModel.saveNewApiParam()) {
+                                            apiViewModel.clearNewParam()
+                                        }
+                                    }
+                                )
+                            }
+                        }
+
+                        else -> {
+                            Row {
+                                Icons.Default.Delete.Icon(
+                                    modifier = Modifier.clickable {
+                                        apiViewModel.deleteApiParam(rowId)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                },
+                dataItemContent = { rowId, columnId ->
+                    val density = LocalDensity.current
+                    val item1 = remember { ui.params[rowId] }
+                    val item = remember {
+                        when (columnId) {
+                            0 -> item1.key
+                            1 -> item1.value
+                            2 -> item1.description
+                            else -> "------"
+                        }
+                    }
+                    val isEditing = Mutable.someBoolean()
+                    val textFieldValue = Mutable.something(
+                        default = TextFieldValue(
+                            text = item,
+                            selection = TextRange(item.length)
+                        )
+                    )
+                    var lineHeightSp by remember { mutableStateOf(TextUnit.Unspecified) }
+
+                    isEditing.When(
+                        isTrue = {
+                            val focusRequester = remember { FocusRequester() }
+                            LaunchedEffectOdd { focusRequester.requestFocus() }
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                BasicTextField(
+                                    value = textFieldValue.value,
+                                    onValueChange = {
+                                        textFieldValue.value = it
+                                        val apiParam = ui.params[rowId]
+                                        val newApiParam = when (columnId) {
+                                            0 -> apiParam.copy(key = item)
+                                            1 -> apiParam.copy(value = item)
+                                            2 -> apiParam.copy(description = item)
+                                            else -> apiParam
+                                        }
+                                        apiViewModel.updateApiParam(rowId, newApiParam)
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(1f)
+                                        .focusRequester(focusRequester),
+                                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
+                                    keyboardActions = KeyboardActions(
+                                        onGo = { isEditing.setFalse() }
+                                    ),
+                                    singleLine = true,
+                                    textStyle = TextStyle.Default.copy(
+                                        lineHeight = lineHeightSp,
+                                        fontSize = 14.sp
+                                    ),
+                                )
+                                Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+                                    isEditing.setFalse()
+                                })
+                            }
                         },
-                        lineHeight = lineHeightSp,
-                        fontSize = 14.sp
+                        isFalse = {
+                            Text(
+                                text = textFieldValue.value.text,
+                                modifier = Modifier.fillMaxSize().clickable { isEditing.setTrue() },
+                                onTextLayout = { textLayoutResult ->
+                                    // 获取文本高度（像素）
+                                    lineHeightSp =
+                                        with(density) { textLayoutResult.size.height.toFloat().toSp() }
+                                },
+                                lineHeight = lineHeightSp,
+                                fontSize = 14.sp
+                            )
+                        }
                     )
                 }
             )
         }
-    )
+    }
 }

@@ -19,6 +19,9 @@ import top.writerpass.rekuester.models.Api
 import top.writerpass.rekuester.models.ApiHeader
 import top.writerpass.rekuester.models.ApiParam
 import top.writerpass.rekuester.models.ApiStateAuthContainer
+import top.writerpass.rekuester.models.ApiStateBodyContainer
+import top.writerpass.rekuester.models.BodyTypes
+import top.writerpass.rekuester.models.RawBodyTypes
 
 class ApiViewModel(
     val apiUuid: String,
@@ -130,12 +133,6 @@ class ApiViewModel(
             started = SharingStarted.WhileSubscribed(),
             initialValue = ApiStateHolder.BLANK
         )
-//    val apiStateFlow = apiFlow.map { ApiStateHolder1.getApiState(it) }
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(),
-//            initialValue = ApiStateHolder1.BLANK
-//        )
 
     fun updateOrInsertApi(api: Api) {
         runInScope {
@@ -157,5 +154,33 @@ class ApiViewModel(
             headers = ui.value.headers.asReadOnly(),
             body = ui.value.body
         )
+    }
+
+    val bodyPart = BodyPart()
+
+    inner class BodyPart{
+        val rawTypeCalculator = { ui.value.body.raw?.type ?: RawBodyTypes.Text }
+        val rawContentCalculator = { ui.value.body.raw?.content ?: "" }
+        fun updateType(newType: BodyTypes){
+            ui.value.body = ui.value.body.copy(type = newType)
+        }
+        fun updateRawType(newType: RawBodyTypes){
+            val body = ui.value.body
+            val raw = body.raw
+            val newRaw = raw?.copy(type = newType) ?: ApiStateBodyContainer.Raw(newType,"")
+            val newBody = body.copy(raw = newRaw)
+            ui.value.body = newBody
+        }
+        fun updateRawContent(newContent: String){
+            val body = ui.value.body
+            val raw = body.raw
+            val rawType = raw?.type ?: RawBodyTypes.Text
+            val newRaw = raw?.copy(content = newContent) ?: ApiStateBodyContainer.Raw(
+                type = rawType,
+                content = newContent
+            )
+            val newBody = body.copy(raw = newRaw)
+            ui.value.body = newBody
+        }
     }
 }

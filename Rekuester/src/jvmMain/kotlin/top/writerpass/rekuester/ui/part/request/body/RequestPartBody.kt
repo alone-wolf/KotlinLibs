@@ -4,13 +4,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import top.writerpass.cmplibrary.compose.DropDownMenu
 import top.writerpass.cmplibrary.compose.FullWidthColumn
 import top.writerpass.cmplibrary.compose.RadioButtonGroup
-import top.writerpass.cmplibrary.compose.Text
-import top.writerpass.cmplibrary.utils.Mutable
+import top.writerpass.cmplibrary.compose.ables.Composables
+import top.writerpass.cmplibrary.compose.ables.StateComposables
 import top.writerpass.rekuester.LocalApiViewModel
-import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.models.BodyTypes
 import top.writerpass.rekuester.models.RawBodyTypes
 
@@ -18,59 +16,50 @@ import top.writerpass.rekuester.models.RawBodyTypes
 @Composable
 fun RequestPartBody() {
     val apiViewModel = LocalApiViewModel.current
-    val ui by apiViewModel.ui.collectAsState()
-    val bodyType by remember { derivedStateOf { ui.body.type } }
-    FullWidthColumn {
-        RadioButtonGroup(
-            options = BodyTypes.list,
-            selectedOption = bodyType,
-            onOptionSelected = { ui.body = ui.body.copy(type = it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { it.label }
-        )
-        FullWidthColumn {
-            when (bodyType) {
-                BodyTypes.None -> { "None of Body".Text() }
-                BodyTypes.FormData -> RequestPartBodyFormData()
-                BodyTypes.FormUrlencoded -> RequestPartBodyFormUrlencoded()
-                BodyTypes.Binary -> RequestPartBodyBinary()
-                BodyTypes.Raw -> {
-                    // sub-selector
-                    val rawType1 by remember { derivedStateOf { ui.body.raw?.type ?: RawBodyTypes.Text } }
-                    RadioButtonGroup(
-                        options = RawBodyTypes.list,
-                        selectedOption = rawType1,
-                        onOptionSelected = { newType->
-                            val body = ui.body
-                            val raw = body.raw
+    val bodyPart = remember { apiViewModel.bodyPart }
+    val body = apiViewModel.ui.collectAsState().value.body
+    Composables.Scope {
+        StateComposables.Scope {
+            FullWidthColumn {
+                RadioButtonGroup(
+                    options = BodyTypes.list,
+                    selectedOption = body.type,
+                    onOptionSelected = bodyPart::updateType,
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { it.label }
+                )
+                FullWidthColumn {
+                    when (body.type) {
+                        BodyTypes.None -> {
+                            "None of Body".Text()
+                        }
 
-                            val newRaw = raw?.copy(type = newType) ?: ApiStateBodyContainer.Raw(newType,"")
+                        BodyTypes.FormData -> RequestPartBodyFormData()
+                        BodyTypes.FormUrlencoded -> RequestPartBodyFormUrlencoded()
+                        BodyTypes.Binary -> RequestPartBodyBinary()
+                        BodyTypes.Raw -> {
+                            // sub-selector
+                            val rawType by remember { derivedStateOf(bodyPart.rawTypeCalculator) }
+                            val rawText by remember { derivedStateOf(bodyPart.rawContentCalculator) }
 
-                            ui.body.raw ?: ApiStateBodyContainer.Raw(newType,"")
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { it.label }
-                    )
+                            RadioButtonGroup(
+                                options = RawBodyTypes.list,
+                                selectedOption = rawType,
+                                onOptionSelected = bodyPart::updateRawType,
+                                modifier = Modifier.fillMaxWidth(),
+                                label = { it.label }
+                            )
+                            OutlinedTextField(
+                                value = rawText,
+                                onValueChange = bodyPart::updateRawContent,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
 
-                    val rawType = Mutable.something(ui.body.raw?.type ?: RawBodyTypes.Text)
-                    rawType.DropDownMenu(
-                        entities = RawBodyTypes.map,
-                        any2String = { label },
-                    )
-                    val rawText by remember {
-                        derivedStateOf { ui.body.raw?.content ?: "" }
+                        BodyTypes.GraphQL -> {
+                            // not implementation
+                        }
                     }
-                    OutlinedTextField(
-                        value = rawText,
-                        onValueChange = {
-//                            ui.body = ui.body.copy(raw = ui.body.raw?.copy(content = it))
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                BodyTypes.GraphQL -> {
-                    // not implementation
                 }
             }
         }
