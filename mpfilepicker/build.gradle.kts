@@ -38,19 +38,18 @@ kotlin {
 
     jvm()
 
-//    js(IR) {
-//        browser()
-//        binaries.executable()
-//    }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-//        moduleName = "mpfilepicker"
+    js(IR) {
         browser()
         binaries.executable()
     }
 
-//    macosX64()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+    macosX64()
 
     listOf(
         iosX64(),
@@ -80,6 +79,7 @@ kotlin {
 //            api(libs.androidx.core.ktx)
 //            api(libs.compose.activity)
             api(libs.kotlinx.coroutines.android)
+            implementation(libs.androidx.activity.ktx)
         }
 
         jvmMain.dependencies {
@@ -105,7 +105,7 @@ kotlin {
             }
         }
 //        val jvmTest by getting
-//        val jsMain by getting
+        val jsMain by getting
         val wasmJsMain by getting
     }
 
