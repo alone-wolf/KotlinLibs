@@ -61,9 +61,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.BasicTextField
-import top.writerpass.cmplibrary.compose.ables.Icon
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxBasicTextField
+import top.writerpass.cmplibrary.compose.ables.CxIcon
+import top.writerpass.cmplibrary.compose.ables.CxText
 import top.writerpass.cmplibrary.horizontalDivider
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.pointerIcons.YResize
@@ -548,13 +548,13 @@ private fun main() = singleWindowApplication {
         headerItemContent = { columnId ->
             val headers = remember { listOf("Key", "Value", "Description") }
             val header = remember { headers[columnId] }
-            header.Text(modifier = Modifier.align(Alignment.Center))
+            header.CxText(modifier = Modifier.align(Alignment.Center))
         },
         footerItemContent = { columnId ->
             when (columnId) {
-                0 -> k.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-                1 -> v.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-                2 -> d.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+                0 -> k.CxBasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+                1 -> v.CxBasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+                2 -> d.CxBasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
             }
         },
         leadingItemContent = { rowId ->
@@ -575,20 +575,20 @@ private fun main() = singleWindowApplication {
         tailItemContent = { rowId ->
             when (rowId) {
                 HeaderRowId -> {
-                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
+                    "Actions".CxText(modifier = Modifier.align(Alignment.Center))
                 }
 
                 FooterRowId -> {
                     Row {
-                        Icons.Default.Delete.Icon()
-                        Icons.Default.Save.Icon()
+                        Icons.Default.Delete.CxIcon()
+                        Icons.Default.Save.CxIcon()
                     }
                 }
 
                 else -> {
                     Row {
-                        Icons.Default.CleanHands.Icon()
-                        Icons.Default.Add.Icon()
+                        Icons.Default.CleanHands.CxIcon()
+                        Icons.Default.Add.CxIcon()
                     }
                 }
             }
@@ -639,7 +639,7 @@ private fun main() = singleWindowApplication {
                                 fontSize = 14.sp
                             ),
                         )
-                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+                        Icons.Default.Check.CxIcon(modifier = Modifier.size(16.dp).clickable {
                             isEditing.setFalse()
                         })
                     }

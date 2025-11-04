@@ -7,7 +7,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -28,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullHeightColumn
 import top.writerpass.cmplibrary.compose.FullWidthBox
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.IconButton
-import top.writerpass.cmplibrary.compose.ables.Text
-import top.writerpass.cmplibrary.compose.ables.TextButton
+import top.writerpass.cmplibrary.compose.ables.CxIconButton
+import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.CxTextButton
 import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.modifier.onPointerRightClick
 import top.writerpass.cmplibrary.utils.Mutable
@@ -48,21 +54,21 @@ fun ApisListView() {
     val collectionApiViewModel = LocalCollectionApiViewModel.current
     FullHeightColumn(modifier = Modifier.width(mainUiViewModel.sideListWidth)) {
         FullWidthRow(horizontalArrangement = Arrangement.End) {
-            "Load".TextButton { mainViewModel.loadData() }
-            "Save".TextButton { mainViewModel.saveData() }
-            Icons.Default.Add.IconButton { collectionApiViewModel.createNewApi() }
+            "Load".CxTextButton { mainViewModel.loadData() }
+            "Save".CxTextButton { mainViewModel.saveData() }
+            Icons.Default.Add.CxIconButton { collectionApiViewModel.createNewApi() }
         }
         val collection by collectionApiViewModel.collectionFlow.collectAsState()
         if (collection == Collection.BLANK) {
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                "No Collection Selected".Text()
+                "No Collection Selected".CxText()
             }
         } else {
             Row(
                 modifier = Modifier.fillMaxWidth().height(30.dp).padding(start = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                collection.label.Text(maxLines = 1, overflow = TextOverflow.Ellipsis)
+                collection.label.CxText(maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             val apisList by collectionApiViewModel.apisListFlow.collectAsState()
             LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
@@ -83,7 +89,7 @@ fun ApisListView() {
                                     onHover = { onHover.value = true }
                                 ),
                         ) {
-                            api.label.Text(
+                            api.label.CxText(
                                 modifier = Modifier.align(Alignment.CenterStart),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -100,11 +106,11 @@ fun ApisListView() {
                                     ) {
                                         AnimatedContent(onIconHover.value) {
                                             if (it) {
-                                                Icons.Default.Delete.IconButton {
+                                                Icons.Default.Delete.CxIconButton {
                                                     collectionApiViewModel.deleteApi(api)
                                                 }
                                             } else {
-                                                Icons.Outlined.Delete.IconButton {}
+                                                Icons.Outlined.Delete.CxIconButton {}
                                             }
                                         }
                                     }

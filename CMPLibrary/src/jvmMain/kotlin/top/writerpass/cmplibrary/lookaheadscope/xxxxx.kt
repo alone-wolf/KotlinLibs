@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.singleWindowApplication
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxText
 
 private object XXXXX {
     /**
@@ -124,7 +124,7 @@ private object XXXXX {
             val hours = remember {
                 movableContentOf {
                     listOf("1", "2").forEach {
-                        it.Text(
+                        it.CxText(
                             modifier = Modifier.padding(8.dp)
                                 .wrapContentSize()
                                 .then(AnimatePlacementNodeElement(this@LookaheadScope)),
@@ -138,7 +138,7 @@ private object XXXXX {
             val minutes = remember {
                 movableContentOf {
                     listOf("5", "6").forEach {
-                        it.Text(
+                        it.CxText(
                             modifier = Modifier.padding(8.dp)
                                 .wrapContentSize()
                                 .then(AnimatePlacementNodeElement(this@LookaheadScope)),

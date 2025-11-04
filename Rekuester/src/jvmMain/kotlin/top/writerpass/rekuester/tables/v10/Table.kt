@@ -5,7 +5,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -15,12 +24,23 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CleanHands
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -34,13 +54,17 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.coerceIn
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.BasicTextField
-import top.writerpass.cmplibrary.compose.ables.Icon
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxBasicTextField
+import top.writerpass.cmplibrary.compose.ables.CxIcon
+import top.writerpass.cmplibrary.compose.ables.CxText
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When
@@ -75,7 +99,8 @@ private sealed class TableAxisStates(default: Dp) {
         override fun updateValue(newValue: Dp) {}
     }
 
-    class RangedAxisState(private val min: Dp, private val max: Dp, default: Dp) : TableAxisStates(default) {
+    class RangedAxisState(private val min: Dp, private val max: Dp, default: Dp) :
+        TableAxisStates(default) {
         override fun updateValue(newValue: Dp) {
             if (newValue > min && newValue < max) {
                 super.updateValue(newValue)
@@ -136,9 +161,10 @@ private class TableState(
     }
 
     @Composable
-    fun rememberRangedColumnState(id: Int, min: Dp, max: Dp, default: Dp = defaultWidth) = remember {
-        columnStateMap.getOrCreate(id) { TableAxisStates.RangedAxisState(min, max, default) }
-    }
+    fun rememberRangedColumnState(id: Int, min: Dp, max: Dp, default: Dp = defaultWidth) =
+        remember {
+            columnStateMap.getOrCreate(id) { TableAxisStates.RangedAxisState(min, max, default) }
+        }
 
     val tableHeight: Dp by derivedStateOf {
         rowStateMap.values.sumOf { it.value }
@@ -243,13 +269,13 @@ private fun main() = singleWindowApplication {
         headerItemContent = { columnId ->
             val headers = remember { listOf("Key", "Value", "Description") }
             val header = remember { headers[columnId] }
-            header.Text(modifier = Modifier.align(Alignment.Center))
+            header.CxText(modifier = Modifier.align(Alignment.Center))
         },
         footerItemContent = { columnId ->
             when (columnId) {
-                0 -> k.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-                1 -> v.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
-                2 -> d.BasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+                0 -> k.CxBasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+                1 -> v.CxBasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
+                2 -> d.CxBasicTextField(modifier = Modifier.fillMaxSize(), maxLines = 1)
             }
         },
         leadingItemContent = { rowId ->
@@ -259,7 +285,7 @@ private fun main() = singleWindowApplication {
                 }
 
                 FooterRowId -> {
-                    Checkbox(e.value, {e.value = it}, modifier = Modifier.align(Alignment.Center))
+                    Checkbox(e.value, { e.value = it }, modifier = Modifier.align(Alignment.Center))
                 }
 
                 else -> {
@@ -270,20 +296,20 @@ private fun main() = singleWindowApplication {
         tailItemContent = { rowId ->
             when (rowId) {
                 HeaderRowId -> {
-                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
+                    "Actions".CxText(modifier = Modifier.align(Alignment.Center))
                 }
 
                 FooterRowId -> {
                     Row {
-                        Icons.Default.Delete.Icon()
-                        Icons.Default.Save.Icon()
+                        Icons.Default.Delete.CxIcon()
+                        Icons.Default.Save.CxIcon()
                     }
                 }
 
                 else -> {
                     Row {
-                        Icons.Default.CleanHands.Icon()
-                        Icons.Default.Add.Icon()
+                        Icons.Default.CleanHands.CxIcon()
+                        Icons.Default.Add.CxIcon()
                     }
                 }
             }
@@ -330,7 +356,7 @@ private fun main() = singleWindowApplication {
                                 fontSize = 14.sp
                             )
                         )
-                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+                        Icons.Default.Check.CxIcon(modifier = Modifier.size(16.dp).clickable {
                             isEditing.setFalse()
                         })
                     }
@@ -385,8 +411,8 @@ private fun CommonTableFrame(
 
     val tableColumnCount = remember {
         var count = dataColumnCount
-        if (hasLeadingColumn) count+=1
-        if (hasTailColumn) count +=1
+        if (hasLeadingColumn) count += 1
+        if (hasTailColumn) count += 1
         count
     }
 
@@ -448,7 +474,12 @@ private fun CommonTableFrame(
                             modifier = Modifier.fillMaxHeight().width(columnState.value),
                             content = { leadingItemContent?.invoke(this, rowId) }
                         )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
+                        VerticalDivider(
+                            modifier = Modifier.horizontalDraggable(
+                                isFirstRow,
+                                columnState
+                            )
+                        )
                     }
                     (0 until dataColumnCount).forEach { columnId ->
                         val columnState = tableState.rememberColumnState(columnId)
@@ -456,7 +487,12 @@ private fun CommonTableFrame(
                             modifier = Modifier.fillMaxHeight().width(columnState.value),
                             content = { dataItemContent(rowId, columnId) }
                         )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
+                        VerticalDivider(
+                            modifier = Modifier.horizontalDraggable(
+                                isFirstRow,
+                                columnState
+                            )
+                        )
                     }
                     if (hasTailColumn) {
                         val columnState = tableState.rememberColumnState(TailColumnId)
@@ -464,7 +500,12 @@ private fun CommonTableFrame(
                             modifier = Modifier.fillMaxHeight().width(columnState.value),
                             content = { tailItemContent?.invoke(this, rowId) }
                         )
-                        VerticalDivider(modifier = Modifier.horizontalDraggable(isFirstRow, columnState))
+                        VerticalDivider(
+                            modifier = Modifier.horizontalDraggable(
+                                isFirstRow,
+                                columnState
+                            )
+                        )
                     }
                     Box(modifier = Modifier.height(rowState.value).width(18.dp))
                 }

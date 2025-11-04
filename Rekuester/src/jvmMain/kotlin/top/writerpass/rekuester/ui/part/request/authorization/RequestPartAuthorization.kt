@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullWidthColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.OutlinedBasicTextField
-import top.writerpass.cmplibrary.compose.ables.Text
-import top.writerpass.cmplibrary.compose.ables.TextButton
+import top.writerpass.cmplibrary.compose.ables.CxOutlinedBasicTextField
+import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.CxTextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.models.AuthTypes
@@ -33,7 +33,7 @@ fun RequestPartAuthorization() {
     FullWidthRow {
         var expanded by remember { mutableStateOf(false) }
         Box {
-            authType.label.TextButton { expanded = !expanded }
+            authType.label.CxTextButton { expanded = !expanded }
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -47,7 +47,7 @@ fun RequestPartAuthorization() {
                             }
                             expanded = false
                         },
-                        text = { k.Text() }
+                        text = { k.CxText() }
                     )
                 }
             }
@@ -55,11 +55,11 @@ fun RequestPartAuthorization() {
         FullWidthColumn {
             when (authType) {
                 AuthTypes.InheritAuthFromParent -> {
-                    "Inherit Auth From Parent".Text()
+                    "Inherit Auth From Parent".CxText()
                 }
 
                 AuthTypes.NoAuth -> {
-                    "No Auth".Text()
+                    "No Auth".CxText()
                 }
 
                 AuthTypes.Basic -> {
@@ -109,9 +109,9 @@ fun RequestPartAuthorization() {
                     val key = Mutable.someString("")
                     val value = Mutable.someString("")
                     val addTo = Mutable.someString("")
-                    key.OutlinedBasicTextField(label = "Key")
-                    value.OutlinedBasicTextField(label = "Value")
-                    addTo.OutlinedBasicTextField(label = "Add to")
+                    key.CxOutlinedBasicTextField(label = "Key")
+                    value.CxOutlinedBasicTextField(label = "Value")
+                    addTo.CxOutlinedBasicTextField(label = "Add to")
                 }
 
                 else -> {}

@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import top.writerpass.cmplibrary.LaunchedEffectOdd
-import top.writerpass.cmplibrary.compose.ables.Icon
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxIcon
+import top.writerpass.cmplibrary.compose.ables.CxText
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
@@ -110,7 +110,7 @@ fun RequestPartParams() {
         dataColumnCount = 3,
         headerItemContent = { columnId ->
             val header = remember { headers[columnId] }
-            header.Text(modifier = Modifier.align(Alignment.Center))
+            header.CxText(modifier = Modifier.align(Alignment.Center))
         },
         footerItemContent = { columnId ->
             when (columnId) {
@@ -185,17 +185,17 @@ fun RequestPartParams() {
         tailItemContent = { rowId ->
             when (rowId) {
                 TableAxisIds.HeaderRowId -> {
-                    "Actions".Text(modifier = Modifier.align(Alignment.Center))
+                    "Actions".CxText(modifier = Modifier.align(Alignment.Center))
                 }
 
                 TableAxisIds.FooterRowId -> {
                     Row {
-                        Icons.Default.Clear.Icon(
+                        Icons.Default.Clear.CxIcon(
                             modifier = Modifier.clickable {
                                 apiViewModel.clearNewParam()
                             }
                         )
-                        Icons.Default.Add.Icon(
+                        Icons.Default.Add.CxIcon(
                             modifier = Modifier.clickable {
                                 if (apiViewModel.saveNewApiParam()) {
                                     apiViewModel.clearNewParam()
@@ -207,7 +207,7 @@ fun RequestPartParams() {
 
                 else -> {
                     Row {
-                        Icons.Default.Delete.Icon(
+                        Icons.Default.Delete.CxIcon(
                             modifier = Modifier.clickable {
                                 apiViewModel.deleteApiParam(rowId)
                             }
@@ -271,7 +271,7 @@ fun RequestPartParams() {
                                 fontSize = 14.sp
                             ),
                         )
-                        Icons.Default.Check.Icon(modifier = Modifier.size(16.dp).clickable {
+                        Icons.Default.Check.CxIcon(modifier = Modifier.size(16.dp).clickable {
                             isEditing.setFalse()
                         })
                     }

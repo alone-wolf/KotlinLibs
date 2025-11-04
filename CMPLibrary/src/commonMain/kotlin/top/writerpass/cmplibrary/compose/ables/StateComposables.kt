@@ -1,6 +1,5 @@
 package top.writerpass.cmplibrary.compose.ables
 
-import androidx.annotation.RestrictTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -16,7 +15,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 
 @Composable
-fun MutableState<String>.BasicTextField(
+fun MutableState<String>.CxBasicTextField(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
@@ -35,7 +34,7 @@ fun MutableState<String>.BasicTextField(
 }
 
 @Composable
-fun MutableState<String>.OutlinedBasicTextField(
+fun MutableState<String>.CxOutlinedBasicTextField(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
@@ -46,17 +45,17 @@ fun MutableState<String>.OutlinedBasicTextField(
     OutlinedTextField(
         value = value,
         onValueChange = { value = it },
-        placeholder = placeholder?.let { {it.Text() } },
+        placeholder = placeholder?.let { { it.CxText() } },
         enabled = enabled,
         maxLines = maxLines,
-        label = label?.let { { it.Text() } },
+        label = label?.let { { it.CxText() } },
         modifier = modifier,
         visualTransformation = visualTransformation
     )
 }
 
 @Composable
-fun <T : Any> MutableState<T>.OutlinedBasicTextField(
+fun <T : Any> MutableState<T>.CxOutlinedBasicTextField(
     label: String? = null,
     maxLines: Int = Int.MAX_VALUE,
     enabled: Boolean = true,
@@ -65,7 +64,7 @@ fun <T : Any> MutableState<T>.OutlinedBasicTextField(
     any2String: T.() -> String
 ) {
     OutlinedTextField(
-        label = label?.let { { it.Text() } },
+        label = label?.let { { it.CxText() } },
         maxLines = maxLines,
         enabled = enabled,
         value = value.any2String(),
@@ -75,13 +74,13 @@ fun <T : Any> MutableState<T>.OutlinedBasicTextField(
 }
 
 @Composable
-fun MutableState<String>.DropDownMenu(
+fun MutableState<String>.CxDropDownMenu(
     values: List<String>,
     modifier: Modifier = Modifier.Companion,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        value.TextButton(modifier = modifier) { expanded = !expanded }
+        value.CxTextButton(modifier = modifier) { expanded = !expanded }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -92,7 +91,7 @@ fun MutableState<String>.DropDownMenu(
                         value = it
                         expanded = false
                     },
-                    text = { it.Text() }
+                    text = { it.CxText() }
                 )
             }
         }
@@ -100,13 +99,13 @@ fun MutableState<String>.DropDownMenu(
 }
 
 @Composable
-fun MutableState<String>.DropDownMenu(
+fun MutableState<String>.CxDropDownMenu(
     entities: Map<String, String>,
     modifier: Modifier = Modifier.Companion,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        value.TextButton { expanded = !expanded }
+        value.CxTextButton { expanded = !expanded }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -118,7 +117,7 @@ fun MutableState<String>.DropDownMenu(
                         value = v
                         expanded = false
                     },
-                    text = { k.Text() }
+                    text = { k.CxText() }
                 )
             }
         }
@@ -126,14 +125,14 @@ fun MutableState<String>.DropDownMenu(
 }
 
 @Composable
-fun <T : Any> MutableState<T>.DropDownMenu(
+fun <T : Any> MutableState<T>.CxDropDownMenu(
     entities: Map<String, T>,
     any2String: T.() -> String = { toString() },
     modifier: Modifier = Modifier.Companion,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        value.any2String().TextButton { expanded = !expanded }
+        value.any2String().CxTextButton { expanded = !expanded }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -145,7 +144,7 @@ fun <T : Any> MutableState<T>.DropDownMenu(
                         value = v
                         expanded = false
                     },
-                    text = { k.Text() }
+                    text = { k.CxText() }
                 )
             }
         }

@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun Icon(
+fun WpIcon(
     imageVector: ImageVector,
     description: String? = null,
     modifier: Modifier = Modifier.Companion
@@ -22,7 +22,7 @@ fun Icon(
 )
 
 @Composable
-fun ImageVector.Icon(
+fun ImageVector.CxIcon(
     description: String? = null,
     modifier: Modifier = Modifier.Companion,
     tint: Color = LocalContentColor.current
@@ -36,7 +36,7 @@ fun ImageVector.Icon(
 }
 
 @Composable
-fun Painter.Icon(
+fun Painter.CxIcon(
     description: String? = null,
     modifier: Modifier = Modifier.Companion,
     tint: Color = LocalContentColor.current
@@ -50,7 +50,7 @@ fun Painter.Icon(
 }
 
 @Composable
-fun Painter.IconButton(
+fun Painter.CxIconButton(
     description: String? = null,
     modifier: Modifier = Modifier.Companion,
     enabled: Boolean = true,
@@ -65,13 +65,13 @@ fun Painter.IconButton(
         colors = colors,
         interactionSource = interactionSource,
         content = {
-            this.Icon(description)
+            this.CxIcon(description)
         }
     )
 }
 
 @Composable
-fun ImageVector.IconButton(
+fun ImageVector.CxIconButton(
     description: String? = null,
     modifier: Modifier = Modifier.Companion,
     enabled: Boolean = true,
@@ -86,7 +86,7 @@ fun ImageVector.IconButton(
         colors = colors,
         interactionSource = interactionSource,
         content = {
-            this.Icon(description)
+            this.CxIcon(description)
         }
     )
 }

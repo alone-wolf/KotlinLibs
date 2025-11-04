@@ -27,8 +27,8 @@ import androidx.compose.ui.window.Window
 import top.writerpass.cmplibrary.compose.FullHeightColumn
 import top.writerpass.cmplibrary.compose.FullWidthBox
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.IconButton
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxIconButton
+import top.writerpass.cmplibrary.compose.ables.CxText
 import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
@@ -55,7 +55,7 @@ fun CollectionManagerWindow() {
 //                        "Save".TextButton {
 //                            mainViewModel.saveData()
 //                        }
-                    Icons.Default.Add.IconButton {}
+                    Icons.Default.Add.CxIconButton {}
                 }
                 val collections by collectionsViewModel.collectionsFlow.collectAsState()
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -88,7 +88,7 @@ fun CollectionManagerWindow() {
                                         onHover = { onHover.value = true }
                                     ),
                             ) {
-                                collection.label.Text(
+                                collection.label.CxText(
                                     modifier = Modifier.align(Alignment.CenterStart),
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis

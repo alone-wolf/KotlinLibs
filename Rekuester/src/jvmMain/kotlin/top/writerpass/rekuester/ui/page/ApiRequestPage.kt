@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import io.ktor.http.HttpMethod
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.OutlinedButton
-import top.writerpass.cmplibrary.compose.ables.Text
-import top.writerpass.cmplibrary.compose.ables.TextButton
+import top.writerpass.cmplibrary.compose.ables.CxOutlinedButton
+import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.CxTextButton
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalApiViewModel
@@ -73,13 +73,13 @@ fun ApiRequestPage() {
                         modifier = Modifier.height(48.dp),
                     )
                 } else {
-                    ui.label.TextButton {
+                    ui.label.CxTextButton {
                         editLabel.setTrue()
                     }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            if (ui.isModified) "Save".TextButton {
+            if (ui.isModified) "Save".CxTextButton {
                 ui.toApi().let {
                     apiViewModel.updateOrInsertApi(it)
                     ui.updateModifyState(false)
@@ -91,7 +91,7 @@ fun ApiRequestPage() {
             var expanded by remember {
                 mutableStateOf(false)
             }
-            ui.method.value.TextButton {
+            ui.method.value.CxTextButton {
                 expanded = true
             }
             DropdownMenu(
@@ -115,7 +115,7 @@ fun ApiRequestPage() {
             OutlinedTextField(
                 value = ui.address,
 //                value = ui.urlBinding.text.value,
-                placeholder = { "Address".Text() },
+                placeholder = { "Address".CxText() },
                 onValueChange = { },
 //                onValueChange = { ui.urlBinding.onTextChange(it) },
                 modifier = Modifier
@@ -134,12 +134,12 @@ fun ApiRequestPage() {
                 maxLines = 1
             )
             Spacer(modifier = Modifier.width(8.dp))
-            "Send".OutlinedButton {
+            "Send".CxOutlinedButton {
                 apiViewModel.request()
             }
         }
         FullSizeColumn {
-            "Request".Text()
+            "Request".CxText()
             TabBarWithContent(
                 modifier = Modifier.fillMaxWidth(),
                 entities = requestPartEntities,
@@ -150,13 +150,13 @@ fun ApiRequestPage() {
                         2 -> RequestPartHeaders()
                         3 -> RequestPartBody()
                         else -> {
-                            requestPartEntities[pageId].Text()
-                            "Not Implemented".Text()
+                            requestPartEntities[pageId].CxText()
+                            "Not Implemented".CxText()
                         }
                     }
                 }
             )
-            "Response".Text()
+            "Response".CxText()
             FullSizeColumn(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
                 TabBarWithContent(
@@ -167,16 +167,16 @@ fun ApiRequestPage() {
                         reqResult.response?.let { result ->
                             when (pageId) {
                                 0 -> {
-                                    "Overview".Text()
-                                    "Status: ${result.code}".Text()
-                                    "Requested at: ${result.reqTime}".Text()
-                                    "Responded at: ${result.respTime}".Text()
+                                    "Overview".CxText()
+                                    "Status: ${result.code}".CxText()
+                                    "Requested at: ${result.reqTime}".CxText()
+                                    "Responded at: ${result.respTime}".CxText()
                                 }
 
                                 1 -> {
-                                    "Requested at: ${result.reqTime}".Text()
-                                    "Responded at: ${result.respTime}".Text()
-                                    result.body.Text()
+                                    "Requested at: ${result.reqTime}".CxText()
+                                    "Responded at: ${result.respTime}".CxText()
+                                    result.body.CxText()
                                 }
 
                                 2 -> {}
@@ -184,8 +184,8 @@ fun ApiRequestPage() {
                                     result.headers.forEach { (key, values) ->
                                         values.forEach { value ->
                                             FullWidthRow(modifier = Modifier.clickable {}) {
-                                                key.Text(modifier = Modifier.weight(0.4f))
-                                                value.Text(modifier = Modifier.weight(1f))
+                                                key.CxText(modifier = Modifier.weight(0.4f))
+                                                value.CxText(modifier = Modifier.weight(1f))
                                             }
                                             HorizontalDivider()
                                         }
@@ -193,7 +193,7 @@ fun ApiRequestPage() {
                                 }
                             }
                         } ?: FullSizeColumn {
-                            "Error: ${reqResult.error}".Text()
+                            "Error: ${reqResult.error}".CxText()
                         }
                     }
                 }

@@ -2,11 +2,15 @@ package top.writerpass.rekuester.ui.part.request.body
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullWidthColumn
 import top.writerpass.cmplibrary.compose.RadioButtonGroup
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxText
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.models.BodyTypes
 import top.writerpass.rekuester.models.RawBodyTypes
@@ -28,7 +32,7 @@ fun RequestPartBody() {
         FullWidthColumn {
             when (body.type) {
                 BodyTypes.None -> {
-                    "None of Body".Text()
+                    "None of Body".CxText()
                 }
 
                 BodyTypes.FormData -> RequestPartBodyFormData()

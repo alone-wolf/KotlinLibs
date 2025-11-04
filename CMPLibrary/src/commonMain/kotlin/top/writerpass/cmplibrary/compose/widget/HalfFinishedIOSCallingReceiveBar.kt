@@ -23,10 +23,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullSizeBox
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxText
 
 @Composable
-fun HalfFinishedIOSCallingReceiveBar(){
+fun HalfFinishedIOSCallingReceiveBar() {
     FullSizeBox {
         Box(
             modifier = Modifier
@@ -40,7 +40,7 @@ fun HalfFinishedIOSCallingReceiveBar(){
 //                )
                 .padding(horizontal = 8.dp)
         ) {
-            "Swipe to start".Text(modifier = Modifier.align(Alignment.Center))
+            "Swipe to start".CxText(modifier = Modifier.align(Alignment.Center))
             var offsetX by remember { mutableStateOf(0f) }
             Box(
                 modifier = Modifier

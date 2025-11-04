@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeColumn
-import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.CxText
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 import top.writerpass.rekuester.Pages
@@ -24,7 +24,7 @@ fun ApiRequestPanel() {
         when (currentPage) {
             is Pages.BlankPage -> {
                 FullSizeBox {
-                    "This is a Blank Page, select one API to start".Text(
+                    "This is a Blank Page, select one API to start".CxText(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }

@@ -34,7 +34,7 @@ import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.mpfilepicker.PlatformFile
 
 @Composable
-fun String.Text(
+fun String.CxText(
     modifier: Modifier = Modifier.Companion,
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
@@ -74,7 +74,7 @@ fun String.Text(
 }
 
 @Composable
-fun String.TextButton(
+fun String.CxTextButton(
     modifier: Modifier = Modifier.Companion,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.textShape,
@@ -94,13 +94,13 @@ fun String.TextButton(
         border = border,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
-        content = { Text() },
+        content = { CxText() },
         onClick = onClick
     )
 }
 
 @Composable
-fun String.OutlinedButton(
+fun String.CxOutlinedButton(
     modifier: Modifier = Modifier.Companion,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.outlinedShape,
@@ -120,13 +120,13 @@ fun String.OutlinedButton(
         border = border,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
-        content = { Text() },
+        content = { CxText() },
         onClick = onClick
     )
 }
 
 @Composable
-fun String.OutlinedButtonWithConfirm(
+fun String.CxOutlinedButtonWithConfirm(
     cancelLabel: String = "Cancel",
     doLabel: String = "$this !",
     modifier: Modifier = Modifier.Companion,
@@ -145,7 +145,7 @@ fun String.OutlinedButtonWithConfirm(
     AnimatedContent(doubleCheck) {
         if (it) {
             Row(modifier = Modifier.padding(horizontal = 8.dp)) {
-                cancelLabel.OutlinedButton(
+                cancelLabel.CxOutlinedButton(
                     modifier = modifier,
                     enabled = enabled,
                     shape = shape,
@@ -156,7 +156,7 @@ fun String.OutlinedButtonWithConfirm(
                 ) {
                     doubleCheck = false
                 }
-                doLabel.OutlinedButton(
+                doLabel.CxOutlinedButton(
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = Color.Red
                     )
@@ -166,7 +166,7 @@ fun String.OutlinedButtonWithConfirm(
                 }
             }
         } else {
-            this@OutlinedButtonWithConfirm.OutlinedButton(
+            this@CxOutlinedButtonWithConfirm.CxOutlinedButton(
                 modifier = modifier,
                 enabled = enabled,
                 shape = shape,
@@ -183,13 +183,13 @@ fun String.OutlinedButtonWithConfirm(
 }
 
 @Composable
-fun String.FilePicker(
+fun String.CxFilePicker(
     extensions: List<String> = emptyList(),
     title: String = "File Picker",
     onFileSelected: (PlatformFile?) -> Unit
 ) {
     val show = Mutable.someBoolean()
-    this.TextButton { show.setTrue() }
+    this.CxTextButton { show.setTrue() }
     top.writerpass.mpfilepicker.FilePicker(
         show = show.value,
         fileExtensions = extensions,
