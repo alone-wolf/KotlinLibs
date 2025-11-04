@@ -28,8 +28,9 @@ import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullHeightColumn
 import top.writerpass.cmplibrary.compose.FullWidthBox
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.Composables
-import top.writerpass.cmplibrary.compose.ables.StateComposables
+import top.writerpass.cmplibrary.compose.ables.IconButton
+import top.writerpass.cmplibrary.compose.ables.Text
+import top.writerpass.cmplibrary.compose.ables.TextButton
 import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.modifier.onPointerRightClick
 import top.writerpass.cmplibrary.utils.Mutable
@@ -42,100 +43,96 @@ import top.writerpass.rekuester.models.Collection
 
 @Composable
 fun ApisListView() {
-    Composables.Scope {
-        StateComposables.Scope {
-            val mainViewModel = LocalMainViewModel.current
-            val mainUiViewModel = LocalMainUiViewModel.current
-            val collectionApiViewModel = LocalCollectionApiViewModel.current
-            FullHeightColumn(modifier = Modifier.width(mainUiViewModel.sideListWidth)) {
-                FullWidthRow(horizontalArrangement = Arrangement.End) {
-                    "Load".TextButton { mainViewModel.loadData() }
-                    "Save".TextButton { mainViewModel.saveData() }
-                    Icons.Default.Add.IconButton { collectionApiViewModel.createNewApi() }
-                }
-                val collection by collectionApiViewModel.collectionFlow.collectAsState()
-                if (collection == Collection.BLANK) {
-                    Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                        "No Collection Selected".Text()
-                    }
-                } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().height(30.dp).padding(start = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        collection.label.Text(maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
-                    val apisList by collectionApiViewModel.apisListFlow.collectAsState()
-                    LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                        items(
-                            items = apisList,
-                            itemContent = { api ->
-                                val onHover = Mutable.someBoolean()
-                                val showMenu = Mutable.someBoolean()
-                                FullWidthBox(
-                                    modifier = Modifier.height(45.dp)
-                                        .clickable { collectionApiViewModel.openApiTab(api) }
-                                        .onPointerRightClick {
-                                            showMenu.setTrue()
-                                        }
-                                        .padding(horizontal = 16.dp)
-                                        .onPointerHover(
-                                            onNotHover = { onHover.value = false },
-                                            onHover = { onHover.value = true }
-                                        ),
+    val mainViewModel = LocalMainViewModel.current
+    val mainUiViewModel = LocalMainUiViewModel.current
+    val collectionApiViewModel = LocalCollectionApiViewModel.current
+    FullHeightColumn(modifier = Modifier.width(mainUiViewModel.sideListWidth)) {
+        FullWidthRow(horizontalArrangement = Arrangement.End) {
+            "Load".TextButton { mainViewModel.loadData() }
+            "Save".TextButton { mainViewModel.saveData() }
+            Icons.Default.Add.IconButton { collectionApiViewModel.createNewApi() }
+        }
+        val collection by collectionApiViewModel.collectionFlow.collectAsState()
+        if (collection == Collection.BLANK) {
+            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                "No Collection Selected".Text()
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(30.dp).padding(start = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                collection.label.Text(maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            val apisList by collectionApiViewModel.apisListFlow.collectAsState()
+            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                items(
+                    items = apisList,
+                    itemContent = { api ->
+                        val onHover = Mutable.someBoolean()
+                        val showMenu = Mutable.someBoolean()
+                        FullWidthBox(
+                            modifier = Modifier.height(45.dp)
+                                .clickable { collectionApiViewModel.openApiTab(api) }
+                                .onPointerRightClick {
+                                    showMenu.setTrue()
+                                }
+                                .padding(horizontal = 16.dp)
+                                .onPointerHover(
+                                    onNotHover = { onHover.value = false },
+                                    onHover = { onHover.value = true }
+                                ),
+                        ) {
+                            api.label.Text(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                                AnimatedVisibility(
+                                    visible = onHover.value, enter = fadeIn(), exit = fadeOut()
                                 ) {
-                                    api.label.Text(
-                                        modifier = Modifier.align(Alignment.CenterStart),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                                        AnimatedVisibility(
-                                            visible = onHover.value, enter = fadeIn(), exit = fadeOut()
-                                        ) {
-                                            val onIconHover = Mutable.someBoolean()
-                                            Box(
-                                                modifier = Modifier.onPointerHover(
-                                                    onHover = { onIconHover.setTrue() },
-                                                    onNotHover = { onIconHover.setFalse() })
-                                            ) {
-                                                AnimatedContent(onIconHover.value) {
-                                                    if (it) {
-                                                        Icons.Default.Delete.IconButton {
-                                                            collectionApiViewModel.deleteApi(api)
-                                                        }
-                                                    } else {
-                                                        Icons.Outlined.Delete.IconButton {}
-                                                    }
+                                    val onIconHover = Mutable.someBoolean()
+                                    Box(
+                                        modifier = Modifier.onPointerHover(
+                                            onHover = { onIconHover.setTrue() },
+                                            onNotHover = { onIconHover.setFalse() })
+                                    ) {
+                                        AnimatedContent(onIconHover.value) {
+                                            if (it) {
+                                                Icons.Default.Delete.IconButton {
+                                                    collectionApiViewModel.deleteApi(api)
                                                 }
+                                            } else {
+                                                Icons.Outlined.Delete.IconButton {}
                                             }
                                         }
-                                    }
-                                    DropdownMenu(
-                                        expanded = showMenu.value,
-                                        onDismissRequest = { showMenu.setFalse() },
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text("Clone") },
-                                            onClick = { showMenu.setFalse() }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("Open") },
-                                            onClick = { showMenu.setFalse() }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("Open All") },
-                                            onClick = {
-                                                collectionApiViewModel.openApiTabs(apisList)
-                                                showMenu.setFalse()
-                                            }
-                                        )
                                     }
                                 }
                             }
-                        )
+                            DropdownMenu(
+                                expanded = showMenu.value,
+                                onDismissRequest = { showMenu.setFalse() },
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Clone") },
+                                    onClick = { showMenu.setFalse() }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Open") },
+                                    onClick = { showMenu.setFalse() }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Open All") },
+                                    onClick = {
+                                        collectionApiViewModel.openApiTabs(apisList)
+                                        showMenu.setFalse()
+                                    }
+                                )
+                            }
+                        }
                     }
-                }
+                )
             }
         }
     }

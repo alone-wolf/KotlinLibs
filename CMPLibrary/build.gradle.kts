@@ -52,6 +52,7 @@ kotlin {
                 api(libs.androidx.navigation.compose)
 //                api("io.github.dautovicharis:charts:2.0.0")
 //                implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+                api(project(":mpfilepicker"))
             }
         }
         val jvmMain by getting {

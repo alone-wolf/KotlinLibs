@@ -38,8 +38,8 @@ import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.Icon
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.Icon
+import top.writerpass.cmplibrary.compose.ables.Text
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When

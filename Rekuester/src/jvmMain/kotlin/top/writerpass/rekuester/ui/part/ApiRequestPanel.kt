@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeColumn
-import top.writerpass.cmplibrary.compose.ables.Composables
+import top.writerpass.cmplibrary.compose.ables.Text
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 import top.writerpass.rekuester.Pages
@@ -24,16 +24,15 @@ fun ApiRequestPanel() {
         when (currentPage) {
             is Pages.BlankPage -> {
                 FullSizeBox {
-                    "This is a Blank Page, select one API to start".Composables {
-                        it.Text(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+                    "This is a Blank Page, select one API to start".Text(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
 
             is Pages.ApiRequestPage -> {
-                val apiUuid = remember(currentPage) { (currentPage as Pages.ApiRequestPage).apiUuid }
+                val apiUuid =
+                    remember(currentPage) { (currentPage as Pages.ApiRequestPage).apiUuid }
                 val apiViewModel = ApiViewModel.instance(apiUuid)
                 CompositionLocalProvider(
                     LocalApiViewModel provides apiViewModel

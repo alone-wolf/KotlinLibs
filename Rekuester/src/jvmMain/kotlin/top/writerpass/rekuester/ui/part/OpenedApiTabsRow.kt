@@ -39,7 +39,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.Composables
+import top.writerpass.cmplibrary.compose.ables.Icon
+import top.writerpass.cmplibrary.compose.ables.Text
 import top.writerpass.cmplibrary.modifier.onPointerRightClick
 import top.writerpass.cmplibrary.reorderable.*
 import top.writerpass.cmplibrary.utils.Mutable
@@ -145,18 +146,16 @@ private fun LazyItemScope.ApiTabItem(
             .detectReorder(state),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Composables.Scope {
-            api.label.Text(
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                modifier = Modifier.weight(1f)
-            )
-            Icons.Default.Close.Icon(
-                modifier = Modifier.size(20.dp).clickable {
-                    collectionApiViewModel.closeApiTab(api)
-                }
-            )
-        }
+        api.label.Text(
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            modifier = Modifier.weight(1f)
+        )
+        Icons.Default.Close.Icon(
+            modifier = Modifier.size(20.dp).clickable {
+                collectionApiViewModel.closeApiTab(api)
+            }
+        )
         DropdownMenu(
             expanded = showMenu.value,
             onDismissRequest = { showMenu.setFalse() },
@@ -248,13 +247,11 @@ fun OpenedApiTabsRow() {
                 }
             )
         }
-        Composables.Scope {
-            Icons.Default.ArrowLeft.Icon(modifier = Modifier.clickable {
-                scope.launch { lazyListState.animateScrollBy(-tabWidthPx * 1.5f) }
-            })
-            Icons.Default.ArrowRight.Icon(modifier = Modifier.clickable {
-                scope.launch { lazyListState.animateScrollBy(tabWidthPx * 1.5f) }
-            })
-        }
+        Icons.Default.ArrowLeft.Icon(modifier = Modifier.clickable {
+            scope.launch { lazyListState.animateScrollBy(-tabWidthPx * 1.5f) }
+        })
+        Icons.Default.ArrowRight.Icon(modifier = Modifier.clickable {
+            scope.launch { lazyListState.animateScrollBy(tabWidthPx * 1.5f) }
+        })
     }
 }

@@ -41,7 +41,7 @@ kotlin {
                 implementation(ktorLibs.client.auth)
 
                 implementation(ktorLibs.serialization.kotlinx.json)
-                implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+//                implementation("com.darkrockstudios:mpfilepicker:3.1.0")
 
 //                implementation(databaseORM.bundles.exposed.sqlite)
 

@@ -37,11 +37,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.singleWindowApplication
 import top.writerpass.cmplibrary.LaunchedEffectOdd
-import top.writerpass.cmplibrary.compose.BasicTextField
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.Icon
-import top.writerpass.cmplibrary.compose.OutlinedBasicTextField
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.BasicTextField
+import top.writerpass.cmplibrary.compose.ables.Icon
+import top.writerpass.cmplibrary.compose.ables.Text
 import top.writerpass.cmplibrary.pointerIcons.XResize
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When

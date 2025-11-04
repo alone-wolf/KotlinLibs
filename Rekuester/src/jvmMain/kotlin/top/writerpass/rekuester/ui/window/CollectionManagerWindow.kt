@@ -27,7 +27,8 @@ import androidx.compose.ui.window.Window
 import top.writerpass.cmplibrary.compose.FullHeightColumn
 import top.writerpass.cmplibrary.compose.FullWidthBox
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.Composables
+import top.writerpass.cmplibrary.compose.ables.IconButton
+import top.writerpass.cmplibrary.compose.ables.Text
 import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
@@ -54,9 +55,7 @@ fun CollectionManagerWindow() {
 //                        "Save".TextButton {
 //                            mainViewModel.saveData()
 //                        }
-                    Icons.Default.Add.Composables {
-                        it.IconButton {}
-                    }
+                    Icons.Default.Add.IconButton {}
                 }
                 val collections by collectionsViewModel.collectionsFlow.collectAsState()
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -89,13 +88,11 @@ fun CollectionManagerWindow() {
                                         onHover = { onHover.value = true }
                                     ),
                             ) {
-                                collection.label.Composables {
-                                    it.Text(
-                                        modifier = Modifier.align(Alignment.CenterStart),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
+                                collection.label.Text(
+                                    modifier = Modifier.align(Alignment.CenterStart),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                                 Row(modifier = Modifier.align(Alignment.CenterEnd)) {
                                     AnimatedVisibility(
                                         visible = onHover.value,
