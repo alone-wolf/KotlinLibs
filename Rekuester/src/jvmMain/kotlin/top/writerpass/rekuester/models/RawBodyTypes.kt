@@ -23,9 +23,13 @@ sealed interface RawBodyTypes {
         override val label: String = "XML"
     }
 
+    object CSS : RawBodyTypes {
+        override val label: String = "CSS"
+    }
+
     companion object Companion {
         val list = listOf(
-            Text, JavaScript, Json, Html, XML
+            Text, JavaScript, Json, Html, XML,CSS
         )
         val map = list.associateBy { it.label }
     }

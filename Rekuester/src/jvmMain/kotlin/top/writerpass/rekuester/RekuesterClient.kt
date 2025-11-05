@@ -7,17 +7,27 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.header
 import io.ktor.client.request.request
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.Parameters
 import io.ktor.http.URLBuilder
+import io.ktor.http.content.ByteArrayContent
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.date.GMTDate
+import io.ktor.util.encodeBase64
 import io.ktor.util.toMap
 import kotlinx.serialization.json.Json
 import top.writerpass.kmplibrary.utils.log
@@ -26,10 +36,9 @@ import top.writerpass.rekuester.models.ApiParam
 import top.writerpass.rekuester.models.ApiStateAuthContainer
 import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.models.AuthTypes
-import kotlin.io.encoding.Base64
-//import java.util.Base64
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm as JwtAlgorithm
+import top.writerpass.rekuester.models.BodyTypes
+import top.writerpass.rekuester.models.RawBodyTypes
+import java.io.File
 
 data class HttpRequestResult(
     val response: HttpResponseResult?,
@@ -62,7 +71,7 @@ class RekuesterClient : AutoCloseable {
             identity()
         }
         install(Logging) {
-            level = LogLevel.HEADERS
+            level = LogLevel.ALL
             logger = object : Logger {
                 override fun log(message: String) {
                     KermitLogger.rekuester.d(message)
@@ -96,41 +105,148 @@ class RekuesterClient : AutoCloseable {
         params.forEach { parameters.append(it.key, it.value) }
     }
 
-    fun HttpMessageBuilder.addHeaders(headers: List<ApiHeader>) {
+    fun HttpRequestBuilder.addHeaders(headers: List<ApiHeader>) {
         headers.forEach { header(it.key, it.value) }
     }
 
-    private fun buildJwtToken(jwt: ApiStateAuthContainer.Jwt): String {
-        val algorithm = when (jwt.algorithm) {
-            ApiStateAuthContainer.Jwt.Companion.Algorithm.HS256 -> JwtAlgorithm.HMAC256(getSecret(jwt))
-            ApiStateAuthContainer.Jwt.Companion.Algorithm.HS384 -> JwtAlgorithm.HMAC384(getSecret(jwt))
-            ApiStateAuthContainer.Jwt.Companion.Algorithm.HS512 -> JwtAlgorithm.HMAC512(getSecret(jwt))
-            else -> error("Unsupported JWT algorithm: ${jwt.algorithm}")
-        }
+    fun URLBuilder.fillAuthorizationParams(auth: ApiStateAuthContainer) {
+        when (auth.type) {
+            AuthTypes.ApiKey -> {
+                auth.apiKey?.let { apiKey ->
+                    if (apiKey.addTo == ApiStateAuthContainer.ApiKey.Companion.AddTo.Param) {
+                        parameters.append(apiKey.key, apiKey.value)
+                    }
+                }
+            }
 
-        return JWT.create()
-            .withPayload(jwt.payload)
-            .withHeader(parseJwtHeaders(jwt.jwtHeaders))
-            .sign(algorithm)
+            AuthTypes.JWT -> {
+                auth.jwt?.let { jwt ->
+                    val token = JwtHelper.buildJwtToken(jwt)
+                    if (jwt.addTo == ApiStateAuthContainer.Jwt.Companion.AddTo.Param) {
+                        parameters.append(
+                            jwt.requestPrefix.ifBlank { "token" },
+                            token
+                        )
+                    }
+                }
+            }
+
+            else -> {}
+        }
     }
 
-    private fun getSecret(jwt: ApiStateAuthContainer.Jwt): ByteArray =
-        if (jwt.secretBase64Encoded)
-            Base64.decode(jwt.secret)
-        else
-            jwt.secret.toByteArray()
+    fun HttpRequestBuilder.fillAuthorizationHeader(auth: ApiStateAuthContainer) {
+        when (auth.type) {
+            AuthTypes.InheritAuthFromParent -> {
+                "AuthTypes.InheritAuthFromParent not implemented yet".log("RekuesterClient::request")
+            }
 
-    private fun parseJwtHeaders(json: String): Map<String, Any> {
-        return try {
-            kotlinx.serialization.json.Json.decodeFromString(
-                kotlinx.serialization.builtins.MapSerializer(
-                    kotlinx.serialization.serializer<String>(),
-                    kotlinx.serialization.serializer<String>()
-                ),
-                json
-            )
-        } catch (_: Exception) {
-            emptyMap()
+            AuthTypes.NoAuth -> {}
+            AuthTypes.Basic -> {
+                auth.basic?.let { basic ->
+                    val credentials = "${basic.username}:${basic.password}".encodeBase64()
+                    header(HttpHeaders.Authorization, "Basic $credentials")
+                }
+            }
+
+            AuthTypes.Bearer -> {
+                auth.bearer?.let { bearer ->
+                    if (bearer.token.isBlank().not()) {
+                        header(HttpHeaders.Authorization, "Bearer ${bearer.token}")
+                    }
+                }
+            }
+
+            AuthTypes.JWT -> {
+                val jwt = auth.jwt
+                if (jwt != null) {
+                    val token = JwtHelper.buildJwtToken(jwt)
+                    if (jwt.addTo == ApiStateAuthContainer.Jwt.Companion.AddTo.Header) {
+                        header(
+                            HttpHeaders.Authorization,
+                            "${jwt.requestPrefix.ifBlank { "Bearer" }} $token"
+                        )
+                    }
+                }
+            }
+
+            AuthTypes.ApiKey -> {
+                val key = auth.apiKey
+                if (key != null && key.addTo == ApiStateAuthContainer.ApiKey.Companion.AddTo.Header) {
+                    header(key.key, key.value)
+                }
+            }
+        }
+    }
+
+    fun HttpRequestBuilder.fillBody(body: ApiStateBodyContainer) {
+        when (body.type) {
+            BodyTypes.None -> {}
+
+            BodyTypes.FormData -> {
+                val data = body.formData?.filter { it.enabled } ?: emptyList()
+                setBody(
+                    MultiPartFormDataContent(
+                        formData {
+                            for (item in data) {
+                                append(item.key, item.value)
+                            }
+                        }
+                    )
+                )
+            }
+
+            BodyTypes.FormUrlencoded -> {
+                val data = body.formUrlEncoded?.filter { it.enabled } ?: emptyList()
+                setBody(FormDataContent(Parameters.build {
+                    data.forEach { append(it.key, it.value) }
+                }))
+            }
+
+            BodyTypes.Raw -> {
+                body.raw?.let { (type, content) ->
+                    val contentType = when (type) {
+                        RawBodyTypes.Json -> ContentType.Application.Json
+                        RawBodyTypes.XML -> ContentType.Application.Xml
+                        RawBodyTypes.Text -> ContentType.Text.Plain
+                        RawBodyTypes.Html -> ContentType.Text.Html
+                        RawBodyTypes.JavaScript -> ContentType.Application.JavaScript
+                        RawBodyTypes.CSS -> ContentType.Text.CSS
+                    }
+                    contentType(contentType)
+                    setBody(content)
+                }
+            }
+
+            BodyTypes.Binary -> {
+                body.binary?.let { bin ->
+                    val file = File(bin.path)
+                    if (file.exists()) {
+                        val content = file.readBytes()
+                        contentType(ContentType.Application.OctetStream)
+                        setBody(ByteArrayContent(content))
+                    } else {
+                        "Binary file not found: ${bin.path}".log("RekuesterClient::request")
+                    }
+                } ?: "body.binary is null".log("RekuesterClient::request")
+            }
+
+            BodyTypes.GraphQL -> {
+                body.graphQL?.let { graphQL ->
+                    val payload = Json.encodeToString(
+                        mapOf(
+                            "query" to graphQL.query,
+                            "variables" to (try {
+                                Json.parseToJsonElement(graphQL.variables)
+                            } catch (_: Exception) {
+                                Json.parseToJsonElement("{}")
+                            })
+                        )
+                    )
+                    contentType(ContentType.Application.Json)
+                    setBody(payload)
+                }
+            }
         }
     }
 
@@ -144,84 +260,17 @@ class RekuesterClient : AutoCloseable {
         body: ApiStateBodyContainer = ApiStateBodyContainer.None
     ): HttpRequestResult {
         return try {
-            val url = URLBuilder(address).apply {
-                addParams(params)
-                when (auth.type) {
-                    AuthTypes.ApiKey -> {
-                        val key = auth.apiKey
-                        if (key.addTo == ApiStateAuthContainer.ApiKey.Companion.AddTo.Param) {
-                            parameters.append(key.key, key.value)
-                        }
-                    }
-
-                    AuthTypes.JWT -> {
-                        val jwt = auth.jwt
-                        val token = buildJwtToken(jwt)
-                        if (jwt.addTo == ApiStateAuthContainer.Jwt.Companion.AddTo.Param) {
-                            parameters.append(
-                                jwt.requestPrefix.ifBlank { "token" },
-                                token
-                            )
-                        }
-                    }
-
-                    else -> {}
-                }
-            }.build()
-
-
-            client.request(url) {
+            val requestBlock: HttpRequestBuilder.() -> Unit = {
                 this.method = method
-                when (auth.type) {
-                    AuthTypes.InheritAuthFromParent -> {
-                        "AuthTypes.InheritAuthFromParent not implemented yet".log("RekuesterClient::request")
-                    }
-
-                    AuthTypes.NoAuth -> {}
-                    AuthTypes.Basic -> {
-                        val basic = auth.basic
-                        if (basic != null) {
-                            val credentials = "${basic.username}:${basic.password}"
-                            val encoded = Base64.encode(credentials.toByteArray())
-                            header(HttpHeaders.Authorization, "Basic $encoded")
-                        }
-                        header(
-                            HttpHeaders.Authorization,
-                            "Basic ${auth.basic?.username}:${auth.basic?.password}"
-                        )
-                    }
-
-                    AuthTypes.Bearer -> {
-                        val token = auth.bearer?.token
-                        if (!token.isNullOrBlank()) {
-                            header(HttpHeaders.Authorization, "Bearer $token")
-                        }
-                        header(HttpHeaders.Authorization, "Bearer ${auth.bearer?.token}")
-                    }
-
-                    AuthTypes.JWT -> {
-                        val jwt = auth.jwt
-                        if (jwt != null) {
-                            val token = buildJwtToken(jwt)
-                            if (jwt.addTo == ApiStateAuthContainer.Jwt.Companion.AddTo.Header) {
-                                header(
-                                    HttpHeaders.Authorization,
-                                    "${jwt.requestPrefix.ifBlank { "Bearer" }} $token"
-                                )
-                            }
-                        }
-                    }
-
-                    AuthTypes.ApiKey -> {
-                        val key = auth.apiKey
-                        if (key != null && key.addTo == ApiStateAuthContainer.ApiKey.Companion.AddTo.Header) {
-                            header(key.key, key.value)
-                        }
-
-                    }
+                url(address) {
+                    fillAuthorizationParams(auth)
+                    addParams(params)
                 }
+                fillAuthorizationHeader(auth)
                 addHeaders(headers)
-            }.toResult()
+                fillBody(body)
+            }
+            client.request(requestBlock).toResult()
         } catch (e: Exception) {
             HttpRequestResult(null, e.message)
         }

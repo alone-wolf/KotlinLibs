@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,26 +15,39 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxFilePicker
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.kmplibrary.file.friendlySize
 import top.writerpass.kmplibrary.utils.ifNotNull
+import top.writerpass.rekuester.LocalApiViewModel
+import top.writerpass.rekuester.models.ApiStateBodyContainer
 import java.io.File
 
 @Composable
 fun RequestPartBodyBinary() {
+    val apiViewModel = LocalApiViewModel.current
+    val ui = apiViewModel.ui.collectAsState().value
     // file selector
     var selectedFile: File? by remember { mutableStateOf(null) }
     Row {
         "Pick a File".CxFilePicker {
-            selectedFile = it?.file
+            it?.file?.let { file ->
+                selectedFile = file
+                apiViewModel.bodyPart.updateBinaryBody(
+                    ApiStateBodyContainer.Binary(
+                        path = file.path,
+                        filename = file.name,
+                        size = file.length()
+                    )
+                )
+            }
         }
         if (selectedFile != null) {
             Icons.Default.Clear.CxIconButton { selectedFile = null }
         }
     }
-    selectedFile.ifNotNull { it ->
+    ui.body.binary.ifNotNull { it ->
         val filename by remember(it) {
-            derivedStateOf { it.name ?: "??unknown??" }
+            derivedStateOf { it.filename }
         }
         val size by remember(it) {
-            derivedStateOf { it.friendlySize() }
+            derivedStateOf { it.size.friendlySize() }
         }
         filename.CxText()
         size.CxText()

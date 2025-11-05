@@ -23,3 +23,15 @@ fun File.friendlySize(): String {
 
     return String.format("%.1f %s", displaySize, units[digitGroups])
 }
+
+@Suppress("DefaultLocale")
+fun Long.friendlySize(): String {
+    val size = this
+    if (size <= 0) return "0 B"
+
+    val units = arrayOf("B", "KB", "MB", "GB", "TB", "PB")
+    val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+    val displaySize = size / 1024.0.pow(digitGroups.toDouble())
+
+    return String.format("%.1f %s", displaySize, units[digitGroups])
+}

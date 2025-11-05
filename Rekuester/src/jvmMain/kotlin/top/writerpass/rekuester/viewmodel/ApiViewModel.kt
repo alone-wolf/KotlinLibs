@@ -181,5 +181,11 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
             val newBody = body.copy(raw = newRaw)
             ui.value.body = newBody
         }
+
+        fun updateBinaryBody(binary: ApiStateBodyContainer.Binary){
+            val body = ui.value.body
+            val newBody = body.copy(binary = binary)
+            ui.value.body = newBody
+        }
     }
 }
