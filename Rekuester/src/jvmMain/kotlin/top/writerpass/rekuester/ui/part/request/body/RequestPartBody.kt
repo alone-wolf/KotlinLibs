@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullWidthColumn
 import top.writerpass.cmplibrary.compose.RadioButtonGroup
-import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.models.BodyTypes
 import top.writerpass.rekuester.models.RawBodyTypes

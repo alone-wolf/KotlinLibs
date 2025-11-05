@@ -9,9 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import top.writerpass.cmplibrary.compose.ables.CxFilePicker
-import top.writerpass.cmplibrary.compose.ables.CxIconButton
-import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxFilePicker
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.kmplibrary.file.friendlySize
 import top.writerpass.kmplibrary.utils.ifNotNull
 import java.io.File

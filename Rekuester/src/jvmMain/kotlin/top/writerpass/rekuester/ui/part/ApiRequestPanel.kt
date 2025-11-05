@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullSizeColumn
-import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.rekuester.LocalApiViewModel
 import top.writerpass.rekuester.LocalCollectionApiViewModel
 import top.writerpass.rekuester.Pages

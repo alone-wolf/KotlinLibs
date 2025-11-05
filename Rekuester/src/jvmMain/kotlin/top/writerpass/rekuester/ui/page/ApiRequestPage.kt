@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import io.ktor.http.HttpMethod
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.CxOutlinedButton
-import top.writerpass.cmplibrary.compose.ables.CxText
-import top.writerpass.cmplibrary.compose.ables.CxTextButton
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxOutlinedButton
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxTextButton
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
 import top.writerpass.rekuester.LocalApiViewModel

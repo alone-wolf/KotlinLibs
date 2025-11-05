@@ -52,8 +52,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.CxIcon
-import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.modifier.onPointerRightClick
 import top.writerpass.cmplibrary.reorderable.ReorderableItem
 import top.writerpass.cmplibrary.reorderable.ReorderableLazyListState

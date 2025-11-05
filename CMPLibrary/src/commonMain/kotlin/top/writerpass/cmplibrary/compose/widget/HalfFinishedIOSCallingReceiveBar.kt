@@ -23,7 +23,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullSizeBox
-import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 
 @Composable
 fun HalfFinishedIOSCallingReceiveBar() {

@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullWidthColumn
-import top.writerpass.cmplibrary.compose.ables.CxText
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 
 @Composable
 fun TabBarWithContent(

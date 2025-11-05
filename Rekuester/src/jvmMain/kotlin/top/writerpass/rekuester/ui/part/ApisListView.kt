@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.compose.FullHeightColumn
 import top.writerpass.cmplibrary.compose.FullWidthBox
 import top.writerpass.cmplibrary.compose.FullWidthRow
-import top.writerpass.cmplibrary.compose.ables.CxIconButton
-import top.writerpass.cmplibrary.compose.ables.CxText
-import top.writerpass.cmplibrary.compose.ables.CxTextButton
+import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxTextButton
 import top.writerpass.cmplibrary.modifier.onPointerHover
 import top.writerpass.cmplibrary.modifier.onPointerRightClick
 import top.writerpass.cmplibrary.utils.Mutable
