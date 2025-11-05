@@ -23,9 +23,7 @@ import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.models.BodyTypes
 import top.writerpass.rekuester.models.RawBodyTypes
 
-class ApiViewModel(
-    val apiUuid: String,
-) : BaseViewModel() {
+class ApiViewModel(val apiUuid: String) : BaseViewModel() {
     private val repository: ApiRepository = Singletons.apisRepository
 
     var newParamEnabled by mutableStateOf(false)
@@ -152,6 +150,7 @@ class ApiViewModel(
             address = ui.value.address,
             params = ui.value.params.asReadOnly(),
             headers = ui.value.headers.asReadOnly(),
+            auth = ui.value.auth,
             body = ui.value.body
         )
     }

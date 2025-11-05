@@ -75,68 +75,6 @@ class ApiStateHolder(private val api: Api) {
     }
 }
 
-//class ApiState(
-//    api: Api,
-//    val uuid: String = api.uuid,
-//) {
-//    val collectionUUID = api.collectionUUID
-//    val isModified = mutableStateOf(false)
-//    val label = autoTagModifiedStateOf(api.label)
-//    val method = autoTagModifiedStateOf(api.method)
-//    val address = autoTagModifiedStateOf(api.address)
-//    val params = autoTagModifiedStateListOf(api.params)
-//    val headers = autoTagModifiedStateListOf(api.headers)
-//    val requestBody = autoTagModifiedStateOf(api.requestBody)
-//    var requestResult by mutableStateOf<HttpRequestResult?>(null)
-//        private set
-//
-//    val auth = autoTagModifiedStateOf(api.auth)
-//    val requestBodyType = autoTagModifiedStateOf(api.bodyType)
-//
-//    val urlBinding = UrlParamsBinding(
-//        address = address,
-//        params = params
-//    )
-//
-//    suspend fun request(client: RekuesterClient) {
-//        requestResult = client.request(
-//            method = method.value,
-//            address = address.value,
-//            params = params.toList(),
-//            headers = headers.toList(),
-//            body = requestBody.value
-//        )
-//    }
-//
-//
-//    fun composeNewApi(): Api {
-//        return Api(
-//            uuid = uuid,
-//            collectionUUID = collectionUUID,
-//            label = label.value,
-//            method = method.value,
-//            address = address.value,
-//            params = params.toList(),
-//            headers = headers.toList(),
-//            requestBody = requestBody.value,
-//        )
-//    }
-//
-//    @StateFactoryMarker
-//    inline fun <reified T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
-//        return autoActionStateOf(initial) {
-//            if (!isModified.value) isModified.setTrue()
-//        }
-//    }
-//
-//    @StateFactoryMarker
-//    inline fun <reified T> autoTagModifiedStateListOf(initial: List<T>): AutoActionMutableStateList<T> {
-//        return autoActionStateListOf(initial) {
-//            if (!isModified.value) isModified.setTrue()
-//        }
-//    }
-//}
-
 class UrlParamsBinding(
     private val address: AutoActionMutableState<String>,
     private val params: AutoActionMutableStateList<ApiParam>
@@ -202,3 +140,67 @@ class UrlParamsBinding(
 
     }
 }
+
+//class ApiState(
+//    api: Api,
+//    val uuid: String = api.uuid,
+//) {
+//    val collectionUUID = api.collectionUUID
+//    val isModified = mutableStateOf(false)
+//    val label = autoTagModifiedStateOf(api.label)
+//    val method = autoTagModifiedStateOf(api.method)
+//    val address = autoTagModifiedStateOf(api.address)
+//    val params = autoTagModifiedStateListOf(api.params)
+//    val headers = autoTagModifiedStateListOf(api.headers)
+//    val requestBody = autoTagModifiedStateOf(api.requestBody)
+//    var requestResult by mutableStateOf<HttpRequestResult?>(null)
+//        private set
+//
+//    val auth = autoTagModifiedStateOf(api.auth)
+//    val requestBodyType = autoTagModifiedStateOf(api.bodyType)
+//
+//    val urlBinding = UrlParamsBinding(
+//        address = address,
+//        params = params
+//    )
+//
+//    suspend fun request(client: RekuesterClient) {
+//        requestResult = client.request(
+//            method = method.value,
+//            address = address.value,
+//            params = params.toList(),
+//            headers = headers.toList(),
+//            body = requestBody.value
+//        )
+//    }
+//
+//
+//    fun composeNewApi(): Api {
+//        return Api(
+//            uuid = uuid,
+//            collectionUUID = collectionUUID,
+//            label = label.value,
+//            method = method.value,
+//            address = address.value,
+//            params = params.toList(),
+//            headers = headers.toList(),
+//            requestBody = requestBody.value,
+//        )
+//    }
+//
+//    @StateFactoryMarker
+//    inline fun <reified T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
+//        return autoActionStateOf(initial) {
+//            if (!isModified.value) isModified.setTrue()
+//        }
+//    }
+//
+//    @StateFactoryMarker
+//    inline fun <reified T> autoTagModifiedStateListOf(initial: List<T>): AutoActionMutableStateList<T> {
+//        return autoActionStateListOf(initial) {
+//            if (!isModified.value) isModified.setTrue()
+//        }
+//    }
+//}
+
+

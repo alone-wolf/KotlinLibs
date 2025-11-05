@@ -54,6 +54,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(libs.kstore.file)
+                implementation("com.auth0:java-jwt:4.5.0")
             }
         }
     }

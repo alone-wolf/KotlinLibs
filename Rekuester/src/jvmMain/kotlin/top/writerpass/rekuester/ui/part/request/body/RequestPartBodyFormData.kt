@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -44,7 +45,8 @@ import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.When
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.rekuester.models.ApiFormData
+import top.writerpass.rekuester.LocalApiViewModel
+import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.tables.v12.CommonTableFrame
 import top.writerpass.rekuester.tables.v12.TableAxisIds
 import top.writerpass.rekuester.tables.v12.TableState
@@ -93,8 +95,14 @@ private val tableState = TableState(
 
 @Composable
 fun RequestPartBodyFormData() {
+    val apiViewModel = LocalApiViewModel.current
+    val ui = apiViewModel.ui.collectAsState().value
     // form data table
-    val formDataList = remember { mutableStateListOf<ApiFormData>() }
+    val formDataList = remember { mutableStateListOf<ApiStateBodyContainer.FormData>().apply {
+        ui.body.formData?.let { it->
+            addAll(it)
+        }
+    } }
     val newE = Mutable.someBoolean()
     val newK = Mutable.something("")
     val newV = Mutable.something("")
@@ -141,20 +149,20 @@ fun RequestPartBodyFormData() {
         leadingItemContent = { rowId ->
             when (rowId) {
                 TableAxisIds.HeaderRowId -> {
-//                                    val allEnabled by remember(apiState.headers.asReadOnly()) {
-//                                        derivedStateOf {
-//                                            apiState.headers.asReadOnly().all { it.enabled }
-//                                        }
-//                                    }
+//                    val allEnabled by remember(apiState.headers.asReadOnly()) {
+//                        derivedStateOf {
+//                            apiState.headers.asReadOnly().all { it.enabled }
+//                        }
+//                    }
                     val allEnabled = true
                     Checkbox(
                         checked = allEnabled,
                         onCheckedChange = { enabled ->
-//                                            apiState.headers.asReadOnly()
-//                                                .map { apiHeader -> apiHeader.copy(enabled = enabled) }
-//                                                .forEachIndexed { index, header ->
-//                                                    apiState.headers[index] = header
-//                                                }
+//                            apiState.headers.asReadOnly()
+//                                .map { apiHeader -> apiHeader.copy(enabled = enabled) }
+//                                .forEachIndexed { index, header ->
+//                                    apiState.headers[index] = header
+//                                }
                         },
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -213,7 +221,7 @@ fun RequestPartBodyFormData() {
                     Row {
                         Icons.Default.Delete.CxIcon(
                             modifier = Modifier.clickable {
-//                                                apiViewModel.deleteApiHeader(rowId)
+//                                apiViewModel.deleteApiHeader(rowId)
                             }
                         )
                     }

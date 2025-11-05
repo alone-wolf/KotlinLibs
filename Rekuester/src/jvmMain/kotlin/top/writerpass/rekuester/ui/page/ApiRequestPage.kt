@@ -14,9 +14,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +27,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextDecorationLineStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.ktor.http.HttpMethod
+import io.ktor.http.URLBuilder
+import io.ktor.http.Url
+import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxOutlinedButton
@@ -35,7 +42,10 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxTextButton
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
+import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.LocalApiViewModel
+import top.writerpass.rekuester.models.ApiParam
+import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.ui.part.request.authorization.RequestPartAuthorization
 import top.writerpass.rekuester.ui.part.request.body.RequestPartBody
@@ -56,10 +66,54 @@ private val responsePartEntities = listOf(
     "Overview", "Body", "Cookies", "Headers"
 )
 
+//class UrlBieBinding(
+//    initial: String,
+//    initialParams: List<ApiParam>
+//) {
+//    private var fullAddress by mutableStateOf("")
+//
+//    fun buildFullUrl(address: String, params: List<ApiParam>): String {
+//        return URLBuilder(address).apply {
+//            params.filter { it.enabled && it.key.isNotEmpty() }.forEach { param ->
+//                parameters.append(param.key, param.value)
+//            }
+//        }.buildString()
+//    }
+//
+//    fun praseUrl(url: String): Pair<String, List<Pair<String, String>>>? {
+//        return try {
+//            val builder = URLBuilder(url)
+//            val newParams = builder.parameters.entries()
+//                .flatMap { item -> item.value.map { it -> item.key to it } }
+//            val newAddress = builder.apply { parameters.clear() }.buildString()
+//            newAddress to newParams
+//        } catch (e: Exception) {
+//            null // 格式错误时不影响现有状态
+//        }
+//    }
+//
+//    init {
+//        fullAddress = buildFullUrl(initial, initialParams)
+//    }
+//}
+
 @Composable
 fun ApiRequestPage() {
     val apiViewModel = LocalApiViewModel.current
-    val ui by apiViewModel.ui.collectAsState()
+    val ui = apiViewModel.ui.collectAsState().value
+
+//    var fullUrl by remember { mutableStateOf("") }
+//
+//    LaunchedEffect(ui) {
+//        if (ui != ApiStateHolder.BLANK) {
+//            fullUrl = URLBuilder(ui.address).apply {
+//                ui.params.toList().filter { it.enabled && it.key.isNotEmpty() }
+//                    .forEach { param ->
+//                        parameters.append(param.key, param.value)
+//                    }
+//            }.buildString()
+//        }
+//    }
 
     FullSizeColumn(modifier = Modifier) {
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
@@ -114,16 +168,14 @@ fun ApiRequestPage() {
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedTextField(
                 value = ui.address,
-//                value = ui.urlBinding.text.value,
                 placeholder = { "Address".CxText() },
-                onValueChange = { },
-//                onValueChange = { ui.urlBinding.onTextChange(it) },
+                onValueChange = {
+                    ui.address = it
+                },
                 modifier = Modifier
                     .weight(1f)
                     .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-//                            ui.urlBinding.onUrlEditStart()
-                        }
+                        if (focusState.isFocused) { }
                     },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Go),
                 keyboardActions = KeyboardActions(
@@ -131,7 +183,13 @@ fun ApiRequestPage() {
                         apiViewModel.request()
                     }
                 ),
-                maxLines = 1
+                maxLines = 3,
+                textStyle = LocalTextStyle.current.copy(
+                    platformStyle = PlatformTextStyle(
+                        spanStyle = null,
+                        paragraphStyle = null
+                    ),
+                )
             )
             Spacer(modifier = Modifier.width(8.dp))
             "Send".CxOutlinedButton {

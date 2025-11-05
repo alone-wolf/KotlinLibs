@@ -28,9 +28,9 @@ sealed interface AuthTypes {
     }
 
     // 如果你希望支持自定义类型，可以用 data class
-    data class Custom(val customLabel: String) : AuthTypes {
-        override val label: String = customLabel
-    }
+//    data class Custom(val customLabel: String) : AuthTypes {
+//        override val label: String = customLabel
+//    }
 
     companion object {
         val all = listOf(
