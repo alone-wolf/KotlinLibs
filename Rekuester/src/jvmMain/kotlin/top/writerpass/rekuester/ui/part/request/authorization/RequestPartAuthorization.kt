@@ -19,7 +19,6 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxTextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.rekuester.LocalApiViewModel
-import top.writerpass.rekuester.models.ApiStateAuthContainer
 import top.writerpass.rekuester.models.AuthTypes
 
 @Composable
@@ -124,8 +123,6 @@ fun RequestPartAuthorization() {
                     }
 
                 }
-
-                else -> {}
             }
         }
     }
