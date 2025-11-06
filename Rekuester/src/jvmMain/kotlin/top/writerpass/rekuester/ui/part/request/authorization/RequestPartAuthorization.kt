@@ -19,6 +19,7 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxTextButton
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.rekuester.LocalApiViewModel
+import top.writerpass.rekuester.models.ApiStateAuthContainer
 import top.writerpass.rekuester.models.AuthTypes
 
 @Composable
@@ -104,12 +105,24 @@ fun RequestPartAuthorization() {
                 }
 
                 AuthTypes.ApiKey -> {
-                    val key = Mutable.someString("")
-                    val value = Mutable.someString("")
-                    val addTo = Mutable.someString("")
-                    key.CxOutlinedBasicTextField(label = "Key")
-                    value.CxOutlinedBasicTextField(label = "Value")
-                    addTo.CxOutlinedBasicTextField(label = "Add to")
+                    ui.auth.apiKey?.let { apiKey ->
+                        val key = Mutable.someString("")
+                        val value = Mutable.someString("")
+                        val addTo = Mutable.someString("")
+                        key.CxOutlinedBasicTextField(label = "Key"){
+                            val newApiKey = apiKey.copy(key = it)
+                            apiViewModel.authPart.updateApiKey(newApiKey)
+                        }
+                        value.CxOutlinedBasicTextField(label = "Value"){
+                            val newApiKey = apiKey.copy(value = it)
+                            apiViewModel.authPart.updateApiKey(newApiKey)
+                        }
+                        addTo.CxOutlinedBasicTextField(label = "Add to"){
+//                            val newApiKey = apiKey.copy(addTo = it)
+//                            apiViewModel.authPart.updateApiKey(newApiKey)
+                        }
+                    }
+
                 }
 
                 else -> {}

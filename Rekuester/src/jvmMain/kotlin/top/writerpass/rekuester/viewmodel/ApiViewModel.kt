@@ -24,6 +24,7 @@ import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.models.AuthTypes
 import top.writerpass.rekuester.models.BodyTypes
 import top.writerpass.rekuester.models.RawBodyTypes
+
 class ApiViewModel(val apiUuid: String) : BaseViewModel() {
     companion object Companion {
         @Composable
@@ -38,11 +39,9 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
         }
     }
 
-    val apiFlow = Singletons.apisRepository
+    val ui = Singletons.apisRepository
         .allFlow.map { it.find { it.uuid == apiUuid } ?: Api.BLANK }
-        .stateIn(Api.BLANK)
-
-    val ui = apiFlow.map { ApiStateHolder(it) }
+        .map { ApiStateHolder(it) }
         .stateIn(ApiStateHolder.BLANK)
 
     fun updateOrInsertApi(api: Api) {
@@ -72,6 +71,7 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
 
     // info part
     val infoPart = InfoPart()
+
     inner class InfoPart() {
         fun updateLabel(label: String) = ui.value.updateLabel(label)
         fun updateMethod(method: HttpMethod) = ui.value.updateMethod(method)
@@ -80,6 +80,7 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
 
     // param part
     val paramPart = ParamPart()
+
     inner class ParamPart {
         var enabled by mutableStateOf(false)
         var key by mutableStateOf("")
@@ -118,6 +119,7 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
 
     // header part
     val headerPart = HeaderPart()
+
     inner class HeaderPart {
         var enabled by mutableStateOf(false)
         var key by mutableStateOf("")
@@ -155,6 +157,7 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
 
     // auth part
     val authPart = AuthPart()
+
     inner class AuthPart {
         fun updateType(newType: AuthTypes) {
             val newAuth = ui.value.auth.copy(type = newType)
@@ -175,10 +178,16 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
             val newAuth = ui.value.auth.copy(jwt = jwt)
             ui.value.updateAuth(newAuth)
         }
+
+        fun updateApiKey(apiKey: ApiStateAuthContainer.ApiKey){
+            val newAuth = ui.value.auth.copy(apiKey = apiKey)
+            ui.value.updateAuth(newAuth)
+        }
     }
 
     // body part
     val bodyPart = BodyPart()
+
     inner class BodyPart {
         val rawTypeCalculator = { ui.value.body.raw?.type ?: RawBodyTypes.Text }
         val rawContentCalculator = { ui.value.body.raw?.content ?: "" }
