@@ -18,7 +18,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,13 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextDecorationLineStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.ktor.http.HttpMethod
-import io.ktor.http.URLBuilder
-import io.ktor.http.Url
-import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxOutlinedButton
@@ -42,10 +37,7 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxTextButton
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.rekuester.ApiStateHolder
 import top.writerpass.rekuester.LocalApiViewModel
-import top.writerpass.rekuester.models.ApiParam
-import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.ui.componment.TabBarWithContent
 import top.writerpass.rekuester.ui.part.request.authorization.RequestPartAuthorization
 import top.writerpass.rekuester.ui.part.request.body.RequestPartBody
@@ -122,7 +114,7 @@ fun ApiRequestPage() {
                 if (editLabel.value) {
                     BasicTextField(
                         value = ui.label,
-                        onValueChange = { ui.label = it },
+                        onValueChange = apiViewModel.infoPart::updateLabel,
                         maxLines = 1,
                         modifier = Modifier.height(48.dp),
                     )
@@ -136,15 +128,13 @@ fun ApiRequestPage() {
             if (ui.isModified) "Save".CxTextButton {
                 ui.toApi().let {
                     apiViewModel.updateOrInsertApi(it)
-                    ui.updateModifyState(false)
+                    ui.updateIsModified(false)
                     editLabel.setFalse()
                 }
             }
         }
         FullWidthRow(verticalAlignment = Alignment.CenterVertically) {
-            var expanded by remember {
-                mutableStateOf(false)
-            }
+            var expanded by remember { mutableStateOf(false) }
             ui.method.value.CxTextButton {
                 expanded = true
             }
@@ -158,7 +148,7 @@ fun ApiRequestPage() {
                         DropdownMenuItem(
                             text = { Text(key) },
                             onClick = {
-                                ui.method = value
+                                apiViewModel.infoPart.updateMethod(value)
                                 expanded = false
                             }
                         )
@@ -169,9 +159,7 @@ fun ApiRequestPage() {
             OutlinedTextField(
                 value = ui.address,
                 placeholder = { "Address".CxText() },
-                onValueChange = {
-                    ui.address = it
-                },
+                onValueChange = apiViewModel.infoPart::updateAddress,
                 modifier = Modifier
                     .weight(1f)
                     .onFocusChanged { focusState ->

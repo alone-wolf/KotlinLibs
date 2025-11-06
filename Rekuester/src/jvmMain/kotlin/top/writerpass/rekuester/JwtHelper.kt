@@ -16,6 +16,7 @@ import java.security.spec.X509EncodedKeySpec
 import kotlin.io.encoding.Base64
 
 object JwtHelper {
+    // TODO 当前这个Helper 没有做到和 ApiStateAuthContainer解耦，并且加载公钥私钥的逻辑也不对
     fun buildJwtToken(jwt: ApiStateAuthContainer.Jwt): String {
         val algorithm = when (jwt.algorithm) {
             // --- HMAC 系列 ---

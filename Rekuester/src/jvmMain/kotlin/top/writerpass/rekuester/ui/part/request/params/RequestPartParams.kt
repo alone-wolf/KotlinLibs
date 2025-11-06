@@ -115,22 +115,22 @@ fun RequestPartParams() {
         footerItemContent = { columnId ->
             when (columnId) {
                 0 -> BasicTextField(
-                    value = apiViewModel.newParamKey,
-                    onValueChange = { apiViewModel.newParamKey = it },
+                    value = apiViewModel.paramPart.key,
+                    onValueChange = { apiViewModel.paramPart.key = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 1 -> BasicTextField(
-                    value = apiViewModel.newParamValue,
-                    onValueChange = { apiViewModel.newParamValue = it },
+                    value = apiViewModel.paramPart.value,
+                    onValueChange = { apiViewModel.paramPart.value = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 2 -> BasicTextField(
-                    value = apiViewModel.newParamDescription,
-                    onValueChange = { apiViewModel.newParamDescription = it },
+                    value = apiViewModel.paramPart.description,
+                    onValueChange = { apiViewModel.paramPart.description = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
@@ -159,8 +159,8 @@ fun RequestPartParams() {
 
                 TableAxisIds.FooterRowId -> {
                     Checkbox(
-                        checked = apiViewModel.newParamEnabled,
-                        onCheckedChange = { apiViewModel.newParamEnabled = it },
+                        checked = apiViewModel.paramPart.enabled,
+                        onCheckedChange = { apiViewModel.paramPart.enabled = it },
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -175,7 +175,7 @@ fun RequestPartParams() {
                         checked = item.enabled,
                         onCheckedChange = {
                             val newApiParam = item.copy(enabled = item.enabled.not())
-                            apiViewModel.updateApiParam(rowId, newApiParam)
+                            apiViewModel.paramPart.updateById(rowId, newApiParam)
                         },
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -192,13 +192,13 @@ fun RequestPartParams() {
                     Row {
                         Icons.Default.Clear.CxIcon(
                             modifier = Modifier.clickable {
-                                apiViewModel.clearNewParam()
+                                apiViewModel.paramPart.clearNew()
                             }
                         )
                         Icons.Default.Add.CxIcon(
                             modifier = Modifier.clickable {
-                                if (apiViewModel.saveNewApiParam()) {
-                                    apiViewModel.clearNewParam()
+                                if (apiViewModel.paramPart.save()) {
+                                    apiViewModel.paramPart.clearNew()
                                 }
                             }
                         )
@@ -209,7 +209,7 @@ fun RequestPartParams() {
                     Row {
                         Icons.Default.Delete.CxIcon(
                             modifier = Modifier.clickable {
-                                apiViewModel.deleteApiParam(rowId)
+                                apiViewModel.paramPart.deleteById(rowId)
                             }
                         )
                     }
@@ -255,7 +255,7 @@ fun RequestPartParams() {
                                     2 -> apiParam.copy(description = item)
                                     else -> apiParam
                                 }
-                                apiViewModel.updateApiParam(rowId, newApiParam)
+                                apiViewModel.paramPart.updateById(rowId,newApiParam)
                             },
                             modifier = Modifier
                                 .fillMaxHeight()

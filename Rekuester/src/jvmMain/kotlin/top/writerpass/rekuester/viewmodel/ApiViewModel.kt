@@ -6,102 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.SharingStarted
+import io.ktor.http.HttpMethod
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import top.writerpass.kmplibrary.coroutine.launchIO
+import top.writerpass.kmplibrary.coroutine.launchMain
+import top.writerpass.kmplibrary.coroutine.withContextIO
 import top.writerpass.rekuester.ApiStateHolder
+import top.writerpass.rekuester.HttpRequestResult
 import top.writerpass.rekuester.LocalAppViewModelStoreOwner
 import top.writerpass.rekuester.RekuesterClient
 import top.writerpass.rekuester.Singletons
-import top.writerpass.rekuester.data.ApiRepository
 import top.writerpass.rekuester.models.Api
 import top.writerpass.rekuester.models.ApiHeader
 import top.writerpass.rekuester.models.ApiParam
 import top.writerpass.rekuester.models.ApiStateAuthContainer
 import top.writerpass.rekuester.models.ApiStateBodyContainer
+import top.writerpass.rekuester.models.AuthTypes
 import top.writerpass.rekuester.models.BodyTypes
 import top.writerpass.rekuester.models.RawBodyTypes
-
 class ApiViewModel(val apiUuid: String) : BaseViewModel() {
-    private val repository: ApiRepository = Singletons.apisRepository
-
-    var newParamEnabled by mutableStateOf(false)
-    var newParamKey by mutableStateOf("")
-    var newParamValue by mutableStateOf("")
-    var newParamDescription by mutableStateOf("")
-
-    fun clearNewParam() {
-        newParamEnabled = false
-        newParamKey = ""
-        newParamValue = ""
-        newParamDescription = ""
-    }
-
-    fun saveNewApiParam(): Boolean {
-        if (newParamKey == "" && newParamValue == "" && newParamDescription == "") {
-            return false
-        }
-        val new = ApiParam(
-            key = newParamKey,
-            value = newParamValue,
-            description = newParamDescription,
-            enabled = newParamEnabled
-        )
-        ui.value.params.add(new)
-        return true
-    }
-
-    fun deleteApiParam(index: Int) {
-        ui.value.params.removeAt(index)
-    }
-
-    fun updateApiParam(index: Int, new: ApiParam) {
-        ui.value.params[index] = new
-    }
-
-
-    var newHeaderEnabled by mutableStateOf(false)
-    var newHeaderKey by mutableStateOf("")
-    var newHeaderValue by mutableStateOf("")
-    var newHeaderDescription by mutableStateOf("")
-    fun clearNewHeader() {
-        newHeaderEnabled = false
-        newHeaderKey = ""
-        newHeaderValue = ""
-        newHeaderDescription = ""
-    }
-
-    fun saveNewApiHeader(): Boolean {
-        if (newHeaderKey == "" && newHeaderValue == "" && newHeaderDescription == "") {
-            return false
-        }
-        val new = ApiHeader(
-            key = newHeaderKey,
-            value = newHeaderValue,
-            description = newHeaderDescription,
-            enabled = newHeaderEnabled
-        )
-        ui.value.headers.add(new)
-        return true
-    }
-
-    fun deleteApiHeader(index: Int) {
-        ui.value.headers.removeAt(index)
-    }
-
-    fun updateApiHeader(index: Int, new: ApiHeader) {
-        ui.value.headers[index] = new
-    }
-
-    fun updateAuth(block: ApiStateAuthContainer.() -> ApiStateAuthContainer) {
-        val new = block(ui.value.auth)
-        ui.value.auth = new
-    }
-
-    // TODO 把上面这些移动到 state 中
-
-
     companion object Companion {
         @Composable
         fun instance(apiUuid: String): ApiViewModel {
@@ -115,37 +38,29 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
         }
     }
 
-    private val client = Singletons.client
-
     val apiFlow = Singletons.apisRepository
         .allFlow.map { it.find { it.uuid == apiUuid } ?: Api.BLANK }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = Api.BLANK
-        )
+        .stateIn(Api.BLANK)
 
     val ui = apiFlow.map { ApiStateHolder(it) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = ApiStateHolder.BLANK
-        )
+        .stateIn(ApiStateHolder.BLANK)
 
     fun updateOrInsertApi(api: Api) {
         runInScope {
-            repository.updateOrInsert(api)
+            Singletons.apisRepository.updateOrInsert(api)
         }
     }
 
     fun request() {
-        viewModelScope.launchIO {
-            request(client)
+        viewModelScope.launchMain {
+            val client = Singletons.client
+            val newRequestResult = withContextIO { request(client) }
+            ui.value.updateRequestResult(newRequestResult)
         }
     }
 
-    suspend fun request(client: RekuesterClient) {
-        ui.value.requestResult = client.request(
+    suspend fun request(client: RekuesterClient): HttpRequestResult {
+        return client.request(
             method = ui.value.method,
             address = ui.value.address,
             params = ui.value.params.asReadOnly(),
@@ -155,22 +70,132 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
         )
     }
 
-    val bodyPart = BodyPart()
+    // info part
+    val infoPart = InfoPart()
+    inner class InfoPart() {
+        fun updateLabel(label: String) = ui.value.updateLabel(label)
+        fun updateMethod(method: HttpMethod) = ui.value.updateMethod(method)
+        fun updateAddress(address: String) = ui.value.updateAddress(address)
+    }
 
-    inner class BodyPart{
+    // param part
+    val paramPart = ParamPart()
+    inner class ParamPart {
+        var enabled by mutableStateOf(false)
+        var key by mutableStateOf("")
+        var value by mutableStateOf("")
+        var description by mutableStateOf("")
+
+        fun clearNew() {
+            enabled = false
+            key = ""
+            value = ""
+            description = ""
+        }
+
+        fun save(): Boolean {
+            if (key == "" && value == "" && description == "") {
+                return false
+            }
+            val new = ApiParam(
+                key = key,
+                value = value,
+                description = description,
+                enabled = enabled
+            )
+            ui.value.params.add(new)
+            return true
+        }
+
+        fun deleteById(index: Int) {
+            ui.value.params.removeAt(index)
+        }
+
+        fun updateById(index: Int, new: ApiParam) {
+            ui.value.params[index] = new
+        }
+    }
+
+    // header part
+    val headerPart = HeaderPart()
+    inner class HeaderPart {
+        var enabled by mutableStateOf(false)
+        var key by mutableStateOf("")
+        var value by mutableStateOf("")
+        var description by mutableStateOf("")
+        fun clearNew() {
+            enabled = false
+            key = ""
+            value = ""
+            description = ""
+        }
+
+        fun save(): Boolean {
+            if (key == "" && value == "" && description == "") {
+                return false
+            }
+            val new = ApiHeader(
+                key = key,
+                value = value,
+                description = description,
+                enabled = enabled
+            )
+            ui.value.headers.add(new)
+            return true
+        }
+
+        fun deleteById(index: Int) {
+            ui.value.headers.removeAt(index)
+        }
+
+        fun updateById(index: Int, new: ApiHeader) {
+            ui.value.headers[index] = new
+        }
+    }
+
+    // auth part
+    val authPart = AuthPart()
+    inner class AuthPart {
+        fun updateType(newType: AuthTypes) {
+            val newAuth = ui.value.auth.copy(type = newType)
+            ui.value.updateAuth(newAuth)
+        }
+
+        fun updateBasic(basic: ApiStateAuthContainer.Basic) {
+            val newAuth = ui.value.auth.copy(basic = basic)
+            ui.value.updateAuth(newAuth)
+        }
+
+        fun updateBearer(bearer: ApiStateAuthContainer.Bearer) {
+            val newAuth = ui.value.auth.copy(bearer = bearer)
+            ui.value.updateAuth(newAuth)
+        }
+
+        fun updateJwt(jwt: ApiStateAuthContainer.Jwt) {
+            val newAuth = ui.value.auth.copy(jwt = jwt)
+            ui.value.updateAuth(newAuth)
+        }
+    }
+
+    // body part
+    val bodyPart = BodyPart()
+    inner class BodyPart {
         val rawTypeCalculator = { ui.value.body.raw?.type ?: RawBodyTypes.Text }
         val rawContentCalculator = { ui.value.body.raw?.content ?: "" }
-        fun updateType(newType: BodyTypes){
-            ui.value.body = ui.value.body.copy(type = newType)
+        fun updateType(newType: BodyTypes) {
+            val newBody = ui.value.body.copy(type = newType)
+            ui.value.updateBody(newBody)
         }
-        fun updateRawType(newType: RawBodyTypes){
+
+        fun updateRawType(newType: RawBodyTypes) {
             val body = ui.value.body
             val raw = body.raw
-            val newRaw = raw?.copy(type = newType) ?: ApiStateBodyContainer.Raw(newType,"")
+            val newRaw = raw?.copy(type = newType) ?: ApiStateBodyContainer.Raw(newType, "")
             val newBody = body.copy(raw = newRaw)
-            ui.value.body = newBody
+            ui.value.updateBody(newBody)
         }
-        fun updateRawContent(newContent: String){
+
+        fun updateRawContent(newContent: String) {
             val body = ui.value.body
             val raw = body.raw
             val rawType = raw?.type ?: RawBodyTypes.Text
@@ -179,13 +204,13 @@ class ApiViewModel(val apiUuid: String) : BaseViewModel() {
                 content = newContent
             )
             val newBody = body.copy(raw = newRaw)
-            ui.value.body = newBody
+            ui.value.updateBody(newBody)
         }
 
-        fun updateBinaryBody(binary: ApiStateBodyContainer.Binary){
+        fun updateBinaryBody(binary: ApiStateBodyContainer.Binary) {
             val body = ui.value.body
             val newBody = body.copy(binary = binary)
-            ui.value.body = newBody
+            ui.value.updateBody(newBody)
         }
     }
 }

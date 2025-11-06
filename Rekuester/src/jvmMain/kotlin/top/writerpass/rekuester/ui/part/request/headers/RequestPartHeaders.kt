@@ -114,22 +114,22 @@ fun RequestPartHeaders() {
         footerItemContent = { columnId ->
             when (columnId) {
                 0 -> BasicTextField(
-                    value = apiViewModel.newHeaderKey,
-                    onValueChange = { apiViewModel.newHeaderKey = it },
+                    value = apiViewModel.headerPart.key,
+                    onValueChange = { apiViewModel.headerPart.key = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 1 -> BasicTextField(
-                    value = apiViewModel.newHeaderValue,
-                    onValueChange = { apiViewModel.newHeaderValue = it },
+                    value = apiViewModel.headerPart.value,
+                    onValueChange = { apiViewModel.headerPart.value = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
 
                 2 -> BasicTextField(
-                    value = apiViewModel.newHeaderDescription,
-                    onValueChange = { apiViewModel.newHeaderDescription = it },
+                    value = apiViewModel.headerPart.description,
+                    onValueChange = { apiViewModel.headerPart.description = it },
                     modifier = Modifier.fillMaxSize(),
                     maxLines = 1
                 )
@@ -158,8 +158,8 @@ fun RequestPartHeaders() {
 
                 TableAxisIds.FooterRowId -> {
                     Checkbox(
-                        checked = apiViewModel.newHeaderEnabled,
-                        onCheckedChange = { apiViewModel.newHeaderEnabled = it },
+                        checked = apiViewModel.headerPart.enabled,
+                        onCheckedChange = { apiViewModel.headerPart.enabled = it },
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -174,7 +174,7 @@ fun RequestPartHeaders() {
                         checked = item.enabled,
                         onCheckedChange = {
                             val newApiHeader = item.copy(enabled = item.enabled.not())
-                            apiViewModel.updateApiHeader(rowId, newApiHeader)
+                            apiViewModel.headerPart.updateById(rowId, newApiHeader)
                         },
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -191,13 +191,13 @@ fun RequestPartHeaders() {
                     Row {
                         Icons.Default.Clear.CxIcon(
                             modifier = Modifier.clickable {
-                                apiViewModel.clearNewHeader()
+                                apiViewModel.headerPart.clearNew()
                             }
                         )
                         Icons.Default.Add.CxIcon(
                             modifier = Modifier.clickable {
-                                if (apiViewModel.saveNewApiHeader()) {
-                                    apiViewModel.clearNewHeader()
+                                if (apiViewModel.headerPart.save()) {
+                                    apiViewModel.headerPart.clearNew()
                                 }
                             }
                         )
@@ -208,7 +208,7 @@ fun RequestPartHeaders() {
                     Row {
                         Icons.Default.Delete.CxIcon(
                             modifier = Modifier.clickable {
-                                apiViewModel.deleteApiHeader(rowId)
+                                apiViewModel.headerPart.deleteById(rowId)
                             }
                         )
                     }
@@ -254,7 +254,7 @@ fun RequestPartHeaders() {
                                     2 -> apiHeader.copy(description = item)
                                     else -> apiHeader
                                 }
-                                apiViewModel.updateApiHeader(rowId, newApiHeader)
+                                apiViewModel.headerPart.updateById(rowId, newApiHeader)
                             },
                             modifier = Modifier
                                 .fillMaxHeight()

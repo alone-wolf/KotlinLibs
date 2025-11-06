@@ -5,9 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.StateFactoryMarker
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.URLBuilder
 import top.writerpass.rekuester.models.Api
 import top.writerpass.rekuester.models.ApiParam
+import top.writerpass.rekuester.models.ApiStateAuthContainer
+import top.writerpass.rekuester.models.ApiStateBodyContainer
 import top.writerpass.rekuester.utils.AutoActionMutableState
 import top.writerpass.rekuester.utils.AutoActionMutableStateList
 import top.writerpass.rekuester.utils.autoActionStateListOf
@@ -28,21 +31,64 @@ fun defaultRequestHeaders(): Map<String, String> {
 }
 
 class ApiStateHolder(private val api: Api) {
-    var label by autoTagModifiedStateOf(api.label)
-    var method by autoTagModifiedStateOf(api.method)
-    var address by autoTagModifiedStateOf(api.address)
-    val params = autoTagModifiedStateListOf(api.params.toList())
-    val headers = autoTagModifiedStateListOf(api.headers.toList())
-    var auth by autoTagModifiedStateOf(api.auth)
-    var body by autoTagModifiedStateOf(api.body)
+    // isModified part
     var isModified by mutableStateOf(false)
         private set
-
-    var requestResult: HttpRequestResult? by mutableStateOf(null)
-
-    fun updateModifyState(modified: Boolean) {
+    fun updateIsModified(modified: Boolean) {
         isModified = modified
     }
+
+    // label part
+    var label by mutableStateOf(api.label)
+        private set
+    fun updateLabel(label: String) {
+        this.label = label
+        isModified = true
+    }
+
+    // method part
+    var method by mutableStateOf(api.method)
+        private set
+
+    fun updateMethod(method: HttpMethod) {
+        this.method = method
+        isModified = true
+    }
+
+    // address part
+    var address by mutableStateOf(api.address)
+        private set
+    fun updateAddress(address: String) {
+        this.address = address
+        isModified = true
+    }
+
+    val params = autoTagModifiedStateListOf(api.params.toList())
+    val headers = autoTagModifiedStateListOf(api.headers.toList())
+
+    // auth part
+    var auth by mutableStateOf(api.auth)
+        private set
+    fun updateAuth(auth: ApiStateAuthContainer){
+        this.auth = auth
+        isModified = true
+    }
+
+    // body part
+    var body by mutableStateOf(api.body)
+        private set
+    fun updateBody(body: ApiStateBodyContainer){
+        this.body = body
+        isModified = true
+    }
+
+    // request result part
+    var requestResult: HttpRequestResult? by mutableStateOf(null)
+        private set
+    fun updateRequestResult(requestResult: HttpRequestResult){
+        this.requestResult = requestResult
+    }
+
 
     fun toApi() = Api(
         uuid = api.uuid,
@@ -56,19 +102,20 @@ class ApiStateHolder(private val api: Api) {
         auth = auth,
     )
 
-    @StateFactoryMarker
-    inline fun <reified T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
-        return autoActionStateOf(initial) {
-            if (!isModified) updateModifyState(true)
-        }
-    }
+//    @StateFactoryMarker
+//    inline fun <reified T> autoTagModifiedStateOf(initial: T): AutoActionMutableState<T> {
+//        return autoActionStateOf(initial) {
+//            if (!isModified) updateIsModified(true)
+//        }
+//    }
 
     @StateFactoryMarker
     inline fun <reified T> autoTagModifiedStateListOf(initial: List<T>): AutoActionMutableStateList<T> {
         return autoActionStateListOf(initial) {
-            if (!isModified) updateModifyState(true)
+            if (!isModified) updateIsModified(true)
         }
     }
+
 
     companion object {
         val BLANK = ApiStateHolder(Api.BLANK)

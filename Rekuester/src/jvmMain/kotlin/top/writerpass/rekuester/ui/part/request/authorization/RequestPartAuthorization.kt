@@ -42,9 +42,7 @@ fun RequestPartAuthorization() {
                 AuthTypes.typeMap.forEach { (k, v) ->
                     DropdownMenuItem(
                         onClick = {
-                            apiViewModel.updateAuth {
-                                copy(type = v)
-                            }
+                            apiViewModel.authPart.updateType(v)
                             expanded = false
                         },
                         text = { k.CxText() }
@@ -67,15 +65,15 @@ fun RequestPartAuthorization() {
                         OutlinedTextField(
                             value = basic.username,
                             onValueChange = {
-                                val new = basic.copy(username = it)
-                                ui.auth = ui.auth.copy(basic = new)
+                                val newBasic = basic.copy(username = it)
+                                apiViewModel.authPart.updateBasic(newBasic)
                             },
                         )
                         OutlinedTextField(
                             value = basic.password,
                             onValueChange = {
-                                val new = basic.copy(password = it)
-                                ui.auth = ui.auth.copy(basic = new)
+                                val newBasic = basic.copy(password = it)
+                                apiViewModel.authPart.updateBasic(newBasic)
                             },
                         )
                     }
@@ -86,8 +84,8 @@ fun RequestPartAuthorization() {
                         OutlinedTextField(
                             value = bearer.token,
                             onValueChange = {
-                                val new = bearer.copy(token = it)
-                                ui.auth = ui.auth.copy(bearer = new)
+                                val newBearer = bearer.copy(token = it)
+                                apiViewModel.authPart.updateBearer(newBearer)
                             },
                         )
                     }
@@ -98,8 +96,8 @@ fun RequestPartAuthorization() {
                         OutlinedTextField(
                             value = jwt.secret,
                             onValueChange = {
-                                val new = jwt.copy(secret = it)
-                                ui.auth = ui.auth.copy(jwt = new)
+                                val newJwt = jwt.copy(secret = it)
+                                apiViewModel.authPart.updateJwt(newJwt)
                             },
                         )
                     }

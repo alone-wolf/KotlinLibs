@@ -101,15 +101,15 @@ class RekuesterClient : AutoCloseable {
         )
     }
 
-    fun URLBuilder.addParams(params: List<ApiParam>) {
+    private fun URLBuilder.addParams(params: List<ApiParam>) {
         params.forEach { parameters.append(it.key, it.value) }
     }
 
-    fun HttpRequestBuilder.addHeaders(headers: List<ApiHeader>) {
+    private fun HttpRequestBuilder.addHeaders(headers: List<ApiHeader>) {
         headers.forEach { header(it.key, it.value) }
     }
 
-    fun URLBuilder.fillAuthorizationParams(auth: ApiStateAuthContainer) {
+    private fun URLBuilder.fillAuthorizationParams(auth: ApiStateAuthContainer) {
         when (auth.type) {
             AuthTypes.ApiKey -> {
                 auth.apiKey?.let { apiKey ->
@@ -135,7 +135,7 @@ class RekuesterClient : AutoCloseable {
         }
     }
 
-    fun HttpRequestBuilder.fillAuthorizationHeader(auth: ApiStateAuthContainer) {
+    private fun HttpRequestBuilder.fillAuthorizationHeader(auth: ApiStateAuthContainer) {
         when (auth.type) {
             AuthTypes.InheritAuthFromParent -> {
                 "AuthTypes.InheritAuthFromParent not implemented yet".log("RekuesterClient::request")
@@ -179,7 +179,7 @@ class RekuesterClient : AutoCloseable {
         }
     }
 
-    fun HttpRequestBuilder.fillBody(body: ApiStateBodyContainer) {
+    private fun HttpRequestBuilder.fillBody(body: ApiStateBodyContainer) {
         when (body.type) {
             BodyTypes.None -> {}
 
