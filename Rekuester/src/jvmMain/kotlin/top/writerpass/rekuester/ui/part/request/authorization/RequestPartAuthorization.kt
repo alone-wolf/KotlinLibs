@@ -24,16 +24,12 @@ import top.writerpass.rekuester.models.AuthTypes
 @Composable
 fun RequestPartAuthorization() {
     val apiViewModel = LocalApiViewModel.current
-    val ui by apiViewModel.ui.collectAsState()
-
-    val authType by remember(ui.auth) {
-        derivedStateOf { ui.auth.type }
-    }
+    val ui = apiViewModel.ui.collectAsState().value
 
     FullWidthRow {
-        var expanded by remember { mutableStateOf(false) }
         Box {
-            authType.label.CxTextButton { expanded = !expanded }
+            var expanded by remember { mutableStateOf(false) }
+            ui.auth.type.label.CxTextButton { expanded = !expanded }
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -51,7 +47,7 @@ fun RequestPartAuthorization() {
             }
         }
         FullWidthColumn {
-            when (authType) {
+            when (ui.auth.type) {
                 AuthTypes.InheritAuthFromParent -> {
                     "Inherit Auth From Parent".CxText()
                 }
@@ -108,20 +104,19 @@ fun RequestPartAuthorization() {
                         val key = Mutable.someString("")
                         val value = Mutable.someString("")
                         val addTo = Mutable.someString("")
-                        key.CxOutlinedBasicTextField(label = "Key"){
+                        key.CxOutlinedBasicTextField(label = "Key") {
                             val newApiKey = apiKey.copy(key = it)
                             apiViewModel.authPart.updateApiKey(newApiKey)
                         }
-                        value.CxOutlinedBasicTextField(label = "Value"){
+                        value.CxOutlinedBasicTextField(label = "Value") {
                             val newApiKey = apiKey.copy(value = it)
                             apiViewModel.authPart.updateApiKey(newApiKey)
                         }
-                        addTo.CxOutlinedBasicTextField(label = "Add to"){
+                        addTo.CxOutlinedBasicTextField(label = "Add to") {
 //                            val newApiKey = apiKey.copy(addTo = it)
 //                            apiViewModel.authPart.updateApiKey(newApiKey)
                         }
                     }
-
                 }
             }
         }
