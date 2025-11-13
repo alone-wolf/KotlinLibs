@@ -3,19 +3,28 @@ plugins {
 //    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.multiplatform)
+//    alias(libs.plugins.multiplatform.android.library)
     alias(libs.plugins.compose)
 }
 
 kotlin {
     androidTarget()
+//    androidLibrary{
+//        compileSdk = 36
+//        namespace = "top.writerpass.floatingwindowmanager"
+//    }
 
     sourceSets{
         val androidMain by getting {
             dependencies {
                 implementation(libs.core.ktx)
+                implementation(libs.androidx.lifecycle.service)
                 implementation(libs.lifecycle.runtime.ktx)
                 implementation(libs.activity.compose)
-                implementation(project(":AndLib"))
+//                implementation(libs.comp)
+                implementation(kotlin("reflect"))
+
+//                implementation(project(":AndLib"))
                 implementation(project(":CMPLibrary"))
                 implementation(project(":KMPLibrary"))
             }
@@ -24,11 +33,11 @@ kotlin {
 }
 
 android {
-    namespace = "top.writerpass.sample"
+    namespace = "top.writerpass.floatingwindowmanager"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "top.writerpass.sample"
+        applicationId = "top.writerpass.floatingwindowmanager"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -36,20 +45,20 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
+//
+//    buildTypes {
+//        release {
+//            isMinifyEnabled = false
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
+//        }
+//    }
+//    compileOptions {
+//        sourceCompatibility = JavaVersion.VERSION_11
+//        targetCompatibility = JavaVersion.VERSION_11
+//    }
 //    kotlinOptions {
 //        jvmTarget = "11"
 //    }

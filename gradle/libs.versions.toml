@@ -33,6 +33,7 @@ materialKolor = "3.0.1"
 jetbrainsKotlinJvm = "2.2.0"
 poiOoxml = "5.4.1"
 activityKtx = "1.11.0"
+lifecycleService = "2.9.4"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin-reflect" }
@@ -83,6 +84,7 @@ kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
 kstore-file = { module = "io.github.xxfast:kstore-file", version.ref = "kstore" }
 kstore-storage = { module = "io.github.xxfast:kstore-storage", version.ref = "kstore" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
