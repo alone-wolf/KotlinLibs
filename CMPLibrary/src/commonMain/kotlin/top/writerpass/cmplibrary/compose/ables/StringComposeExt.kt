@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import top.writerpass.cmplibrary.utils.Mutable
 import top.writerpass.cmplibrary.utils.Mutable.setFalse
 import top.writerpass.cmplibrary.utils.Mutable.setTrue
-import top.writerpass.mpfilepicker.PlatformFile
+//import top.writerpass.mpfilepicker.PlatformFile
 
 interface StringComposeExt
 
@@ -186,22 +186,22 @@ object TextComposeExt : StringComposeExt {
         }
     }
 
-    @Composable
-    fun String.CxFilePicker(
-        extensions: List<String> = emptyList(),
-        title: String = "File Picker",
-        onFileSelected: (PlatformFile?) -> Unit
-    ) {
-        val show = Mutable.someBoolean()
-        this.CxTextButton { show.setTrue() }
-        top.writerpass.mpfilepicker.FilePicker(
-            show = show.value,
-            fileExtensions = extensions,
-            title = title,
-            onFileSelected = {
-                onFileSelected(it)
-                show.setFalse()
-            }
-        )
-    }
+//    @Composable
+//    fun String.CxFilePicker(
+//        extensions: List<String> = emptyList(),
+//        title: String = "File Picker",
+//        onFileSelected: (PlatformFile?) -> Unit
+//    ) {
+//        val show = Mutable.someBoolean()
+//        this.CxTextButton { show.setTrue() }
+//        top.writerpass.mpfilepicker.FilePicker(
+//            show = show.value,
+//            fileExtensions = extensions,
+//            title = title,
+//            onFileSelected = {
+//                onFileSelected(it)
+//                show.setFalse()
+//            }
+//        )
+//    }
 }
