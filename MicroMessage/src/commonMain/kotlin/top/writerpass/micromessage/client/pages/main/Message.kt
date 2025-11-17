@@ -11,7 +11,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
-import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.micromessage.client.pages.base.MainPages
@@ -26,7 +25,7 @@ object Message : MainPages {
     override val iconSelected: ImageVector
         get() = Icons.AutoMirrored.Filled.Message
     override val label: String
-        get() = "MicroMessage"
+        get() = "Message"
     override val leftTopIcon: @Composable (() -> Unit)
         get() = {}
     override val actions: @Composable (RowScope.() -> Unit)

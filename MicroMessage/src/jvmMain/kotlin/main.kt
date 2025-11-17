@@ -15,7 +15,9 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.singleWindowApplication
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -29,92 +31,99 @@ import top.writerpass.micromessage.client.pages.main.Message
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun main(){
-
-
-
-    singleWindowApplication(
-        title = "MicroMessage",
-    ) {
-        val navController = rememberNavController()
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentPage by remember {
-            derivedStateOf {
-                navBackStackEntry
-                    ?.destination
-                    ?.route
-                    ?.split("/")
-                    ?.first()
-                    .let { Singleton.pageMap[it] ?: Message }
-            }
-        }
-        val showBottomBar by remember {
-            derivedStateOf { currentPage is MainPages }
-        }
-        CompositionLocalProvider(
-            LocalNavController provides navController
-        ) {
-            val navController = LocalNavController.current
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { currentPage.label.CxText() },
-                        navigationIcon = { currentPage.leftTopIcon() },
-                        actions = { currentPage.actions(this) }
-                    )
-                },
-                modifier = Modifier.fillMaxSize(),
-                bottomBar = {
-                    if (showBottomBar) {
-                        NavigationBar {
-                            Singleton.mainPages.forEach { page ->
-                                val isSelected by remember(currentPage) {
-                                    derivedStateOf {
-                                        currentPage == page
+fun main() {
+    application {
+        Window(
+            state = rememberWindowState(),
+            onCloseRequest = ::exitApplication,
+            visible = true,
+            title = "MicroMessage",
+            resizable = true,
+            enabled = true,
+            focusable = true,
+            alwaysOnTop = false,
+            content = {
+                val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentPage by remember {
+                    derivedStateOf {
+                        navBackStackEntry
+                            ?.destination
+                            ?.route
+                            ?.split("/")
+                            ?.first()
+                            .let { Singleton.pageMap[it] ?: Message }
+                    }
+                }
+                val showBottomBar by remember {
+                    derivedStateOf { currentPage is MainPages }
+                }
+                CompositionLocalProvider(
+                    LocalNavController provides navController
+                ) {
+                    val navController = LocalNavController.current
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = { currentPage.label.CxText() },
+                                navigationIcon = { currentPage.leftTopIcon() },
+                                actions = { currentPage.actions(this) }
+                            )
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                        bottomBar = {
+                            if (showBottomBar) {
+                                NavigationBar {
+                                    Singleton.mainPages.forEach { page ->
+                                        val isSelected by remember(currentPage) {
+                                            derivedStateOf {
+                                                currentPage == page
+                                            }
+                                        }
+                                        NavigationBarItem(
+                                            selected = isSelected,
+                                            icon = { (if (isSelected) page.iconSelected else page.icon).CxIcon() },
+                                            label = { page.label.CxText() },
+                                            onClick = {
+                                                navController.navigate(page.route)
+                                            }
+                                        )
                                     }
                                 }
-                                NavigationBarItem(
-                                    selected = isSelected,
-                                    icon = { (if (isSelected) page.iconSelected else page.icon).CxIcon() },
-                                    label = { page.label.CxText() },
-                                    onClick = {
-                                        navController.navigate(page.route)
-                                    }
-                                )
                             }
-                        }
-                    }
-                },
-                snackbarHost = {
-                    val snackbarHostState = remember { SnackbarHostState() }
-                    SnackbarHost(
-                        hostState = snackbarHostState,
-                        snackbar = {}
+                        },
+                        snackbarHost = {
+                            val snackbarHostState = remember { SnackbarHostState() }
+                            SnackbarHost(
+                                hostState = snackbarHostState,
+                                snackbar = {}
+                            )
+                        },
+                        floatingActionButton = {
+                            currentPage.fab()
+                        },
+                        floatingActionButtonPosition = FabPosition.End,
+                        content = { padding ->
+                            NavHost(
+                                navController = navController,
+                                startDestination = Message.route,
+                                modifier = Modifier.padding(padding)
+                            ) {
+                                Singleton.pageMap.forEach { (route, page) ->
+                                    composable(
+                                        route = route,
+                                        arguments = emptyList(),
+                                        enterTransition = { EnterTransition.None },
+                                        exitTransition = { ExitTransition.None },
+                                        popEnterTransition = { EnterTransition.None },
+                                        popExitTransition = { ExitTransition.None },
+                                    ) { page.content(this, it) }
+                                }
+                            }
+                        },
                     )
-                },
-                floatingActionButton = {
-                    currentPage.fab()
-                },
-                floatingActionButtonPosition = FabPosition.End,
-                content = { padding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = Message.route,
-                        modifier = Modifier.padding(padding)
-                    ) {
-                        Singleton.pageMap.forEach { (route, page) ->
-                            composable(
-                                route = route,
-                                arguments = emptyList(),
-                                enterTransition = { EnterTransition.None },
-                                exitTransition = { ExitTransition.None },
-                                popEnterTransition = { EnterTransition.None },
-                                popExitTransition = { ExitTransition.None },
-                            ) { page.content(this, it) }
-                        }
-                    }
-                },
-            )
-        }
+                }
+            }
+        )
     }
 }
