@@ -8,9 +8,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kotlinx.coroutines.launch
 import top.writerpass.cmpframework.page.Page
 import top.writerpass.cmplibrary.compose.FullSizeColumn
-import top.writerpass.cmplibrary.compose.OutlinedButton
-import top.writerpass.cmplibrary.compose.OutlinedBasicTextField
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.MutableStateComposeExt.CxOutlinedBasicTextField
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxOutlinedButton
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.utils.Mutable
 
 internal val loginPage = Page(
@@ -22,19 +22,19 @@ internal val loginPage = Page(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            "Login".Text()
+            "Login".CxText()
             val username = Mutable.someString()
             val password = Mutable.someString()
 
-            username.OutlinedBasicTextField(label = "Username")
-            password.OutlinedBasicTextField(
+            username.CxOutlinedBasicTextField(label = "Username")
+            password.CxOutlinedBasicTextField(
                 label = "Password",
                 visualTransformation = PasswordVisualTransformation()
             )
 
             val loginManager = LocalLoginManager.current
             val scope = rememberCoroutineScope()
-            "Login".OutlinedButton {
+            "Login".CxOutlinedButton {
                 scope.launch {
                     if (loginManager.check(username.value, password.value)) {
                         if (loginManager.login(username.value, password.value)) {
@@ -43,7 +43,7 @@ internal val loginPage = Page(
                     }
                 }
             }
-            "Register".OutlinedButton {
+            "Register".CxOutlinedButton {
                 loginManager.gotoRegister()
             }
         }

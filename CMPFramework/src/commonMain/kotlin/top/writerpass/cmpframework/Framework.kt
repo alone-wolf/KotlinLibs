@@ -39,9 +39,9 @@ import top.writerpass.cmpframework.page.IMainPages
 import top.writerpass.cmpframework.page.IPages
 import top.writerpass.cmpframework.page.MainPage
 import top.writerpass.cmpframework.page.Page
-import top.writerpass.cmplibrary.compose.Icon
-import top.writerpass.cmplibrary.compose.IconButton
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
+import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.utils.Mutable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,13 +95,13 @@ fun Framework(
                             NavigationBarItem(
                                 icon = {
                                     if (selected) {
-                                        p.selectedIcon.Icon()
+                                        p.selectedIcon.CxIcon()
                                     } else {
-                                        p.icon.Icon()
+                                        p.icon.CxIcon()
                                     }
                                 },
                                 label = {
-                                    p.label.Text()
+                                    p.label.CxText()
                                 },
                                 selected = selected,
                                 onClick = {
@@ -110,16 +110,16 @@ fun Framework(
                             )
                         }
                         if (mainPages?.hasMore ?: false) {
-                            val selected = Mutable.SomeBoolean(false)
+                            val selected = Mutable.someBoolean(false)
                             this@NavigationBar.NavigationBarItem(
                                 icon = {
                                     if (selected.value) {
-                                        Icons.Filled.Close.Icon()
+                                        Icons.Filled.Close.CxIcon()
                                     } else {
-                                        Icons.Outlined.MoreHoriz.Icon()
+                                        Icons.Outlined.MoreHoriz.CxIcon()
                                     }
                                 },
-                                label = { "More".Text() },
+                                label = { "More".CxText() },
                                 selected = selected.value,
                                 onClick = {
                                     selected.value = !selected.value
@@ -132,8 +132,8 @@ fun Framework(
                                 ) {
                                     mainPages.pagesInMore.forEach { p ->
                                         DropdownMenuItem(
-                                            text = { p.label.Text() },
-                                            leadingIcon = { p.icon.Icon() },
+                                            text = { p.label.CxText() },
+                                            leadingIcon = { p.icon.CxIcon() },
                                             onClick = {
                                                 selected.value = false
                                                 navController.gotoMainPage(p)
@@ -171,7 +171,7 @@ fun Framework(
 //                                it.Text()
 //                            }
                             Crossfade(currentPageLabel) {
-                                it.Text()
+                                it.CxText()
                             }
                         },
                         navigationIcon = {
@@ -180,7 +180,7 @@ fun Framework(
                                 enter = fadeIn() + slideInHorizontally() + expandHorizontally(),
                                 exit = fadeOut() + slideOutHorizontally() + shrinkHorizontally(),
                             ) {
-                                Icons.AutoMirrored.Filled.ArrowBack.IconButton {
+                                Icons.AutoMirrored.Filled.ArrowBack.CxIconButton {
                                     navController.back()
                                 }
                             }

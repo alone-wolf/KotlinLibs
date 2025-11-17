@@ -12,8 +12,8 @@ import top.writerpass.cmpframework.navigation.gotoPage
 import top.writerpass.cmpframework.page.IMainPages
 import top.writerpass.cmpframework.page.MainPage
 import top.writerpass.cmplibrary.compose.FullSizeRow
-import top.writerpass.cmplibrary.compose.OutlinedButton
-import top.writerpass.cmplibrary.compose.Text
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxOutlinedButton
+import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 
 internal object MainPages : IMainPages {
 
@@ -24,9 +24,9 @@ internal object MainPages : IMainPages {
         selectedIcon = Icons.Filled.Home,
         content = { it ->
             FullSizeRow {
-                "Home".Text()
+                "Home".CxText()
                 val navController = LocalNavControllerWrapper.current
-                "LoginPage".OutlinedButton {
+                "LoginPage".CxOutlinedButton {
                     navController.gotoPage(Pages.loginPage)
                 }
             }
@@ -38,7 +38,7 @@ internal object MainPages : IMainPages {
         label = "List",
         icon = Icons.AutoMirrored.Filled.List,
         selectedIcon = Icons.AutoMirrored.Outlined.List,
-        content = { FullSizeRow { "List".Text() } }
+        content = { FullSizeRow { "List".CxText() } }
     )
 
     val profilePage = MainPage(
@@ -46,7 +46,7 @@ internal object MainPages : IMainPages {
         label = "Profile",
         icon = Icons.AutoMirrored.Outlined.Article,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
-        content = { FullSizeRow { "Profile".Text() } }
+        content = { FullSizeRow { "Profile".CxText() } }
     )
 
     val settingsPage = MainPage(
@@ -55,7 +55,7 @@ internal object MainPages : IMainPages {
         icon = Icons.AutoMirrored.Outlined.Article,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
         hideInMore = true,
-        content = { FullSizeRow { "Settings".Text() } }
+        content = { FullSizeRow { "Settings".CxText() } }
     )
 
     val settingsPage1 = MainPage(
@@ -64,7 +64,7 @@ internal object MainPages : IMainPages {
         icon = Icons.AutoMirrored.Outlined.Article,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
         hideInMore = true,
-        content = { FullSizeRow { "Settings1".Text() } }
+        content = { FullSizeRow { "Settings1".CxText() } }
     )
 
     val settingsPage2 = MainPage(
@@ -73,7 +73,7 @@ internal object MainPages : IMainPages {
         icon = Icons.AutoMirrored.Outlined.Article,
         selectedIcon = Icons.AutoMirrored.Filled.Article,
         hideInMore = true,
-        content = { FullSizeRow { "Settings2".Text() } }
+        content = { FullSizeRow { "Settings2".CxText() } }
     )
 
     override val pages: List<MainPage> = listOf(
