@@ -31,6 +31,7 @@ kotlinx-datetime = "0.7.1"
 kstore = "1.0.0"
 materialKolor = "3.0.1"
 jetbrainsKotlinJvm = "2.2.0"
+napierVersion = "2.7.1"
 poiOoxml = "5.4.1"
 activityKtx = "1.11.0"
 lifecycleService = "2.9.4"
@@ -52,6 +53,7 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+logger-napier = { module = "io.github.aakira:napier", version.ref = "napierVersion" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }

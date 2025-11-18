@@ -7,12 +7,11 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
-import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.Pages
+import top.writerpass.micromessage.client.pages.base.Page
 
-object PrivateChatPage : Pages {
+object PrivateChatPage : Page {
     override val routeRaw: String
         get() = "private-chat-page"
     override val route: String

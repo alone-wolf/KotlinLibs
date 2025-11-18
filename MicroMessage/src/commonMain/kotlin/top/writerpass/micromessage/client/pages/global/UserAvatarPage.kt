@@ -9,16 +9,13 @@ import androidx.compose.material.icons.filled.Person2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
-import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
-import top.writerpass.micromessage.client.pages.base.Pages
+import top.writerpass.micromessage.client.pages.base.Page
 
 
-object UserAvatarPage : Pages {
-    override val routeRaw: String
-        get() = route
+object UserAvatarPage : Page {
     override val route: String
         get() = "user-avatar-page"
     override val label: String

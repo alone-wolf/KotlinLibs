@@ -8,10 +8,9 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
-import kotlinx.serialization.Serializable
-import top.writerpass.micromessage.client.pages.base.MainPages
+import top.writerpass.micromessage.client.pages.base.MainPage
 
-object Explorer : MainPages {
+object Explorer : MainPage {
     override val routeRaw: String
         get() = route
     override val route: String

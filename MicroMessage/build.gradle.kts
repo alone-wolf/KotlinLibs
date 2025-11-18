@@ -43,9 +43,14 @@ kotlin {
                 implementation(compose.components.uiToolingPreview)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.androidx.navigation.compose)
+                implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.logger.napier)
 
                 implementation(project(":CMPLibrary"))
                 implementation(project(":KMPLibrary"))
+
+                // https://github.com/alexzhirkevich/qrose
+                implementation("io.github.alexzhirkevich:qrose:1.0.1")
             }
         }
         val jvmMain by getting {

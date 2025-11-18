@@ -11,37 +11,57 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
+import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.Singleton
-import top.writerpass.micromessage.client.pages.base.MainPages
+import top.writerpass.micromessage.client.pages.base.MainPage
 import top.writerpass.micromessage.client.pages.main.Message
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun main() {
+    val viewModelStoreOwner = object : ViewModelStoreOwner {
+        override val viewModelStore: ViewModelStore = ViewModelStore()
+    }
     application {
+        val mainWindowState = rememberWindowState(
+            width = 400.dp,
+            height = 800.dp
+        )
+
+        LaunchedEffect(ApplicationState.showMainWindow) {
+            if (ApplicationState.showMainWindow.not()) {
+                ::exitApplication.invoke()
+            }
+        }
+
         Window(
-            state = rememberWindowState(),
-            onCloseRequest = ::exitApplication,
-            visible = true,
+            state = mainWindowState,
+            onCloseRequest = { ApplicationState.showMainWindow = false },
+            visible = ApplicationState.showMainWindow,
             title = "MicroMessage",
             resizable = true,
             enabled = true,
             focusable = true,
-            alwaysOnTop = false,
+            alwaysOnTop = ApplicationState.pingOnTop,
             content = {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -56,10 +76,11 @@ fun main() {
                     }
                 }
                 val showBottomBar by remember {
-                    derivedStateOf { currentPage is MainPages }
+                    derivedStateOf { currentPage is MainPage }
                 }
                 CompositionLocalProvider(
-                    LocalNavController provides navController
+                    LocalNavController provides navController,
+                    LocalViewModelStoreOwner provides viewModelStoreOwner
                 ) {
                     val navController = LocalNavController.current
                     Scaffold(
@@ -109,15 +130,21 @@ fun main() {
                                 startDestination = Message.route,
                                 modifier = Modifier.padding(padding)
                             ) {
-                                Singleton.pageMap.forEach { (route, page) ->
+
+                                composable<Any>() {
+                                    val a:Any = it.toRoute()
+                                }
+
+                                Singleton.pages.forEach { page ->
                                     composable(
-                                        route = route,
+                                        route = page.route,
                                         arguments = emptyList(),
                                         enterTransition = { EnterTransition.None },
                                         exitTransition = { ExitTransition.None },
                                         popEnterTransition = { EnterTransition.None },
                                         popExitTransition = { ExitTransition.None },
-                                    ) { page.content(this, it) }
+                                        content = { page.content(this, it) }
+                                    )
                                 }
                             }
                         },

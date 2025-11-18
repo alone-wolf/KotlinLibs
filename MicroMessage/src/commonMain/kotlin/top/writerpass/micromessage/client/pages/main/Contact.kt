@@ -9,11 +9,10 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
-import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
-import top.writerpass.micromessage.client.pages.base.MainPages
+import top.writerpass.micromessage.client.pages.base.MainPage
 
-object Contact : MainPages {
+object Contact : MainPage {
     override val routeRaw: String
         get() = route
     override val route: String
