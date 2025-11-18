@@ -28,13 +28,9 @@ import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
-import top.writerpass.micromessage.client.pages.base.Page
+import top.writerpass.micromessage.client.pages.base.IPageContent
 
-object MyQrCodePage : Page {
-    override val routeRaw: String
-        get() = "my-qrcode-page"
-    override val route: String
-        get() = "my-qrcode-page"
+object MyQrCodePage : IPageContent {
     override val label: String
         get() = "QRCode"
     override val actions: @Composable (RowScope.() -> Unit)
@@ -50,7 +46,7 @@ object MyQrCodePage : Page {
                 val aaa = rememberQrCodePainter("lalalala")
                 FullSizeColumn {
                     Image(
-                        painter = rememberQrCodePainter(myQRCodeString){
+                        painter = rememberQrCodePainter(myQRCodeString) {
                             logo {
                                 painter = aaa
                                 padding = QrLogoPadding.Natural(.1f)

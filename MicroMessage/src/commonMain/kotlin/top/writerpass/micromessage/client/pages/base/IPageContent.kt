@@ -10,8 +10,7 @@ import androidx.navigation.NavBackStackEntry
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.micromessage.client.LocalNavController
 
-interface Page {
-    val route: String
+interface IPageContent {
     val label: String
     val leftTopIcon: @Composable () -> Unit
         get() = {
@@ -21,9 +20,12 @@ interface Page {
             }
         }
     val actions: @Composable RowScope.() -> Unit
+
     val fab: @Composable () -> Unit
         get() = {}
     val fabPosition: FabPosition
-        get() = FabPosition.End
+        get() = FabPosition.Companion.End
+
     val content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 }
+

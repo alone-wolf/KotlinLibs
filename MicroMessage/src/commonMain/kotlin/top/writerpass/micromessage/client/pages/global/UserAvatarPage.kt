@@ -12,17 +12,15 @@ import androidx.navigation.NavBackStackEntry
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
-import top.writerpass.micromessage.client.pages.base.Page
+import top.writerpass.micromessage.client.pages.base.IPageContent
 
 
-object UserAvatarPage : Page {
-    override val route: String
-        get() = "user-avatar-page"
+object UserAvatarPage : IPageContent {
     override val label: String
         get() = "Avatar"
     override val actions: @Composable (RowScope.() -> Unit)
         get() = {
-            Icons.Default.MoreHoriz.CxIconButton {  }
+            Icons.Default.MoreHoriz.CxIconButton { }
         }
     override val fab: @Composable (() -> Unit)
         get() = {}

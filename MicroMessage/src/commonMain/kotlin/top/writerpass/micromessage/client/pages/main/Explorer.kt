@@ -8,13 +8,9 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
-import top.writerpass.micromessage.client.pages.base.MainPage
+import top.writerpass.micromessage.client.pages.base.IMainPageContent
 
-object Explorer : MainPage {
-    override val routeRaw: String
-        get() = route
-    override val route: String
-        get() = "explorer-page"
+object Explorer : IMainPageContent {
     override val icon: ImageVector
         get() = Icons.AutoMirrored.Outlined.Article
     override val iconSelected: ImageVector

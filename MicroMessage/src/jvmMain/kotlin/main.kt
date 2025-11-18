@@ -33,8 +33,8 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.Singleton
-import top.writerpass.micromessage.client.pages.base.MainPage
-import top.writerpass.micromessage.client.pages.main.Message
+import top.writerpass.micromessage.client.pages.base.IMainPage
+import top.writerpass.micromessage.client.pages.main.MessageContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun main() {
@@ -53,6 +53,23 @@ fun main() {
             }
         }
 
+        val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentPage by remember {
+            derivedStateOf {
+                navBackStackEntry
+                    ?.destination
+                    ?.route
+                    ?.split("/")
+                    ?.first()
+                    .let { Singleton.pageMap[it] ?: MessageContent }
+            }
+        }
+        val showBottomBar by remember {
+            derivedStateOf { currentPage is IMainPage }
+        }
+
+
         Window(
             state = mainWindowState,
             onCloseRequest = { ApplicationState.showMainWindow = false },
@@ -63,21 +80,7 @@ fun main() {
             focusable = true,
             alwaysOnTop = ApplicationState.pingOnTop,
             content = {
-                val navController = rememberNavController()
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentPage by remember {
-                    derivedStateOf {
-                        navBackStackEntry
-                            ?.destination
-                            ?.route
-                            ?.split("/")
-                            ?.first()
-                            .let { Singleton.pageMap[it] ?: Message }
-                    }
-                }
-                val showBottomBar by remember {
-                    derivedStateOf { currentPage is MainPage }
-                }
+
                 CompositionLocalProvider(
                     LocalNavController provides navController,
                     LocalViewModelStoreOwner provides viewModelStoreOwner
@@ -127,12 +130,12 @@ fun main() {
                         content = { padding ->
                             NavHost(
                                 navController = navController,
-                                startDestination = Message.route,
+                                startDestination = MessageContent.route,
                                 modifier = Modifier.padding(padding)
                             ) {
 
                                 composable<Any>() {
-                                    val a:Any = it.toRoute()
+                                    val a: Any = it.toRoute()
                                 }
 
                                 Singleton.pages.forEach { page ->

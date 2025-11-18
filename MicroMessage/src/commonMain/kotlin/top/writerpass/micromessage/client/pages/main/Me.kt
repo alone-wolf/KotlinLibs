@@ -29,14 +29,10 @@ import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.MainPage
+import top.writerpass.micromessage.client.pages.base.IMainPageContent
 import top.writerpass.micromessage.client.pages.global.MyQrCodePage
 
-object Me : MainPage {
-    override val routeRaw: String
-        get() = route
-    override val route: String
-        get() = "me-page"
+object Me : IMainPageContent {
     override val icon: ImageVector
         get() = Icons.Outlined.Person
     override val iconSelected: ImageVector
@@ -49,7 +45,7 @@ object Me : MainPage {
         get() = {
             val navController = LocalNavController.current
             Icons.Default.QrCode2.CxIconButton {
-                navController.navigate(MyQrCodePage.route)
+                navController.navigate(MyQrCodePage)
             }
         }
     override val fab: @Composable (() -> Unit)

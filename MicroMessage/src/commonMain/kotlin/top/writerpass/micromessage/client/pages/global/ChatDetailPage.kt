@@ -16,31 +16,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavArgument
-import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavType
+import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
-import top.writerpass.micromessage.client.pages.base.Page
-import top.writerpass.micromessage.client.pages.base.PageArg
+import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.pages.base.IPageContent
 
-object ChatDetailPage : Page, PageArg {
-    override val routeTemplate: String
-        get() = "chat-detail-page/{id}"
-    override val args: List<String>
-        get() = listOf("id")
-    override val arguments: List<NavArgument>
-        get() = listOf(
-//            NavArgumentBuilder().apply {
-//                this.type = NavType.StringType
-//
-//            }.build()
-        )
-    override val route: String
-        get() = "chat-detail-page"
+@Serializable
+class ChatDetailPage(val id: Long) : IPage
+
+object ChatDetailPageContent : IPageContent {
     override val label: String
         get() = "Chat Detail Page"
     override val actions: @Composable (RowScope.() -> Unit)

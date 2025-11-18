@@ -35,9 +35,8 @@ import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.MainPage
-import top.writerpass.micromessage.client.pages.base.Page
-import top.writerpass.micromessage.client.pages.global.ChatDetailPage
+import top.writerpass.micromessage.client.pages.base.IMainPageContent
+import top.writerpass.micromessage.client.pages.global.ChatDetailPageContent
 import top.writerpass.micromessage.client.pages.global.SearchPage
 
 fun NavHostController.open(page: Page, vararg args: String) {
@@ -50,9 +49,7 @@ fun NavHostController.open(page: Page, vararg args: String) {
     navigate(newRouteBuilder.toString())
 }
 
-object Message : MainPage {
-    override val route: String
-        get() = "message-page"
+object MessageContent : IMainPageContent {
     override val icon: ImageVector
         get() = Icons.AutoMirrored.Outlined.Message
     override val iconSelected: ImageVector
@@ -93,7 +90,7 @@ object Message : MainPage {
                 items(100) { index ->
                     FullWidthRow(
                         modifier = Modifier.clickable {
-                            navController.navigate("${ChatDetailPage.route}/${index}")
+                            navController.navigate("${ChatDetailPageContent.route}/${index}")
                         }.padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

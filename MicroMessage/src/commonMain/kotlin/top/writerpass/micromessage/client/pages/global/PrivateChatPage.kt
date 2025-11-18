@@ -9,13 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.Page
+import top.writerpass.micromessage.client.pages.base.IPageContent
 
-object PrivateChatPage : Page {
-    override val routeRaw: String
-        get() = "private-chat-page"
-    override val route: String
-        get() = "private-chat-page/{id}"
+object PrivateChatPage : IPageContent {
     override val label: String
         get() = "Private Chat"
     override val leftTopIcon: @Composable (() -> Unit)
