@@ -26,11 +26,15 @@ import io.github.alexzhirkevich.qrose.options.circle
 import io.github.alexzhirkevich.qrose.options.roundCorners
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
-import top.writerpass.micromessage.client.pages.base.IPageContent
+import top.writerpass.micromessage.client.pages.base.IPage
 
-object MyQrCodePage : IPageContent {
+
+object MyQrCodePage : IPage {
+    override val routeBase: String
+        get() = "my-qrcode"
     override val label: String
         get() = "QRCode"
     override val actions: @Composable (RowScope.() -> Unit)

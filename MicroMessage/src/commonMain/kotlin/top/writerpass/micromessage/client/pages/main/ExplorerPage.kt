@@ -3,26 +3,27 @@ package top.writerpass.micromessage.client.pages.main
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.automirrored.outlined.List
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.automirrored.filled.Article
+import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
-import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
-import top.writerpass.micromessage.client.pages.base.IMainPageContent
+import top.writerpass.micromessage.client.pages.base.IMainPage
 
-object Contact : IMainPageContent {
+
+object ExplorerPage : IMainPage {
     override val icon: ImageVector
-        get() = Icons.AutoMirrored.Outlined.List
+        get() = Icons.AutoMirrored.Outlined.Article
     override val iconSelected: ImageVector
-        get() = Icons.AutoMirrored.Filled.List
+        get() = Icons.AutoMirrored.Filled.Article
+    override val routeBase: String
+        get() = "explorer"
     override val label: String
-        get() = "Contact"
-    override val leftTopIcon: @Composable (() -> Unit)
-        get() = {}
+        get() = "Explorer"
+//    override val leftTopIcon: @Composable (() -> Unit)
+//        get() = {}
     override val actions: @Composable (RowScope.() -> Unit)
-        get() = { Icons.Default.AddCircle.CxIconButton { } }
+        get() = {}
     override val fab: @Composable (() -> Unit)
         get() = {}
     override val content: @Composable (AnimatedContentScope.(NavBackStackEntry) -> Unit)

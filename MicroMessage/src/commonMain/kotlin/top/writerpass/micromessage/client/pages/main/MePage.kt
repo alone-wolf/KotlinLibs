@@ -24,19 +24,23 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
+import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.IMainPageContent
+import top.writerpass.micromessage.client.pages.base.IMainPage
 import top.writerpass.micromessage.client.pages.global.MyQrCodePage
 
-object Me : IMainPageContent {
+
+object MePageContent : IMainPage {
     override val icon: ImageVector
         get() = Icons.Outlined.Person
     override val iconSelected: ImageVector
         get() = Icons.Filled.Person
+    override val routeBase: String
+        get() = "me"
     override val label: String
         get() = "Me"
     override val leftTopIcon: @Composable (() -> Unit)
@@ -45,7 +49,7 @@ object Me : IMainPageContent {
         get() = {
             val navController = LocalNavController.current
             Icons.Default.QrCode2.CxIconButton {
-                navController.navigate(MyQrCodePage)
+                navController.open(MyQrCodePage)
             }
         }
     override val fab: @Composable (() -> Unit)

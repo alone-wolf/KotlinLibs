@@ -21,9 +21,11 @@ import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
-import top.writerpass.micromessage.client.pages.base.IPageContent
+import top.writerpass.micromessage.client.pages.base.IPage
 
-object MyProfilePage : IPageContent {
+object MyProfilePage : IPage {
+    override val routeBase: String
+        get() = "my-profile"
     override val label: String
         get() = "Profile"
     override val actions: @Composable (RowScope.() -> Unit)

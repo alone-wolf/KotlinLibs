@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -42,11 +43,22 @@ import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
-import top.writerpass.micromessage.client.pages.base.IPageContent
+import top.writerpass.micromessage.client.LocalNavController
+import top.writerpass.micromessage.client.pages.base.IPage
 
-object SearchPage : IPageContent {
+
+object SearchPage : IPage {
+    override val routeBase: String
+        get() = "search-page"
     override val label: String
         get() = "搜索"
+    override val leftTopIcon: @Composable () -> Unit
+        get() = {
+            val navController = LocalNavController.current
+            Icons.Default.ArrowBackIosNew.CxIconButton {
+                navController.c.popBackStack()
+            }
+        }
     override val actions: @Composable (RowScope.() -> Unit)
         get() = {}
     override val fab: @Composable (() -> Unit)

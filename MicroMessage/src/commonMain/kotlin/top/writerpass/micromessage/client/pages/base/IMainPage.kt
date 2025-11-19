@@ -1,3 +1,9 @@
 package top.writerpass.micromessage.client.pages.base
 
-interface IMainPage
+import androidx.compose.ui.graphics.vector.ImageVector
+
+
+interface IMainPage : IPage {
+    val icon: ImageVector
+    val iconSelected: ImageVector
+}

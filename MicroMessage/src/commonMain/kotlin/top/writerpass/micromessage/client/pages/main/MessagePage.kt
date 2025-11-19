@@ -28,32 +28,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.IMainPageContent
-import top.writerpass.micromessage.client.pages.global.ChatDetailPageContent
+import top.writerpass.micromessage.client.pages.base.IMainPage
+import top.writerpass.micromessage.client.pages.global.ChatDetailPage
 import top.writerpass.micromessage.client.pages.global.SearchPage
 
-fun NavHostController.open(page: Page, vararg args: String) {
-    val newRouteBuilder = StringBuilder(page.route)
-    if (args.isNotEmpty()) {
-        args.forEach { a ->
-            newRouteBuilder.append("/").append(a)
-        }
-    }
-    navigate(newRouteBuilder.toString())
-}
 
-object MessageContent : IMainPageContent {
+object MessagePage : IMainPage {
     override val icon: ImageVector
         get() = Icons.AutoMirrored.Outlined.Message
     override val iconSelected: ImageVector
         get() = Icons.AutoMirrored.Filled.Message
+    override val routeBase: String
+        get() = "message"
     override val label: String
         get() = "Message"
     override val leftTopIcon: @Composable (() -> Unit)
@@ -76,7 +68,7 @@ object MessageContent : IMainPageContent {
             val navController = LocalNavController.current
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(SearchPage.route)
+                    navController.navigate(SearchPage)
                 },
                 content = {
                     Icons.Default.Search.CxIcon()
@@ -90,7 +82,7 @@ object MessageContent : IMainPageContent {
                 items(100) { index ->
                     FullWidthRow(
                         modifier = Modifier.clickable {
-                            navController.navigate("${ChatDetailPageContent.route}/${index}")
+                            navController.navigate(ChatDetailPage.routeTemplate)
                         }.padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
