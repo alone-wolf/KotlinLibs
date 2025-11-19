@@ -68,7 +68,7 @@ object MessagePage : IMainPage {
             val navController = LocalNavController.current
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(SearchPage)
+                    navController.open(SearchPage)
                 },
                 content = {
                     Icons.Default.Search.CxIcon()
@@ -82,7 +82,7 @@ object MessagePage : IMainPage {
                 items(100) { index ->
                     FullWidthRow(
                         modifier = Modifier.clickable {
-                            navController.navigate(ChatDetailPage.routeTemplate)
+                            navController.open(ChatDetailPage)
                         }.padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

@@ -3,14 +3,10 @@ package top.writerpass.micromessage.client
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import top.writerpass.micromessage.client.pages.base.IPage
 
-//val LocalApplicationViewModel = staticCompositionLocalOf<ApplicationViewModel> {
-//    error("No ApplicationViewModel provided")
-//}
 val LocalNavController = staticCompositionLocalOf<NavControllerWrapper> {
     error("No NavHostController provided")
 }

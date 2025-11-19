@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
-import kotlinx.serialization.Serializable
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
@@ -34,7 +33,7 @@ import top.writerpass.micromessage.client.pages.base.IMainPage
 import top.writerpass.micromessage.client.pages.global.MyQrCodePage
 
 
-object MePageContent : IMainPage {
+object MePage : IMainPage {
     override val icon: ImageVector
         get() = Icons.Outlined.Person
     override val iconSelected: ImageVector

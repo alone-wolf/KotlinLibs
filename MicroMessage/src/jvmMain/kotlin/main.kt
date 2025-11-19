@@ -38,15 +38,6 @@ import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.Singleton
 import top.writerpass.micromessage.client.pages.base.IMainPage
-import top.writerpass.micromessage.client.pages.global.ChatDetailPage
-import top.writerpass.micromessage.client.pages.global.MyProfilePage
-import top.writerpass.micromessage.client.pages.global.MyQrCodePage
-import top.writerpass.micromessage.client.pages.global.PrivateChatPage
-import top.writerpass.micromessage.client.pages.global.SearchPage
-import top.writerpass.micromessage.client.pages.global.UserAvatarPage
-import top.writerpass.micromessage.client.pages.main.ContactPage
-import top.writerpass.micromessage.client.pages.main.ExplorerPage
-import top.writerpass.micromessage.client.pages.main.MePageContent
 import top.writerpass.micromessage.client.pages.main.MessagePage
 import top.writerpass.micromessage.client.rememberNavControllerWrapper
 
@@ -71,31 +62,19 @@ fun main() {
         val navController = rememberNavControllerWrapper()
         val navBackStackEntry by navController.c.currentBackStackEntryAsState()
 
-        LaunchedEffect(navBackStackEntry) {
-            val r = navBackStackEntry?.destination?.route ?: MessagePage::class.qualifiedName!!
-            val rr = r.split("/").first()
-
-            println("currentRoute: $r $rr")
-        }
-        val currentRoute by remember {
+        val currentRouteBase by remember {
             derivedStateOf {
                 navBackStackEntry
                     ?.destination
-                    ?.route
-                    ?: MessagePage::class.qualifiedName!!
-                        .split("/")
-                        .first()
-                        .also { println("currentRoute: $it") }
+                    ?.route ?: MessagePage.routeBase
+                    .split("/")
+                    .first()
+                    .also { println("currentRoute: $it") }
             }
         }
         val currentPage by remember {
             derivedStateOf {
-                Singleton.pageRouteMap[currentRoute]!!
-            }
-        }
-        val currentPageContent by remember {
-            derivedStateOf {
-                Singleton.pageRouteContentMap[currentRoute]!!
+                Singleton.pageRouteMap[currentRouteBase]!!
             }
         }
         val showBottomBar by remember {
@@ -122,26 +101,26 @@ fun main() {
                     Scaffold(
                         topBar = {
                             TopAppBar(
-                                title = { currentPageContent.label.CxText() },
-                                navigationIcon = { currentPageContent.leftTopIcon() },
-                                actions = { currentPageContent.actions(this) }
+                                title = { currentPage.label.CxText() },
+                                navigationIcon = { currentPage.leftTopIcon() },
+                                actions = { currentPage.actions(this) }
                             )
                         },
                         modifier = Modifier.fillMaxSize(),
                         bottomBar = {
                             if (showBottomBar) {
                                 NavigationBar {
-                                    Singleton.mainPageMap.forEach { (pageRoute, pageContent) ->
-                                        val isSelected by remember(currentPageContent) {
+                                    Singleton.mainRouteMap.forEach { (routeBase, page) ->
+                                        val isSelected by remember(currentPage) {
                                             derivedStateOf {
-                                                currentRoute == pageRoute
+                                                currentRouteBase == routeBase
                                             }
                                         }
                                         NavigationBarItem(
                                             selected = isSelected,
-                                            icon = { (if (isSelected) pageContent.iconSelected else pageContent.icon).CxIcon() },
-                                            label = { pageContent.label.CxText() },
-                                            onClick = { navController.open(pageRoute) }
+                                            icon = { (if (isSelected) page.iconSelected else page.icon).CxIcon() },
+                                            label = { page.label.CxText() },
+                                            onClick = { navController.open(page) }
                                         )
                                     }
                                 }
@@ -155,26 +134,23 @@ fun main() {
                             )
                         },
                         floatingActionButton = {
-                            currentPageContent.fab()
+                            currentPage.fab()
                         },
                         floatingActionButtonPosition = FabPosition.End,
                         content = { padding ->
                             NavHost(
-                                navController = navController,
-                                startDestination = MessagePage,
+                                navController = navController.c,
+                                startDestination = MessagePage.routeBase,
                                 modifier = Modifier.padding(padding)
                             ) {
-                                noAnimeComposable<MessagePage>(content = MessagePage.content)
-                                noAnimeComposable<ContactPage>(content = ContactPage.content)
-                                noAnimeComposable<ExplorerPage>(content = ExplorerPage.content)
-                                noAnimeComposable<MePage>(content = MePageContent.content)
-                                noAnimeComposable<UserAvatarPage>(content = UserAvatarPage.content)
-                                noAnimeComposable<PrivateChatPage>(content = PrivateChatPage.content)
-                                noAnimeComposable<PrivateChatPage>(content = PrivateChatPage.content)
-                                noAnimeComposable<MyProfilePage>(content = MyProfilePage.content)
-                                noAnimeComposable<MyQRCodePage>(content = MyQrCodePage.content)
-                                noAnimeComposable<ChatDetailPage>(content = ChatDetailPage.content)
-                                noAnimeComposable<SearchPage>(content = SearchPage.content)
+                                Singleton.pages.forEach { page ->
+                                    noAnimeComposable(
+                                        routeTemplate = page.routeTemplate,
+                                        arguments = page.arguments,
+                                        deepLinks = page.deepLink,
+                                        content = page.content
+                                    )
+                                }
                             }
                         },
                     )
