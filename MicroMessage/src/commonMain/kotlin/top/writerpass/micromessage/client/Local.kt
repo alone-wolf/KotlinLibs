@@ -23,6 +23,7 @@ class NavControllerWrapper(
                 append(it)
             }
         }.toString()
+        println("going to open:${newRoute}")
         navHostController.navigate(newRoute)
     }
 }

@@ -49,7 +49,7 @@ import top.writerpass.micromessage.client.pages.base.IPage
 
 object SearchPage : IPage {
     override val routeBase: String
-        get() = "search-page"
+        get() = "search"
     override val label: String
         get() = "搜索"
     override val leftTopIcon: @Composable () -> Unit

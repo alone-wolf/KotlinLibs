@@ -20,8 +20,8 @@ object ExplorerPage : IMainPage {
         get() = "explorer"
     override val label: String
         get() = "Explorer"
-//    override val leftTopIcon: @Composable (() -> Unit)
-//        get() = {}
+    override val leftTopIcon: @Composable (() -> Unit)
+        get() = {}
     override val actions: @Composable (RowScope.() -> Unit)
         get() = {}
     override val fab: @Composable (() -> Unit)

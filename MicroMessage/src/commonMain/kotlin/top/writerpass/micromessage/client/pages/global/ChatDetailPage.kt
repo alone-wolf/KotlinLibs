@@ -31,14 +31,6 @@ object ChatDetailPage : IPage {
     override val routeBase: String
         get() = "chat-detail"
 
-    override val arguments: List<NamedNavArgument>
-        get() = listOf(
-            navArgument("id") {
-                type = NavType.LongType
-                defaultValue = -1L
-            }
-        )
-
     override val label: String
         get() = "Chat Detail Page"
     override val actions: @Composable (RowScope.() -> Unit)

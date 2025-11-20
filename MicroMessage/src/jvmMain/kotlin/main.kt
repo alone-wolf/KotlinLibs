@@ -77,9 +77,6 @@ fun main() {
                 Singleton.pageRouteMap[currentRouteBase]!!
             }
         }
-        val showBottomBar by remember {
-            derivedStateOf { currentPage is IMainPage }
-        }
 
 
         Window(
@@ -92,7 +89,6 @@ fun main() {
             focusable = true,
             alwaysOnTop = ApplicationState.pingOnTop,
             content = {
-
                 CompositionLocalProvider(
                     LocalNavController provides navController,
                     LocalViewModelStoreOwner provides viewModelStoreOwner
@@ -102,12 +98,15 @@ fun main() {
                         topBar = {
                             TopAppBar(
                                 title = { currentPage.label.CxText() },
-                                navigationIcon = { currentPage.leftTopIcon() },
-                                actions = { currentPage.actions(this) }
+                                navigationIcon = currentPage.leftTopIcon,
+                                actions = currentPage.actions
                             )
                         },
                         modifier = Modifier.fillMaxSize(),
                         bottomBar = {
+                            val showBottomBar by remember {
+                                derivedStateOf { currentPage is IMainPage }
+                            }
                             if (showBottomBar) {
                                 NavigationBar {
                                     Singleton.mainRouteMap.forEach { (routeBase, page) ->
@@ -133,9 +132,7 @@ fun main() {
                                 snackbar = {}
                             )
                         },
-                        floatingActionButton = {
-                            currentPage.fab()
-                        },
+                        floatingActionButton = currentPage.fab,
                         floatingActionButtonPosition = FabPosition.End,
                         content = { padding ->
                             NavHost(
@@ -144,6 +141,7 @@ fun main() {
                                 modifier = Modifier.padding(padding)
                             ) {
                                 Singleton.pages.forEach { page ->
+                                    println("register:${page.routeTemplate}")
                                     noAnimeComposable(
                                         routeTemplate = page.routeTemplate,
                                         arguments = page.arguments,
@@ -167,8 +165,8 @@ private fun NavGraphBuilder.noAnimeComposable(
     content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) = composable(
     route = routeTemplate,
-    arguments = emptyList(),
-    deepLinks = emptyList(),
+    arguments = arguments,
+    deepLinks = deepLinks,
     enterTransition = { EnterTransition.None },
     exitTransition = { ExitTransition.None },
     popEnterTransition = { EnterTransition.None },

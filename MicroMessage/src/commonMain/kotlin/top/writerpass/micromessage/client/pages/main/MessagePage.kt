@@ -36,6 +36,7 @@ import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.pages.base.IMainPage
 import top.writerpass.micromessage.client.pages.global.ChatDetailPage
+import top.writerpass.micromessage.client.pages.global.PrivateChatPage
 import top.writerpass.micromessage.client.pages.global.SearchPage
 
 
@@ -82,7 +83,7 @@ object MessagePage : IMainPage {
                 items(100) { index ->
                     FullWidthRow(
                         modifier = Modifier.clickable {
-                            navController.open(ChatDetailPage)
+                            navController.open(PrivateChatPage, index)
                         }.padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

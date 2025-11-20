@@ -12,7 +12,6 @@ import androidx.navigation.NavDeepLink
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.global.ChatDetailPage
 
 interface PageWithArgs {
 
@@ -20,9 +19,9 @@ interface PageWithArgs {
 
 interface IPage {
     val routeTemplate: String // routeName/{id}
-        get() = StringBuilder(ChatDetailPage.routeBase).apply {
-            if (ChatDetailPage.arguments.isNotEmpty()) {
-                ChatDetailPage.arguments.forEach { argument ->
+        get() = StringBuilder(routeBase).apply {
+            if (arguments.isNotEmpty()) {
+                arguments.forEach { argument ->
                     append("/{")
                     append(argument.name)
                     append("}")
