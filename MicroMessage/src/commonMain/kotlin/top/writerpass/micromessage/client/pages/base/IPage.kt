@@ -13,10 +13,6 @@ import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.LocalNavController
 
-interface PageWithArgs {
-
-}
-
 interface IPage {
     val routeTemplate: String // routeName/{id}
         get() = StringBuilder(routeBase).apply {
