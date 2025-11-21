@@ -40,7 +40,7 @@ interface IPage {
         get() = {
             val navController = LocalNavController.current
             Icons.Default.ArrowBackIosNew.CxIconButton {
-                navController.c.popBackStack()
+                navController.popBackStack()
             }
         }
     val actions: @Composable RowScope.() -> Unit

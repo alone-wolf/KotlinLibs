@@ -60,15 +60,12 @@ fun main() {
         }
 
         val navController = rememberNavControllerWrapper()
-        val navBackStackEntry by navController.c.currentBackStackEntryAsState()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
 
         val currentRouteBase by remember {
             derivedStateOf {
-                navBackStackEntry
-                    ?.destination
-                    ?.route ?: MessagePage.routeBase
-                    .split("/")
-                    .first()
+                (navBackStackEntry?.destination?.route ?: MessagePage.routeBase)
+                    .split("/").first()
                     .also { println("currentRoute: $it") }
             }
         }
@@ -97,7 +94,7 @@ fun main() {
                     Scaffold(
                         topBar = {
                             TopAppBar(
-                                title = { currentPage.label.CxText() },
+                                title = currentPage.labelCompose,
                                 navigationIcon = currentPage.leftTopIcon,
                                 actions = currentPage.actions
                             )
@@ -141,7 +138,6 @@ fun main() {
                                 modifier = Modifier.padding(padding)
                             ) {
                                 Singleton.pages.forEach { page ->
-                                    println("register:${page.routeTemplate}")
                                     noAnimeComposable(
                                         routeTemplate = page.routeTemplate,
                                         arguments = page.arguments,

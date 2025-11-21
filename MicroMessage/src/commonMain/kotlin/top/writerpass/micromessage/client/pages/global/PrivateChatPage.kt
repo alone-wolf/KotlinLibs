@@ -30,7 +30,7 @@ object PrivateChatPage : IPage {
         get() = {
             val navController = LocalNavController.current
             Icons.Default.ArrowBackIosNew.CxIconButton {
-                navController.c.popBackStack()
+                navController.popBackStack()
             }
         }
     override val actions: @Composable (RowScope.() -> Unit)
