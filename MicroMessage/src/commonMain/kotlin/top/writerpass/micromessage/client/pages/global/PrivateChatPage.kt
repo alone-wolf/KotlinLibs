@@ -19,11 +19,10 @@ object PrivateChatPage : IPage {
         get() = "private-chat"
     override val arguments: List<NamedNavArgument>
         get() = listOf(
-            navArgument("id") {
+            navArgument("chatId") {
                 type = NavType.LongType
                 defaultValue = -1L
-            }
-        )
+            })
     override val label: String
         get() = "Private Chat"
     override val leftTopIcon: @Composable (() -> Unit)
@@ -35,8 +34,9 @@ object PrivateChatPage : IPage {
         }
     override val actions: @Composable (RowScope.() -> Unit)
         get() = {
+            val navController = LocalNavController.current
             Icons.Default.Person.CxIconButton {
-
+                navController.open(UserProfilePage, 100L)
             }
         }
     override val fab: @Composable (() -> Unit)

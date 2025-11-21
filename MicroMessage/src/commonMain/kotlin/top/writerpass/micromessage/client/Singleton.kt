@@ -6,6 +6,7 @@ import top.writerpass.micromessage.client.pages.global.MyQrCodePage
 import top.writerpass.micromessage.client.pages.global.PrivateChatPage
 import top.writerpass.micromessage.client.pages.global.SearchPage
 import top.writerpass.micromessage.client.pages.global.UserAvatarPage
+import top.writerpass.micromessage.client.pages.global.UserProfilePage
 import top.writerpass.micromessage.client.pages.main.ContactPage
 import top.writerpass.micromessage.client.pages.main.ExplorerPage
 import top.writerpass.micromessage.client.pages.main.MePage
@@ -25,7 +26,8 @@ object Singleton {
         MyProfilePage,
         MyQrCodePage,
         ChatDetailPage,
-        SearchPage
+        SearchPage,
+        UserProfilePage
     )
 
     val pages = mainPages + globalPages
