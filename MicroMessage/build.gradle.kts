@@ -49,6 +49,7 @@ kotlin {
                 implementation(project(":CMPLibrary"))
                 implementation(project(":KMPLibrary"))
 
+                // QRCode Generate
                 // https://github.com/alexzhirkevich/qrose
                 implementation("io.github.alexzhirkevich:qrose:1.0.1")
             }
