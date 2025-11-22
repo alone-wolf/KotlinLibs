@@ -7,13 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCode2
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +35,7 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.pages.base.IMainPage
 import top.writerpass.micromessage.client.pages.global.MyQrCodePage
+import top.writerpass.micromessage.client.pages.global.SettingsPage
 
 
 object MePage : IMainPage {
@@ -55,6 +60,7 @@ object MePage : IMainPage {
         get() = {}
     override val content: @Composable (AnimatedContentScope.(NavBackStackEntry) -> Unit)
         get() = {
+            val navController = LocalNavController.current
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item {
                     FullWidthRow(
@@ -77,6 +83,34 @@ object MePage : IMainPage {
                         }
                         Spacer(modifier = Modifier.weight(1f))
                     }
+                }
+
+                fun LazyListScope.aa(
+                    label: String,
+                    icon: ImageVector,
+                    onClick: () -> Unit
+                ) {
+                    item {
+                        FullWidthRow(
+                            modifier = Modifier
+                                .height(48.dp)
+                                .clickable(onClick = onClick)
+                                .padding(horizontal = 16.dp)
+                            ,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            icon.CxIcon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            label.CxText()
+                        }
+                    }
+                }
+
+                aa(
+                    "Settings",
+                    Icons.Default.Settings
+                ) {
+                    navController.open(SettingsPage)
                 }
             }
         }

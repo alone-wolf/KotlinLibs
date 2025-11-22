@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
+import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
@@ -35,7 +36,6 @@ import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.pages.base.IMainPage
-import top.writerpass.micromessage.client.pages.global.ChatDetailPage
 import top.writerpass.micromessage.client.pages.global.PrivateChatPage
 import top.writerpass.micromessage.client.pages.global.SearchPage
 
@@ -79,32 +79,34 @@ object MessagePage : IMainPage {
     override val content: @Composable (AnimatedContentScope.(NavBackStackEntry) -> Unit)
         get() = {
             val navController = LocalNavController.current
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(100) { index ->
-                    FullWidthRow(
-                        modifier = Modifier.clickable {
-                            navController.open(PrivateChatPage, index)
-                        }.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icons.Default.Person2.CxIcon(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                        )
-                        Column(modifier = Modifier.weight(1f)) {
-                            "用户${index}用户${index}用户${index}用户${index}".CxText(
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal
+            FullSizeBox {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(100) { index ->
+                        FullWidthRow(
+                            modifier = Modifier.clickable {
+                                navController.open(PrivateChatPage, index)
+                            }.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icons.Default.Person2.CxIcon(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(RoundedCornerShape(6.dp))
                             )
-                            "[18] 这是一条测试消息".CxText(
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                "用户${index}用户${index}用户${index}用户${index}".CxText(
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal
+                                )
+                                "[18] 这是一条测试消息".CxText(
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
                         }
                     }
                 }

@@ -5,12 +5,33 @@ import top.writerpass.micromessage.client.pages.global.MyProfilePage
 import top.writerpass.micromessage.client.pages.global.MyQrCodePage
 import top.writerpass.micromessage.client.pages.global.PrivateChatPage
 import top.writerpass.micromessage.client.pages.global.SearchPage
+import top.writerpass.micromessage.client.pages.global.SettingsPage
 import top.writerpass.micromessage.client.pages.global.UserAvatarPage
 import top.writerpass.micromessage.client.pages.global.UserProfilePage
 import top.writerpass.micromessage.client.pages.main.ContactPage
 import top.writerpass.micromessage.client.pages.main.ExplorerPage
 import top.writerpass.micromessage.client.pages.main.MePage
 import top.writerpass.micromessage.client.pages.main.MessagePage
+
+// MainPages:
+// Message
+// Contact
+// Explorer
+// Me
+
+// GlobalPages:
+
+// PrivateChatPage v
+// GroupChatPage
+// GlobalChannelPage
+// UserProfilePage v
+// GroupProfilePage
+// GroupWizardPage
+// QRCodeScannerPage
+// NewFriendPage
+// FriendRequestPage
+// AppSettingPage
+// MeProfilePage
 
 object Singleton {
 
@@ -27,7 +48,8 @@ object Singleton {
         MyQrCodePage,
         ChatDetailPage,
         SearchPage,
-        UserProfilePage
+        UserProfilePage,
+        SettingsPage
     )
 
     val pages = mainPages + globalPages

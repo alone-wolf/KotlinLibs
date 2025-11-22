@@ -13,22 +13,22 @@ version = "1.0.0"
 
 kotlin {
     jvm()
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
-    androidTarget()
+//    wasmJs {
+//        browser()
+//        binaries.executable()
+//    }
+//    androidTarget()
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
+//    listOf(
+//        iosX64(),
+//        iosArm64(),
+//        iosSimulatorArm64()
+//    ).forEach {
+//        it.binaries.framework {
+//            baseName = "ComposeApp"
+//            isStatic = true
+//        }
+//    }
 
     sourceSets {
         val commonMain by getting {
@@ -60,9 +60,9 @@ kotlin {
                 implementation(libs.kstore.file)
             }
         }
-        val androidMain by getting {
-            dependencies {}
-        }
+//        val androidMain by getting {
+//            dependencies {}
+//        }
     }
 }
 

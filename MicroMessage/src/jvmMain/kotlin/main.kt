@@ -1,8 +1,15 @@
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.LocalScrollbarStyle
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.NavigationBar
@@ -42,8 +49,17 @@ import top.writerpass.micromessage.client.pages.main.MessagePage
 import top.writerpass.micromessage.client.rememberNavControllerWrapper
 
 
+@Composable
+fun BoxScope.PlatformScrollBar(
+    lazyListState: LazyListState
+) {
+
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 fun main() {
+
+
     val viewModelStoreOwner = object : ViewModelStoreOwner {
         override val viewModelStore: ViewModelStore = ViewModelStore()
     }
