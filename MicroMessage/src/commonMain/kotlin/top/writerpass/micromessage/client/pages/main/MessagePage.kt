@@ -53,13 +53,13 @@ object MessagePage : IMainPage {
         get() = {}
     override val actions: @Composable (RowScope.() -> Unit)
         get() = {
-            if (ApplicationState.pingOnTop) {
+            if (ApplicationState.pinMainWindowOnTop) {
                 Icons.Filled.PushPin.CxIconButton {
-                    ApplicationState.pingOnTop = false
+                    ApplicationState.pinMainWindowOnTop = false
                 }
             } else {
                 Icons.Outlined.PushPin.CxIconButton {
-                    ApplicationState.pingOnTop = true
+                    ApplicationState.pinMainWindowOnTop = true
                 }
             }
             Icons.Default.AddCircleOutline.CxIconButton {}

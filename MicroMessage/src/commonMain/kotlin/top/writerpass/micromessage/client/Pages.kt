@@ -1,9 +1,12 @@
 package top.writerpass.micromessage.client
 
 import top.writerpass.micromessage.client.pages.global.ChatDetailPage
+import top.writerpass.micromessage.client.pages.global.LoginPage
 import top.writerpass.micromessage.client.pages.global.MyProfilePage
 import top.writerpass.micromessage.client.pages.global.MyQrCodePage
 import top.writerpass.micromessage.client.pages.global.PrivateChatPage
+import top.writerpass.micromessage.client.pages.global.RegisterPage
+import top.writerpass.micromessage.client.pages.global.ResetPasswordPage
 import top.writerpass.micromessage.client.pages.global.SearchPage
 import top.writerpass.micromessage.client.pages.global.SettingsPage
 import top.writerpass.micromessage.client.pages.global.UserAvatarPage
@@ -30,10 +33,10 @@ import top.writerpass.micromessage.client.pages.main.MessagePage
 // QRCodeScannerPage
 // NewFriendPage
 // FriendRequestPage
-// AppSettingPage
-// MeProfilePage
+// SettingPage v
+// MyProfilePage v
 
-object Singleton {
+object Pages {
 
     val mainPages = listOf(
         MessagePage,
@@ -42,6 +45,11 @@ object Singleton {
         MePage
     )
     val globalPages = listOf(
+        // login&misc
+        LoginPage,
+        RegisterPage,
+        ResetPasswordPage,
+
         UserAvatarPage,
         PrivateChatPage,
         MyProfilePage,
@@ -53,25 +61,5 @@ object Singleton {
     )
 
     val pages = mainPages + globalPages
-
-    val mainRouteMap = mainPages.associateBy { it.routeBase }
-    val globalRouteMap = globalPages.associateBy { it.routeBase }
     val pageRouteMap = pages.associateBy { it.routeBase }
-
-//    val mainPageMap = mapOf(
-//        MessagePage::class.qualifiedName!! to MessagePage,
-//        ContactPage::class.qualifiedName!! to ContactPage,
-//        ExplorerPage::class.qualifiedName!! to ExplorerPage,
-//        MePage::class.qualifiedName!! to MePage,
-//    )
-//    val globalPageMap = mapOf(
-//        UserAvatarPage::class.qualifiedName!! to UserAvatarPage,
-//        PrivateChatPage::class.qualifiedName!! to PrivateChatPage,
-//        MyProfilePage::class.qualifiedName!! to MyProfilePage,
-//        MyQrCodePage::class.qualifiedName!! to MyQrCodePage,
-//        ChatDetailPage::class.qualifiedName!! to ChatDetailPage,
-//        SearchPage::class.qualifiedName!! to SearchPage
-//    )
-//
-//    val pageRouteContentMap = mainPageMap + globalPageMap
 }

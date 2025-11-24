@@ -6,5 +6,5 @@ import androidx.compose.runtime.setValue
 
 object ApplicationState {
     var showMainWindow by mutableStateOf(true)
-    var pingOnTop by mutableStateOf(false)
+    var pinMainWindowOnTop by mutableStateOf(false)
 }

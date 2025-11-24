@@ -45,6 +45,8 @@ object MutableStateComposeExt : StateComposeExt {
         label: String? = null,
         placeholder: String? = null,
         visualTransformation: VisualTransformation = VisualTransformation.None,
+        trailingIcon: @Composable (() -> Unit)? = null,
+        isError: Boolean = false,
         onUpdate: (String) -> Unit = {}
     ) {
         OutlinedTextField(
@@ -55,7 +57,9 @@ object MutableStateComposeExt : StateComposeExt {
             maxLines = maxLines,
             label = label?.let { { it.CxText() } },
             modifier = modifier,
-            visualTransformation = visualTransformation
+            visualTransformation = visualTransformation,
+            isError = isError,
+            trailingIcon = trailingIcon
         )
     }
 

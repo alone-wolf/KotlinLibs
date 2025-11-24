@@ -1,7 +1,5 @@
 @file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.multiplatform.android.library)
@@ -43,7 +41,6 @@ kotlin {
         binaries.executable()
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()

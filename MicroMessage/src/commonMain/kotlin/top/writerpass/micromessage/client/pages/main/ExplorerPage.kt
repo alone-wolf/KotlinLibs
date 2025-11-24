@@ -16,6 +16,8 @@ object ExplorerPage : IMainPage {
         get() = Icons.AutoMirrored.Outlined.Article
     override val iconSelected: ImageVector
         get() = Icons.AutoMirrored.Filled.Article
+    override val showOnBottomBar: Boolean
+        get() = false
     override val routeBase: String
         get() = "explorer"
     override val label: String

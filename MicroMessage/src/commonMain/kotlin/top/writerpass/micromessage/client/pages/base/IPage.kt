@@ -29,6 +29,8 @@ interface IPage {
         get() = emptyList()
     val arguments: List<NamedNavArgument>
         get() = emptyList()
+    val showTopAppBar: Boolean
+        get() = true
     val label: String
     val labelCompose: @Composable () -> Unit
         get() = { label.CxText() }

@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.Settings
@@ -111,6 +113,12 @@ object MePage : IMainPage {
                     Icons.Default.Settings
                 ) {
                     navController.open(SettingsPage)
+                }
+                aa(
+                    "Logout",
+                    Icons.AutoMirrored.Filled.Logout
+                ){
+                    navController.logout()
                 }
             }
         }
