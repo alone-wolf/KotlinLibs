@@ -19,6 +19,7 @@ class DatabaseContainer: WithLogger{
             "-webPort", "8082"
         )!!
     }
+    // http://127.0.0.1:8082
 
     fun startWebServer() {
         webServer.start()

@@ -64,6 +64,9 @@ class ReturnBody<T> private constructor(
         fun notFound(error: String, message: String? = null) =
             failed(HttpStatusCode.NotFound, message, error)
 
+        fun conflict(error: String, message: String? = null) =
+            failed(HttpStatusCode.Conflict, message, error)
+
         // 500 Internal Server Error
         fun internalError(error: String, message: String? = null) =
             failed(HttpStatusCode.InternalServerError, message, error)
@@ -115,6 +118,12 @@ suspend fun ApplicationCall.returnNotFound(error: String, message: String? = nul
     respond(
         status = HttpStatusCode.NotFound,
         message = ReturnBody.notFound(error, message)
+    )
+
+suspend fun ApplicationCall.returnConflict(error: String, message: String? = null) =
+    respond(
+        status = HttpStatusCode.Conflict,
+        message = ReturnBody.conflict(error, message)
     )
 
 suspend fun ApplicationCall.returnInternalError(error: String, message: String? = null) =

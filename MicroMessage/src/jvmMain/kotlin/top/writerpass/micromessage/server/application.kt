@@ -9,13 +9,13 @@ import top.writerpass.micromessage.server.server.ServerContainer
 
 suspend fun applicationServer(){
     Singletons.register.registerTables()
-//    Singletons.databaseContainer.startWebServer()
+    Singletons.databaseContainer.startWebServer()
 
     val serverContainer = ServerContainer(
         config = ServerConfig.default,
         extraModules = {
             install(Authentication) {
-                AuthNodes.LoginNicknamePassword.run { install() }
+                AuthNodes.LoginUsernamePassword.run { install() }
                 AuthNodes.RefreshToken.run { install() }
                 AuthNodes.NormalAccess.run { install() }
             }
@@ -43,7 +43,7 @@ fun main() {
         config = ServerConfig.default,
         extraModules = {
             install(Authentication) {
-                AuthNodes.LoginNicknamePassword.run { install() }
+                AuthNodes.LoginUsernamePassword.run { install() }
                 AuthNodes.RefreshToken.run { install() }
                 AuthNodes.NormalAccess.run { install() }
             }

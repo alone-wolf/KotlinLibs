@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package top.writerpass.micromessage.server.core.data.service.auth
 
 import io.ktor.server.auth.AuthenticationConfig
@@ -9,12 +11,29 @@ import io.ktor.server.auth.basic
 import io.ktor.server.auth.bearer
 import io.ktor.server.request.path
 import io.ktor.server.routing.Route
+import kotlinx.serialization.Serializable
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import top.writerpass.micromessage.server.utils.PasswordUtil
+import top.writerpass.micromessage.server.core.data.enums.CredentialType
+import top.writerpass.micromessage.server.core.data.enums.IdentifierType
+import top.writerpass.micromessage.server.core.data.service.auth.data.Credential
 import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSession
+import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionEntity
+import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionTable
+import top.writerpass.micromessage.server.core.data.service.user.entity.UserIdentifierEntity
+import top.writerpass.micromessage.server.core.data.service.user.table.UserIdentifierTable
+import top.writerpass.micromessage.server.utils.SessionTokenGenerator
+import top.writerpass.micromessage.server.utils.WithLogger
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@Serializable
 class UserInfoPrincipal(
     val userId: Long,
-    val session: LoginSession.Data,
+    val session: LoginSession,
 )
 
 object AuthNodes {
@@ -23,16 +42,13 @@ object AuthNodes {
         val realmInfo: String
         fun AuthenticationConfig.install()
         fun Route.routeWrapper(build: Route.() -> Unit) = authenticate(
-            LoginNicknamePassword.name,
+            name,
             optional = false,
             build = build
         )
     }
 
-    private val logger = LoggerFactory.getLogger("Authentication")
-    private fun String.logi() = logger.info(this)
-
-    object LoginNicknamePassword : AuthNode<UserPasswordCredential> {
+    object LoginUsernamePassword : AuthNode<UserPasswordCredential>, WithLogger {
 
         override val name: String = "login"
         override val realmInfo: String = "Access to the '/auth-api/login' path"
@@ -41,23 +57,51 @@ object AuthNodes {
             basic(name) {
                 realm = realmInfo
                 validate { credentials ->
-                    // 根据所谓用户名、密码从数据库查询用户信息
-                    // 根据用户信息创建新的Session，包含token、refresh-token并包含在UserPrincipal中传给route
-                    // login的route将token、refresh-token返回给用户
-                    val nickname = credentials.name
-                    val password = credentials.password
-                    "Authentication@login name=${nickname} password=${password}".logi()
-                    if (credentials.name == "admin" && credentials.password == "password") {
-                        UserIdPrincipal(credentials.name)
-                    } else {
-                        null
+
+                    val username = credentials.name
+                    val passwordHash0 = credentials.password
+
+                    val principal = newSuspendedTransaction {
+
+                        // 1. 查 identifier
+                        val identifier = UserIdentifierEntity.find {
+                            (UserIdentifierTable.type eq IdentifierType.Username) and
+                                    (UserIdentifierTable.content eq username)
+                        }.singleOrNull() ?: return@newSuspendedTransaction null
+
+                        // 2. 查 password credential
+                        val cred = Credential.Entity.find {
+                            (Credential.CredentialTable.userId eq identifier.userId) and
+                                    (Credential.CredentialTable.identifierId eq identifier.id.value) and
+                                    (Credential.CredentialTable.type eq CredentialType.Password)
+                        }.singleOrNull() ?: return@newSuspendedTransaction null
+
+                        // 3. 校验密码
+                        val calcHash = PasswordUtil.hash(passwordHash0, cred.salt)
+                        if (calcHash != cred.passwordHash) return@newSuspendedTransaction null
+
+                        // 4. 创建登陆 Session
+                        val loginSession = LoginSessionEntity.new {
+                            userId = identifier.userId
+                            sessionToken = SessionTokenGenerator.generate()
+                            expiresAt = Clock.System.now().toEpochMilliseconds() + 3600 * 1000
+                        }.toData()
+
+                        UserInfoPrincipal(
+                            identifier.userId,
+                            loginSession
+                        )
                     }
+
+                    principal
                 }
             }
         }
+
+        override val logger: Logger = LoggerFactory.getLogger(this::class.simpleName)
     }
 
-    object RefreshToken : AuthNode<BearerTokenCredential> {
+    object RefreshToken : AuthNode<BearerTokenCredential>, WithLogger {
         override val name: String = "refresh-token"
         override val realmInfo: String = "Access to the '/auth-api/refresh' path"
 
@@ -75,9 +119,10 @@ object AuthNodes {
             }
         }
 
+        override val logger: Logger = LoggerFactory.getLogger(this::class.simpleName)
     }
 
-    object NormalAccess : AuthNode<BearerTokenCredential> {
+    object NormalAccess : AuthNode<BearerTokenCredential>, WithLogger {
         override val name: String = "normal-access"
         override val realmInfo: String = "Access to the '/api/*' path"
 
@@ -86,35 +131,25 @@ object AuthNodes {
                 realm = realmInfo
                 authenticate { tokenCredential ->
                     val token = tokenCredential.token
-                    val path = this.request.path()
 
-                    LoginSession.Entity.find {
-                        LoginSession.Table.sessionToken eq token
-                    }.singleOrNull()?.let { session ->
+                    val principal = newSuspendedTransaction {
+                        val loginSession = LoginSessionEntity.find {
+                            LoginSessionTable.sessionToken eq token
+                        }.singleOrNull() ?: return@newSuspendedTransaction null
+
+                        val userId = loginSession.userId
+
                         UserInfoPrincipal(
-                            session.userId.value,
-                            session.toData(),
+                            userId = userId,
+                            session = loginSession.toData(),
                         )
-                        "Authentication@normal-access token=${tokenCredential.token}".logi()
-                        if (token == "asdfghjkl") {
-                            UserIdPrincipal(tokenCredential.token)
-                        }
                     }
 
-//                    AuthService.authCheckWithToken(token)?.let { session ->
-//                        UserInfoPrincipal(
-//                            session.userId.value,
-//                            session.toData(),
-//                        )
-//                        "Authentication@normal-access token=${tokenCredential.token}".logi()
-//                        if (token == "asdfghjkl") {
-//                            UserIdPrincipal(tokenCredential.token)
-//                        } else {
-//                            null
-//                        }
-//                    }
+                    principal
                 }
             }
         }
+
+        override val logger: Logger = LoggerFactory.getLogger(this::class.simpleName)
     }
 }

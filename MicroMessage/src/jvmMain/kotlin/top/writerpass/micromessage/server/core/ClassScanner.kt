@@ -11,7 +11,7 @@ import top.writerpass.micromessage.server.utils.logWrapper
 class ClassScanner : WithLogger {
     override val logger = LoggerFactory.getLogger(ClassScanner::class.simpleName)
 
-    private val SERVICE_PACKAGE = "top.writerpass.micromessage.core.data.service"
+    private val SERVICE_PACKAGE = "top.writerpass.micromessage.server.core.data.service"
     val tables: Array<Table>
     val routings: Array<BaseRouting>
 

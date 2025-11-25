@@ -23,7 +23,7 @@ object Credential {
         val updatedAt: Long
     ) : BaseDataClass
 
-    object Table : LongIdTable() {
+    object CredentialTable : LongIdTable() {
         val userId = long("user_id").references(UserTable.id)
         val identifierId = long("identifier_id").references(UserIdentifierTable.id)
         val type = enumeration<CredentialType>("type")
@@ -40,15 +40,15 @@ object Credential {
     }
 
     class Entity(id: EntityID<Long>) : LongEntity(id) {
-        companion object : LongEntityClass<Entity>(Table)
+        companion object : LongEntityClass<Entity>(CredentialTable)
 
-        var userId by Table.userId
-        var identifierId by Table.identifierId
-        var type by Table.type
-        var passwordHash by Table.passwordHash
-        var salt by Table.salt
-        var createdAt by Table.createdAt
-        var updatedAt by Table.updatedAt
+        var userId by CredentialTable.userId
+        var identifierId by CredentialTable.identifierId
+        var type by CredentialTable.type
+        var passwordHash by CredentialTable.passwordHash
+        var salt by CredentialTable.salt
+        var createdAt by CredentialTable.createdAt
+        var updatedAt by CredentialTable.updatedAt
 
         fun toData(): Data {
             return Data(

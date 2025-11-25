@@ -70,6 +70,9 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(libs.kstore.file)
 
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")  // 或最新版本
+
+
                 // server
                 implementation("io.github.classgraph:classgraph:4.8.184")
                 implementation(ktorLibs.server.core)
