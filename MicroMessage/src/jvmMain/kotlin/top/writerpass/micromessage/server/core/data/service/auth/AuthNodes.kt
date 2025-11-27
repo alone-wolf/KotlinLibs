@@ -3,15 +3,11 @@
 package top.writerpass.micromessage.server.core.data.service.auth
 
 import io.ktor.server.auth.AuthenticationConfig
-import io.ktor.server.auth.BearerTokenCredential
 import io.ktor.server.auth.UserIdPrincipal
-import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.basic
 import io.ktor.server.auth.bearer
-import io.ktor.server.request.path
 import io.ktor.server.routing.Route
-import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.slf4j.Logger
@@ -20,9 +16,9 @@ import top.writerpass.micromessage.server.utils.PasswordUtil
 import top.writerpass.micromessage.server.core.data.enums.CredentialType
 import top.writerpass.micromessage.server.core.data.enums.IdentifierType
 import top.writerpass.micromessage.server.core.data.service.auth.data.Credential
-import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSession
 import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionEntity
 import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionTable
+import top.writerpass.micromessage.server.core.data.service.auth.principal.UserInfoPrincipal
 import top.writerpass.micromessage.server.core.data.service.user.entity.UserIdentifierEntity
 import top.writerpass.micromessage.server.core.data.service.user.table.UserIdentifierTable
 import top.writerpass.micromessage.server.utils.SessionTokenGenerator
@@ -30,14 +26,9 @@ import top.writerpass.micromessage.server.utils.WithLogger
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-@Serializable
-class UserInfoPrincipal(
-    val userId: Long,
-    val session: LoginSession,
-)
-
 object AuthNodes {
-    interface AuthNode<Credential> {
+
+    interface AuthNode {
         val name: String
         val realmInfo: String
         fun AuthenticationConfig.install()
@@ -48,10 +39,10 @@ object AuthNodes {
         )
     }
 
-    object LoginUsernamePassword : AuthNode<UserPasswordCredential>, WithLogger {
+    object LoginUsernamePassword : AuthNode, WithLogger {
 
         override val name: String = "login"
-        override val realmInfo: String = "Access to the '/auth-api/login' path"
+        override val realmInfo: String = "Access to the '/api/v1/auth/login' path"
 
         override fun AuthenticationConfig.install() {
             basic(name) {
@@ -101,9 +92,9 @@ object AuthNodes {
         override val logger: Logger = LoggerFactory.getLogger(this::class.simpleName)
     }
 
-    object RefreshToken : AuthNode<BearerTokenCredential>, WithLogger {
+    object RefreshToken : AuthNode, WithLogger {
         override val name: String = "refresh-token"
-        override val realmInfo: String = "Access to the '/auth-api/refresh' path"
+        override val realmInfo: String = "Access to the '/api/v1/auth/refresh' path"
 
         override fun AuthenticationConfig.install() {
             bearer(name) {
@@ -122,9 +113,9 @@ object AuthNodes {
         override val logger: Logger = LoggerFactory.getLogger(this::class.simpleName)
     }
 
-    object NormalAccess : AuthNode<BearerTokenCredential>, WithLogger {
+    object NormalAccess : AuthNode, WithLogger {
         override val name: String = "normal-access"
-        override val realmInfo: String = "Access to the '/api/*' path"
+        override val realmInfo: String = "Access to the normal api path"
 
         override fun AuthenticationConfig.install() {
             bearer(name) {

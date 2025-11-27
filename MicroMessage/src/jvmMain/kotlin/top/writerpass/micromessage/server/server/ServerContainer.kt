@@ -3,6 +3,10 @@ package top.writerpass.micromessage.server.server
 import io.ktor.server.application.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.*
+import io.ktor.server.plugins.calllogging.CallLogging
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import top.writerpass.micromessage.server.server.modules.installCallLogging
 import top.writerpass.micromessage.server.server.modules.installHTTP
 import top.writerpass.micromessage.server.server.modules.installLifecycleHook
 import top.writerpass.micromessage.server.server.modules.installSerialization
@@ -19,7 +23,7 @@ class ServerContainer(
             installLifecycleHook(config.lifecycleHook)
             installHTTP()
             installSerialization()
-
+            installCallLogging()
             extraModules()
         }
     )

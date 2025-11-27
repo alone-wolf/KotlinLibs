@@ -16,6 +16,7 @@ import top.writerpass.micromessage.server.core.data.enums.IdentifierType
 import top.writerpass.micromessage.server.core.data.service.auth.data.Credential
 import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionEntity
 import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionTable
+import top.writerpass.micromessage.server.core.data.service.auth.principal.UserInfoPrincipal
 import top.writerpass.micromessage.server.core.data.service.auth.request.ResetPasswordRequest
 import top.writerpass.micromessage.server.core.data.service.user.entity.UserEntity
 import top.writerpass.micromessage.server.core.data.service.user.entity.UserIdentifierEntity
