@@ -22,7 +22,7 @@ import top.writerpass.micromessage.server.core.data.service.auth.principal.UserI
 import top.writerpass.micromessage.server.core.data.service.user.entity.UserIdentifierEntity
 import top.writerpass.micromessage.server.core.data.service.user.table.UserIdentifierTable
 import top.writerpass.micromessage.server.utils.SessionTokenGenerator
-import top.writerpass.micromessage.server.utils.WithLogger
+import top.writerpass.micromessage.common.utils.WithLogger
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -39,7 +39,7 @@ object AuthNodes {
         )
     }
 
-    object LoginUsernamePassword : AuthNode, WithLogger {
+    object Password : AuthNode, WithLogger {
 
         override val name: String = "login"
         override val realmInfo: String = "Access to the '/api/v1/auth/login' path"

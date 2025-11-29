@@ -16,8 +16,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.writerpass.micromessage.server.core.data.service.auth.AuthNodes
-import top.writerpass.micromessage.server.utils.WithLogger
-import top.writerpass.micromessage.server.utils.logWrapper
+import top.writerpass.micromessage.common.utils.WithLogger
+import top.writerpass.micromessage.common.utils.logWrapper
 import kotlin.time.ExperimentalTime
 
 

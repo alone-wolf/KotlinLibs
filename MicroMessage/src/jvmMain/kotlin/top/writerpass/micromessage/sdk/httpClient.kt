@@ -2,19 +2,19 @@
 
 package top.writerpass.micromessage.sdk
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.HttpResponseValidator
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import top.writerpass.micromessage.common.ServerRoutes
+import top.writerpass.micromessage.common.request.RegisterRequest
+import top.writerpass.micromessage.common.utils.WithLogger
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -25,7 +25,15 @@ object HttpClientFactory {
     ): HttpClient {
         return HttpClient {
             install(ContentNegotiation) {
-                json(prettyJson)
+                json(Json {
+                    prettyPrint = true
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                    encodeDefaults = true
+                    explicitNulls = false
+                    allowSpecialFloatingPointValues = true
+                    allowStructuredMapKeys = true
+                })
             }
 
             install(HttpTimeout) {
@@ -36,7 +44,7 @@ object HttpClientFactory {
             defaultRequest {
                 url(baseUrl)
                 header(HttpHeaders.Accept, "*/*")
-                header(HttpHeaders.UserAgent,"MicroMessageSdk/0.0.1")
+                header(HttpHeaders.UserAgent, "MicroMessageSdk/0.0.1")
                 authProvider()?.let { token ->
                     header(HttpHeaders.Authorization, "Bearer $token")
                 }
@@ -83,15 +91,30 @@ class ApiClient(
         authProvider = { authStorage.getToken() }
     )
 
-    suspend fun requestDebugDump(){
+    suspend fun requestDebugDump() {
         val r = client.post("/debug/dump")
         val b = r.bodyAsText()
         print(b)
     }
 
-//    val auth = AuthService(client, authStorage)
+    val auth = AuthService(client)
 //    val user = UserService(client)
 //    val message = MessageService(client)
+}
+
+class AuthService(private val client: HttpClient) : WithLogger {
+    suspend fun register(username: String, password: String) {
+        val passwordHash0 = password
+        val reqBody = RegisterRequest(username, passwordHash0)
+        val r = client.post(ServerRoutes.Api.V1.Auth.Register.path) {
+            contentType(ContentType.Application.Json)
+            setBody(reqBody)
+        }
+        val b = r.bodyAsText()
+        print(b)
+    }
+
+    override val logger: Logger = LoggerFactory.getLogger(this::class.java)
 }
 
 

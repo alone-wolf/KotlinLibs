@@ -3,7 +3,7 @@ package top.writerpass.micromessage.server.server
 import org.h2.tools.Server
 import org.jetbrains.exposed.sql.Database
 import org.slf4j.LoggerFactory
-import top.writerpass.micromessage.server.utils.WithLogger
+import top.writerpass.micromessage.common.utils.WithLogger
 
 class DatabaseContainer: WithLogger{
     val database = Database.connect(

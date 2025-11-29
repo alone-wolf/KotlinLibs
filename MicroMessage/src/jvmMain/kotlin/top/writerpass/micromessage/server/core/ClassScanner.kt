@@ -5,8 +5,8 @@ import io.github.classgraph.ScanResult
 import org.jetbrains.exposed.sql.Table
 import org.slf4j.LoggerFactory
 import top.writerpass.micromessage.server.core.data.base.BaseRouting
-import top.writerpass.micromessage.server.utils.WithLogger
-import top.writerpass.micromessage.server.utils.logWrapper
+import top.writerpass.micromessage.common.utils.WithLogger
+import top.writerpass.micromessage.common.utils.logWrapper
 
 class ClassScanner : WithLogger {
     override val logger = LoggerFactory.getLogger(ClassScanner::class.simpleName)

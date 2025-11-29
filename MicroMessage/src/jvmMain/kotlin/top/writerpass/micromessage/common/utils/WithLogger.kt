@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.server.utils
+package top.writerpass.micromessage.common.utils
 
 import org.slf4j.Logger
 

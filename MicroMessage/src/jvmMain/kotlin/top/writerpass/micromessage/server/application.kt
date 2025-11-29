@@ -15,7 +15,7 @@ suspend fun applicationServer(){
         config = ServerConfig.default,
         extraModules = {
             install(Authentication) {
-                AuthNodes.LoginUsernamePassword.run { install() }
+                AuthNodes.Password.run { install() }
                 AuthNodes.RefreshToken.run { install() }
                 AuthNodes.NormalAccess.run { install() }
             }
@@ -43,7 +43,7 @@ fun main() {
         config = ServerConfig.default,
         extraModules = {
             install(Authentication) {
-                AuthNodes.LoginUsernamePassword.run { install() }
+                AuthNodes.Password.run { install() }
                 AuthNodes.RefreshToken.run { install() }
                 AuthNodes.NormalAccess.run { install() }
             }

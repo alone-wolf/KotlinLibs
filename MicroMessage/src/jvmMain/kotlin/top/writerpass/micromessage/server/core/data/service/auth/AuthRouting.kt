@@ -10,6 +10,8 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import top.writerpass.micromessage.common.request.RegisterRequest
+import top.writerpass.micromessage.common.response.RegisterResponse
 import top.writerpass.micromessage.server.core.data.base.BaseRouting
 import top.writerpass.micromessage.server.core.data.enums.CredentialType
 import top.writerpass.micromessage.server.core.data.enums.IdentifierType
@@ -28,19 +30,6 @@ import top.writerpass.micromessage.server.server.returnUnauthorized
 import top.writerpass.micromessage.server.utils.PasswordUtil
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-
-@Serializable
-data class RegisterRequest(
-    val username: String,
-    val passwordHash0: String,
-)
-
-@Serializable
-data class RegisterResponse(
-    val userId: Long,
-    val username: String,
-    val createdAt: Long
-)
 
 @Serializable
 data class LoginResponse(
@@ -109,7 +98,7 @@ object AuthRouting : BaseRouting {
             }
 
             // /api/v1/auth/login
-            AuthNodes.LoginUsernamePassword.run {
+            AuthNodes.Password.run {
                 routeWrapper {
                     post("/login") {
                         call.principal<UserInfoPrincipal>()?.let { principal ->

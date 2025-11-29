@@ -63,6 +63,9 @@ kotlin {
                 implementation(ktorLibs.client.logging)
                 implementation(ktorLibs.client.encoding)
 
+                implementation(ktorLibs.serialization.kotlinx.json)
+
+
                 implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.2.0")
             }
         }

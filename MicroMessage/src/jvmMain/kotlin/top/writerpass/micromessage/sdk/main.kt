@@ -9,6 +9,9 @@ fun main() {
     )
 
     runBlocking {
-        client.requestDebugDump()
+        val username = "writerpass"
+        val password = "abc123"
+//        client.requestDebugDump()
+        client.auth.register(username, password)
     }
 }
