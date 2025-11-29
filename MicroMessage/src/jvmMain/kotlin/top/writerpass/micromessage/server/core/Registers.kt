@@ -4,7 +4,6 @@ package top.writerpass.micromessage.server.core
 
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -13,17 +12,10 @@ import io.ktor.util.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import top.writerpass.micromessage.server.core.data.service.auth.AuthNodes
-import top.writerpass.micromessage.server.core.data.service.auth.AuthRouting
-import top.writerpass.micromessage.server.core.data.service.auth.UserInfoPrincipal
-import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionEntity
-import top.writerpass.micromessage.server.core.data.service.auth.data.LoginSessionTable
-import top.writerpass.micromessage.server.server.returnOk
-import top.writerpass.micromessage.server.server.returnUnauthorized
 import top.writerpass.micromessage.server.utils.WithLogger
 import top.writerpass.micromessage.server.utils.logWrapper
 import kotlin.time.ExperimentalTime
@@ -93,13 +85,13 @@ class Register : WithLogger {
         route("/api") {
             route("/v1") {
                 val routingList = Singletons.classScanner.routings
-                routingList.forEach { it ->
-                    it.apiRoutes(this)
+                routingList.forEach { routingItem ->
+                    routingItem.apiRoutes(this)
                 }
                 AuthNodes.NormalAccess.run {
                     route("/admin/") {
-                        routingList.forEach { it ->
-                            it.adminRoutes(this)
+                        routingList.forEach { routingItem ->
+                            routingItem.adminRoutes(this)
                         }
                     }
                 }
