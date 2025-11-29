@@ -20,12 +20,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.EmojiEmotions
-import androidx.compose.material.icons.filled.KeyboardVoice
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Voicemail
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.EmojiEmotions
 import androidx.compose.material.icons.outlined.KeyboardVoice
@@ -34,12 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,7 +50,6 @@ import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.pages.base.IPage
 import top.writerpass.micromessage.client.viewmodels.PrivateChatMessage
 import top.writerpass.micromessage.client.viewmodels.PrivateChatViewModel
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 

@@ -62,6 +62,8 @@ kotlin {
                 implementation(ktorLibs.client.auth)
                 implementation(ktorLibs.client.logging)
                 implementation(ktorLibs.client.encoding)
+
+                implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.2.0")
             }
         }
         val jvmMain by getting {

@@ -9,6 +9,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import androidx.window.core.layout.WindowSizeClass
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.AppMainWindowNavHost
@@ -27,6 +29,20 @@ import top.writerpass.micromessage.client.LocalSnackbarHostState
 import top.writerpass.micromessage.client.Pages
 import top.writerpass.micromessage.client.pages.base.IMainPage
 import top.writerpass.micromessage.client.pages.global.LoginPage
+
+object AdaptiveWindow {
+    sealed interface X {
+        object Compact : X
+        object Medium : X
+        object Large : X
+    }
+
+    sealed interface Y {
+        object Compact : Y
+        object Medium : Y
+        object Large : Y
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,15 +62,35 @@ fun AppMainWindow() {
         focusable = true,
         alwaysOnTop = ApplicationState.pinMainWindowOnTop,
         content = {
+            val wai = currentWindowAdaptiveInfo(supportLargeAndXLargeWidth = true)
+            val wsc = wai.windowSizeClass
+            val currentWindowY = when {
+                wsc.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND) -> AdaptiveWindow.Y.Large
+                wsc.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND) -> AdaptiveWindow.Y.Medium
+                else -> AdaptiveWindow.Y.Compact
+            }
+
+            val currentWindowX = when {
+                wsc.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) -> AdaptiveWindow.X.Large
+                wsc.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) -> AdaptiveWindow.X.Medium
+                else -> AdaptiveWindow.X.Compact
+            }
+            val showTopAppBar = wsc.isHeightAtLeastBreakpoint(
+                WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
+            )
+
+
             val navController = LocalNavController.current
             Scaffold(
                 topBar = {
-                    if (currentPage.showTopAppBar) {
-                        TopAppBar(
-                            title = currentPage.labelCompose,
-                            navigationIcon = currentPage.leftTopIcon,
-                            actions = currentPage.actions
-                        )
+                    if (showTopAppBar) {
+                        if (currentPage.showTopAppBar) {
+                            TopAppBar(
+                                title = currentPage.labelCompose,
+                                navigationIcon = currentPage.leftTopIcon,
+                                actions = currentPage.actions
+                            )
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxSize(),
