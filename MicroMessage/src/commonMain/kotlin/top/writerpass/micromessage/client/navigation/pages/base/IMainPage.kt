@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.base
+package top.writerpass.micromessage.client.navigation.pages.base
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

@@ -2,30 +2,37 @@
 
 package top.writerpass.micromessage.server.core
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.util.*
+import io.ktor.http.HttpHeaders
+import io.ktor.server.application.Application
+import io.ktor.server.plugins.origin
+import io.ktor.server.request.contentType
+import io.ktor.server.request.header
+import io.ktor.server.request.httpMethod
+import io.ktor.server.request.path
+import io.ktor.server.request.receiveText
+import io.ktor.server.request.uri
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.getAllRoutes
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
+import io.ktor.util.toMap
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import top.writerpass.micromessage.server.core.data.service.auth.AuthNodes
 import top.writerpass.micromessage.common.utils.WithLogger
 import top.writerpass.micromessage.common.utils.logWrapper
+import top.writerpass.micromessage.server.core.data.service.auth.AuthNodes
+import top.writerpass.micromessage.server.server.ReturnBodyPlugin
 import kotlin.time.ExperimentalTime
 
 
 @Serializable
 data class DebugDump(
-    val method: String,
-    val uri: String,
-    val path: String,
+    val method: String, val uri: String, val path: String,
 
     // Query 是多值 Map
     val queryParameters: Map<String, List<String>>,
@@ -36,18 +43,12 @@ data class DebugDump(
     // Cookies map
     val cookies: Map<String, String>,
 
-    val clientIP: String?,
-    val scheme: String,
+    val clientIP: String?, val scheme: String,
 
     // origin host info
-    val host_local: String?,
-    val host_server: String?,
-    val port_local: Int,
-    val port_server: Int,
+    val host_local: String?, val host_server: String?, val port_local: Int, val port_server: Int,
 
-    val protocol: String,
-    val contentType: String,
-    val contentLength: Long?,
+    val protocol: String, val contentType: String, val contentLength: Long?,
 
     // body 一律用 String 容器
     val body: String
@@ -84,6 +85,7 @@ class Register : WithLogger {
         debugDumpRoute()
         route("/api") {
             route("/v1") {
+                install(ReturnBodyPlugin)
                 val routingList = Singletons.classScanner.routings
                 routingList.forEach { routingItem ->
                     routingItem.apiRoutes(this)

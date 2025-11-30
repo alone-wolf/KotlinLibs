@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.main
+package top.writerpass.micromessage.client.navigation.pages.main
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.RowScope
@@ -8,7 +8,7 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavBackStackEntry
-import top.writerpass.micromessage.client.pages.base.IMainPage
+import top.writerpass.micromessage.client.navigation.pages.base.IMainPage
 
 
 object ExplorerPage : IMainPage {

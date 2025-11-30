@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.global
+package top.writerpass.micromessage.client.navigation.pages.global
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.clickable
@@ -16,23 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import top.writerpass.cmplibrary.compose.FullWidthRow
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
-import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.navigation.pages.base.IPage
 
-
-object ChatDetailPage : IPage {
+object MyProfilePage : IPage {
     override val routeBase: String
-        get() = "chat-detail"
-
+        get() = "my-profile"
     override val label: String
-        get() = "Chat Detail Page"
+        get() = "Profile"
     override val actions: @Composable (RowScope.() -> Unit)
         get() = {
             Icons.Default.MoreHoriz.CxIconButton { }
@@ -157,5 +152,4 @@ object ChatDetailPage : IPage {
                 )
             }
         }
-
 }

@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.main
+package top.writerpass.micromessage.client.navigation.pages.main
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.clickable
@@ -35,9 +35,9 @@ import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.IMainPage
-import top.writerpass.micromessage.client.pages.global.PrivateChatPage
-import top.writerpass.micromessage.client.pages.global.SearchPage
+import top.writerpass.micromessage.client.navigation.pages.base.IMainPage
+import top.writerpass.micromessage.client.navigation.pages.global.PrivateChatPage
+import top.writerpass.micromessage.client.navigation.pages.global.SearchPage
 
 
 object MessagePage : IMainPage {

@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.global
+package top.writerpass.micromessage.client.navigation.pages.global
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
@@ -44,7 +44,7 @@ import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.navigation.pages.base.IPage
 
 
 object SearchPage : IPage {

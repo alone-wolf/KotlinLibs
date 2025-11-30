@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client
+package top.writerpass.micromessage.client.navigation
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.EnterTransition
@@ -11,14 +11,15 @@ import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.NavControllerWrapper
+import top.writerpass.micromessage.client.navigation.pages.base.IPage
 
 @Composable
 fun AppMainWindowNavHost(
     navControllerWrapper: NavControllerWrapper,
     startDestination: IPage,
     modifier: Modifier,
-    pages:List<IPage>
+    pages: List<IPage>
 ) {
     NavHost(
         navController = navControllerWrapper.c,

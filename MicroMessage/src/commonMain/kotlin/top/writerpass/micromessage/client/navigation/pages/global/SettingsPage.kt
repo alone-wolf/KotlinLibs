@@ -1,13 +1,13 @@
-package top.writerpass.micromessage.client.pages.global
+package top.writerpass.micromessage.client.navigation.pages.global
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
 import top.writerpass.cmplibrary.compose.FullSizeBox
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
-import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.navigation.pages.base.IPage
 
-object SettingsPage: IPage {
+object SettingsPage : IPage {
     override val routeBase: String
         get() = "settings"
     override val label: String

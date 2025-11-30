@@ -21,14 +21,14 @@ import androidx.compose.ui.window.rememberWindowState
 import androidx.window.core.layout.WindowSizeClass
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
-import top.writerpass.micromessage.client.AppMainWindowNavHost
 import top.writerpass.micromessage.client.ApplicationState
 import top.writerpass.micromessage.client.LocalCurrentPage
 import top.writerpass.micromessage.client.LocalNavController
 import top.writerpass.micromessage.client.LocalSnackbarHostState
-import top.writerpass.micromessage.client.Pages
-import top.writerpass.micromessage.client.pages.base.IMainPage
-import top.writerpass.micromessage.client.pages.global.LoginPage
+import top.writerpass.micromessage.client.navigation.AppMainWindowNavHost
+import top.writerpass.micromessage.client.navigation.pages.Pages
+import top.writerpass.micromessage.client.navigation.pages.base.IMainPage
+import top.writerpass.micromessage.client.navigation.pages.global.LoginPage
 
 object AdaptiveWindow {
     sealed interface X {

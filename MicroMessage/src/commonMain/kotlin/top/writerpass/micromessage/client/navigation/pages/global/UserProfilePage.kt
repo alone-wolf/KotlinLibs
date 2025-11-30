@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.global
+package top.writerpass.micromessage.client.navigation.pages.global
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
@@ -13,7 +13,7 @@ import androidx.navigation.navArgument
 import androidx.savedstate.read
 import top.writerpass.cmplibrary.LaunchedEffectOdd
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
-import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.navigation.pages.base.IPage
 
 object UserProfilePage : IPage {
     override val routeBase: String

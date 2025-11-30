@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.main
+package top.writerpass.micromessage.client.navigation.pages.main
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.Settings
@@ -35,9 +34,9 @@ import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.IMainPage
-import top.writerpass.micromessage.client.pages.global.MyQrCodePage
-import top.writerpass.micromessage.client.pages.global.SettingsPage
+import top.writerpass.micromessage.client.navigation.pages.base.IMainPage
+import top.writerpass.micromessage.client.navigation.pages.global.MyQrCodePage
+import top.writerpass.micromessage.client.navigation.pages.global.SettingsPage
 
 
 object MePage : IMainPage {
@@ -97,8 +96,7 @@ object MePage : IMainPage {
                             modifier = Modifier
                                 .height(48.dp)
                                 .clickable(onClick = onClick)
-                                .padding(horizontal = 16.dp)
-                            ,
+                                .padding(horizontal = 16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             icon.CxIcon()
@@ -117,7 +115,7 @@ object MePage : IMainPage {
                 aa(
                     "Logout",
                     Icons.AutoMirrored.Filled.Logout
-                ){
+                ) {
                     navController.logout()
                 }
             }

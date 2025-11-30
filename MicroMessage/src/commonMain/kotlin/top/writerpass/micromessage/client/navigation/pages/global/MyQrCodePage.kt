@@ -1,4 +1,4 @@
-package top.writerpass.micromessage.client.pages.global
+package top.writerpass.micromessage.client.navigation.pages.global
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.Image
@@ -28,7 +28,7 @@ import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import top.writerpass.cmplibrary.compose.FullSizeColumn
 import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIcon
-import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.navigation.pages.base.IPage
 
 
 object MyQrCodePage : IPage {

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package top.writerpass.micromessage.client.pages.global
+package top.writerpass.micromessage.client.navigation.pages.global
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
@@ -21,7 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.EmojiEmotions
 import androidx.compose.material.icons.outlined.KeyboardVoice
@@ -47,7 +48,7 @@ import top.writerpass.cmplibrary.compose.ables.IconComposeExt.CxIconButton
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxText
 import top.writerpass.cmplibrary.compose.ables.TextComposeExt.CxTextButton
 import top.writerpass.micromessage.client.LocalNavController
-import top.writerpass.micromessage.client.pages.base.IPage
+import top.writerpass.micromessage.client.navigation.pages.base.IPage
 import top.writerpass.micromessage.client.viewmodels.PrivateChatMessage
 import top.writerpass.micromessage.client.viewmodels.PrivateChatViewModel
 import kotlin.time.ExperimentalTime
@@ -74,8 +75,11 @@ object PrivateChatPage : IPage {
     override val actions: @Composable (RowScope.() -> Unit)
         get() = {
             val navController = LocalNavController.current
-            Icons.Default.Person.CxIconButton {
-                navController.open(UserProfilePage, 100L)
+            Icons.Default.Call.CxIconButton {
+                navController.open(AudioCallPage, 100L)
+            }
+            Icons.Default.MoreHoriz.CxIconButton {
+//                navController.open(UserProfilePage, 100L)
             }
         }
     override val fab: @Composable (() -> Unit)
